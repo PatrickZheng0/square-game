@@ -1,0 +1,8 @@
+dff/dffe_ref.v
+dff/dff_32.v
+dff/dff_32_tb.v
+decoder/decoder_32.v
+decoder/decoder_32_tb.v
+tri_state_buffer/tri_state_buffer.v
+regfile/regfile.v
+regfile/regfile_tb.v

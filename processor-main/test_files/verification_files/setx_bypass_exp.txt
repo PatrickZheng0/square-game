@@ -1,0 +1,2 @@
+num cycles:50
+r1=0

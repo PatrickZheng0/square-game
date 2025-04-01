@@ -1,0 +1,733 @@
+
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Test Results</title>
+            <style>
+                body { font-family: Arial, sans-serif; margin: 20px; }
+                .section { margin: 20px 0; padding: 10px; border: 1px solid #eee; border-radius: 8px; }
+                .header { 
+                    background-color: #f5f5f5; 
+                    padding: 10px; 
+                    display: flex;
+                    align-items: center;
+                    cursor: pointer;
+                    user-select: none;
+                    -webkit-user-select: none;
+                    -moz-user-select: none;
+                    -ms-user-select: none;
+                    flex-wrap: wrap;
+                    gap: 10px;
+                    border-radius: 8px;
+                }
+                .header span { 
+                    font-size: 1.2em;
+                    font-weight: bold;
+                    margin-left: 3px;
+                    margin-right: 30px;
+                }
+                .success { color: #23a645; }
+                .failure { color: #f03d30; }
+                .warning { color: #FF9500; }
+                .not-run { color: #BBBBBB; }
+                .toc-link.success { color: #23a645; }
+                .toc-link.failure { color: #f03d30; }
+                .toc-link.warning { color: #FF9500; }
+                .toc-link.not-run { color: #BBBBBB; }
+                .content-block { margin: 10px 0; padding: 10px; background-color: #f9f9f9; border-radius: 8px; }
+                .content-block:last-child {
+                    margin-bottom: 0;  /* Removes bottom margin from last content block */
+                }
+                .content-block div { 
+                    white-space: pre-wrap;
+                    font-family: monospace;
+                    tab-size: 5;
+                    -moz-tab-size: 5;
+                    word-wrap: break-word;
+                    overflow-wrap: break-word;
+                }
+                .collapse-btn {
+                    cursor: pointer;
+                    border: none;
+                    background: none;
+                    font-size: 1.2em;
+                    padding: 0 10px;
+                    color: inherit;
+                    user-select: none;
+                    -webkit-user-select: none;
+                    -moz-user-select: none;
+                    -ms-user-select: none;
+                }
+                .content-container {
+                    display: block;
+                }
+                .content-container.collapsed {
+                    display: none;
+                }
+                .description {
+                    color: #666;
+                    font-style: italic;
+                    margin-bottom: 20px;
+                    margin-left: 3px;
+                }
+                .theme-toggle {
+                    flex: 1;
+                    padding: 10px 20px;
+                    background-color: #017AFF;
+                    color: white;
+                    border: none;
+                    border-radius: 5px;
+                    cursor: pointer;
+                    box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+                    z-index: 1000;
+                }
+                .float-button {
+                    flex: 1;
+                    padding: 10px 20px;
+                    background-color: #017AFF;
+                    color: white;
+                    border: none;
+                    border-radius: 5px;
+                    cursor: pointer;
+                    box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+                }
+                /* Add dark mode styles */
+                body.dark-mode { 
+                    background-color: #1a1a1a; 
+                    color: #ffffff; 
+                }
+                body.dark-mode .section { 
+                    border-color: #444; 
+                }
+                body.dark-mode .header { 
+                    background-color: #2d2d2d; 
+                }
+                body.dark-mode .content-block { 
+                    background-color: #2d2d2d; 
+                }
+                body.dark-mode .failure { 
+                    color: #FF443B;  
+                }
+                body.dark-mode .success { 
+                    color: #32D84C; 
+                }
+                body.dark-mode .description { 
+                    color: #e1e1e1; /* match title color */
+                }
+                body.dark-mode .not-run { 
+                    color: #777777; 
+                }
+                .copy-button {
+                    padding: 5px 10px;
+                    color: white;
+                    border: none;
+                    border-radius: 3px;
+                    cursor: pointer;
+                    margin-left: 0px;
+                    user-select: none;
+                    -webkit-user-select: none;
+                    -moz-user-select: none;
+                    -ms-user-select: none;
+                }
+                .copy-button.success {
+                    background-color: #23a645;
+                    color: white;
+                }
+                .copy-button.success:hover {
+                    background-color: #45d86c;
+                    color: white;
+                }
+                .copy-button.failure {
+                    background-color: #f03d30;
+                    color: white;
+                }
+                .copy-button.failure:hover {
+                    background-color: #ff524a;
+                    color: white;
+                }
+                body.dark-mode .copy-button.success {
+                    background-color: #28b040;
+                    color: #ffffff;
+                }
+                body.dark-mode .copy-button.success:hover {
+                    background-color: #32c94c;
+                    color: #ffffff;
+                }
+                body.dark-mode .copy-button.failure {
+                    background-color: #FF443B;
+                    color: #ffffff;
+                }
+                body.dark-mode .copy-button.failure:hover {
+                    background-color: #ff5a52;
+                    color: #ffffff;
+                }
+                .copy-button.warning {
+                    background-color: #FF9500;
+                    color: white;
+                }
+                .copy-button.warning:hover {
+                    background-color: #ffaa33;
+                    color: white;
+                }
+                body.dark-mode .copy-button.warning {
+                    background-color: #FF9500;
+                    color: #ffffff;
+                }
+                body.dark-mode .copy-button.warning:hover {
+                    background-color: #ffaa33;
+                    color: #ffffff;
+                }
+                /* Add new sidebar styles */
+                .sidebar {
+                    position: fixed;
+                    right: 20px;
+                    top: 80px;
+                    width: 250px;
+                    padding: 20px;
+                    background-color: #f5f5f5;
+                    border-radius: 8px;
+                    max-height: calc(100vh - 140px);
+                    overflow-y: auto;
+                    z-index: 999;
+                }
+                body.dark-mode .sidebar {
+                    background-color: #2d2d2d;
+                }
+                .sidebar-title {
+                    font-weight: bold;
+                    margin-bottom: 10px;
+                }
+                .toc-link {
+                    display: block;
+                    padding: 5px 0;
+                    text-decoration: none;
+                    color: inherit;
+                }
+                .toc-link:hover {
+                    text-decoration: underline;
+                }
+                .main-content {
+                    margin-right: 300px;
+                    margin-top: 20px;
+                }
+                .button-container {
+                    display: flex;
+                    gap: 10px;
+                    margin-bottom: 20px;
+                    width: 100%;
+                    position: fixed;
+                    right: 20px;
+                    top: 20px;
+                    width: 290px;
+                    z-index: 999;
+                }
+            </style>
+            <script>
+                function toggleContent(buttonElement) {
+                    const container = buttonElement.parentElement.nextElementSibling;
+                    const isCollapsed = container.classList.contains('collapsed');
+                    container.classList.toggle('collapsed');
+                    buttonElement.textContent = isCollapsed ? '▽' : '▷';
+
+                    const allSections = document.querySelectorAll('.content-container');
+                    const allCollapsed = Array.from(allSections).every(section => 
+                        section.classList.contains('collapsed')
+                    );
+                    
+                    // Update floating button text accordingly
+                    const toggleButton = document.getElementById('toggleButton');
+                    toggleButton.textContent = allCollapsed ? 'Expand Failed' : 'Collapse All';
+                }
+
+                function toggleAll() {
+                    const button = document.getElementById('toggleButton');
+                    const isCollapsed = button.textContent === 'Expand Failed';
+                    const sections = document.querySelectorAll('.section');
+                    
+                    if (isCollapsed) {
+                        // Expand failed tests
+                        sections.forEach(section => {
+                            if (section.querySelector('.header.failure') || section.querySelector('.header.not-run')) {
+                                const container = section.querySelector('.content-container');
+                                const btn = section.querySelector('.collapse-btn');
+                                container.classList.remove('collapsed');
+                                btn.textContent = '▽';
+                            }
+                        });
+                        button.textContent = 'Collapse All';
+                    } else {
+                        // Collapse all
+                        sections.forEach(section => {
+                            const container = section.querySelector('.content-container');
+                            const btn = section.querySelector('.collapse-btn');
+                            container.classList.add('collapsed');
+                            btn.textContent = '▷';
+                        });
+                        button.textContent = 'Expand Failed';
+                    }
+                }
+
+                function toggleTheme() {
+                    const body = document.body;
+                    const button = document.getElementById('themeToggle');
+                    body.classList.toggle('dark-mode');
+                    button.textContent = body.classList.contains('dark-mode') ? '☀️ Light Mode' : '🌙 Dark Mode';
+                }
+
+                function copyGTKWaveCommand(title) {
+                    const command = `gtkwave test_files/output_files/${title}.vcd`;
+                    navigator.clipboard.writeText(command);
+                    
+                    // Optional: Show feedback that command was copied
+                    const button = event.target;
+                    const originalText = button.textContent;
+                    button.textContent = 'Copied!';
+                    setTimeout(() => button.textContent = originalText, 1000);
+                }
+
+                function scrollToSection(id) {
+                    const element = document.getElementById(id);
+                    if (element) {
+                        element.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }
+            </script>
+        </head>
+        <body class="dark-mode">
+            <div class="button-container">
+                <button id="toggleButton" class="float-button" onclick="toggleAll()">Collapse All</button>
+                <button id="themeToggle" class="theme-toggle" onclick="toggleTheme()">☀️ Light Mode</button>
+            </div>
+            <div class="sidebar">
+                <div class="sidebar-title">Test List</div>
+                <div class="sidebar-content">
+                    <!-- TOC links will be added here dynamically -->
+                </div>
+            </div>
+            <div class="main-content">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h1>Test Results - 2025-03-11 09:05:25</h1>
+                </div>
+                <div class="description">You saved 72.52 seconds by running this script instead of uploading to Gradescope.</div>
+                <div class="description">Build version: 1.1.2</div>
+        
+            <script>
+                document.querySelector('.sidebar-content').innerHTML = `<a href="javascript:void(0)" onclick="scrollToSection('section-Banned-Verilog-Check')" class="toc-link success">Banned Verilog Check</a><a href="javascript:void(0)" onclick="scrollToSection('section-add_lw')" class="toc-link success">add_lw</a><a href="javascript:void(0)" onclick="scrollToSection('section-alu_bypass')" class="toc-link success">alu_bypass</a><a href="javascript:void(0)" onclick="scrollToSection('section-alu_double_bypass')" class="toc-link success">alu_double_bypass</a><a href="javascript:void(0)" onclick="scrollToSection('section-bex_bypass')" class="toc-link success">bex_bypass</a><a href="javascript:void(0)" onclick="scrollToSection('section-bex_setx')" class="toc-link success">bex_setx</a><a href="javascript:void(0)" onclick="scrollToSection('section-blt')" class="toc-link success">blt</a><a href="javascript:void(0)" onclick="scrollToSection('section-bne')" class="toc-link success">bne</a><a href="javascript:void(0)" onclick="scrollToSection('section-branch_bypass')" class="toc-link success">branch_bypass</a><a href="javascript:void(0)" onclick="scrollToSection('section-branch_jump_race')" class="toc-link success">branch_jump_race</a><a href="javascript:void(0)" onclick="scrollToSection('section-branch_memory')" class="toc-link success">branch_memory</a><a href="javascript:void(0)" onclick="scrollToSection('section-control_1')" class="toc-link success">control_1</a><a href="javascript:void(0)" onclick="scrollToSection('section-control_2')" class="toc-link success">control_2</a><a href="javascript:void(0)" onclick="scrollToSection('section-exception_bypass')" class="toc-link success">exception_bypass</a><a href="javascript:void(0)" onclick="scrollToSection('section-exceptions')" class="toc-link success">exceptions</a><a href="javascript:void(0)" onclick="scrollToSection('section-j')" class="toc-link success">j</a><a href="javascript:void(0)" onclick="scrollToSection('section-jal')" class="toc-link success">jal</a><a href="javascript:void(0)" onclick="scrollToSection('section-jal_bypass')" class="toc-link success">jal_bypass</a><a href="javascript:void(0)" onclick="scrollToSection('section-jal_jr_bypass')" class="toc-link success">jal_jr_bypass</a><a href="javascript:void(0)" onclick="scrollToSection('section-jr')" class="toc-link success">jr</a><a href="javascript:void(0)" onclick="scrollToSection('section-jr_bypass')" class="toc-link success">jr_bypass</a><a href="javascript:void(0)" onclick="scrollToSection('section-load_to_save_bypass')" class="toc-link success">load_to_save_bypass</a><a href="javascript:void(0)" onclick="scrollToSection('section-lw_add')" class="toc-link success">lw_add</a><a href="javascript:void(0)" onclick="scrollToSection('section-lw_branch')" class="toc-link success">lw_branch</a><a href="javascript:void(0)" onclick="scrollToSection('section-lw_jr')" class="toc-link success">lw_jr</a><a href="javascript:void(0)" onclick="scrollToSection('section-memory_bypass')" class="toc-link success">memory_bypass</a><a href="javascript:void(0)" onclick="scrollToSection('section-memory_no_bypass')" class="toc-link success">memory_no_bypass</a><a href="javascript:void(0)" onclick="scrollToSection('section-misc_memory')" class="toc-link success">misc_memory</a><a href="javascript:void(0)" onclick="scrollToSection('section-multdiv_bypass_fast')" class="toc-link success">multdiv_bypass_fast</a><a href="javascript:void(0)" onclick="scrollToSection('section-multdiv_bypass_regular')" class="toc-link success">multdiv_bypass_regular</a><a href="javascript:void(0)" onclick="scrollToSection('section-multdiv_bypass_slow')" class="toc-link success">multdiv_bypass_slow</a><a href="javascript:void(0)" onclick="scrollToSection('section-multdiv_no_bypass_fast')" class="toc-link success">multdiv_no_bypass_fast</a><a href="javascript:void(0)" onclick="scrollToSection('section-multdiv_no_bypass_regular')" class="toc-link success">multdiv_no_bypass_regular</a><a href="javascript:void(0)" onclick="scrollToSection('section-multdiv_no_bypass_slow')" class="toc-link success">multdiv_no_bypass_slow</a><a href="javascript:void(0)" onclick="scrollToSection('section-negative_no_bypass')" class="toc-link success">negative_no_bypass</a><a href="javascript:void(0)" onclick="scrollToSection('section-positive_no_bypass')" class="toc-link success">positive_no_bypass</a><a href="javascript:void(0)" onclick="scrollToSection('section-pre_sort')" class="toc-link success">pre_sort</a><a href="javascript:void(0)" onclick="scrollToSection('section-setx_bypass')" class="toc-link success">setx_bypass</a><a href="javascript:void(0)" onclick="scrollToSection('section-sort')" class="toc-link success">sort</a><a href="javascript:void(0)" onclick="scrollToSection('section-stall_edge')" class="toc-link success">stall_edge</a><a href="javascript:void(0)" onclick="scrollToSection('section-wrong_bypass')" class="toc-link success">wrong_bypass</a><a href="javascript:void(0)" onclick="scrollToSection('section-zero_bypass')" class="toc-link success">zero_bypass</a>`;
+            </script>
+        <div class="section" id="section-Banned-Verilog-Check">
+                <div class='header success' onclick='toggleContent(this.querySelector(".collapse-btn"))'>
+                    <button class='collapse-btn'>▷</button>
+                    <span>Banned Verilog Check</span>
+                    
+                </div>
+            <div class='content-container collapsed'><div class='content-block'><div class=''>==================== DISCLAIMER ====================</div><div class=''> </div><div class=''>This automated banned Verilog checker may produce false positives and false negatives. Your final Gradescope submission will be checked manually for banned Verilog constructs. </div><div class=''> </div><div class=''>Please reference the Checkpoint 4: Processor document for the full list of banned Verilog constructs.</div></div></div></div><div class="section" id="section-add_lw">
+                <div class='header success' onclick='toggleContent(this.querySelector(".collapse-btn"))'>
+                    <button class='collapse-btn'>▽</button>
+                    <span>add_lw</span>
+                    
+                    <button class='copy-button success' onclick='event.stopPropagation(); copyGTKWaveCommand("add_lw")'>
+                        Copy GTKWave Command
+                </button>
+                
+                </div>
+            <div class='content-container '><div class='content-block'><div class=''> 0:  nop            # Specifically tests add into lw</div><div class=''> 1:  nop            # Author: Philip Xue</div><div class=''> 2:  nop</div><div class=''> 3:  nop            # EDGE CASE: bypassing ALU result to address calculation for lw</div><div class=''> 4:  nop</div><div class=''> 5:  addi $1, $0, 830        # r1 = 830</div><div class=''> 6:  nop</div><div class=''> 7:  nop</div><div class=''> 8:  sw $1, 4($0)         # mem[4] = r1 = 830</div><div class=''> 9:  addi $2, $0, 2       # r2 = 2</div><div class=''>10:  lw $3, 2($2)         # r3 = mem[2+r2] = mem[2+2] = mem[4] = 830</div><div class=''>11:  nop</div><div class=''>12:  nop</div><div class=''>13:  add $4, $2, $0       # r4 = 2</div><div class=''>14:  lw $5, 2($4)         # r5 = mem[2+r4] = mem[2+2] = mem[4] = 830</div><div class=''>15:  nop</div><div class=''>16:  nop</div><div class=''>17:  </div></div><div class='content-block'><div class=''>num cycles:25</div></div><div class='content-block'><div class=''>All registers passed!</div></div></div></div><div class="section" id="section-alu_bypass">
+                <div class='header success' onclick='toggleContent(this.querySelector(".collapse-btn"))'>
+                    <button class='collapse-btn'>▽</button>
+                    <span>alu_bypass</span>
+                    
+                    <button class='copy-button success' onclick='event.stopPropagation(); copyGTKWaveCommand("alu_bypass")'>
+                        Copy GTKWave Command
+                </button>
+                
+                </div>
+            <div class='content-container '><div class='content-block'><div class=''> 0:  nop             # Values initialized using addi (positive only)</div><div class=''> 1:  nop             # Author: Oliver Rodas</div><div class=''> 2:  nop</div><div class=''> 3:  nop</div><div class=''> 4:  nop             # Basic Bypassing to ALU: X->D and M->D</div><div class=''> 5:  addi $r1, $r0, 80        # r1 = 80</div><div class=''> 6:  addi $r2, $r1, 22        # r2 = r1 + 22 = 102    (X->D)</div><div class=''> 7:  addi $r3, $r1, 37        # r3 = r1 + 37 = 117    (M->D)</div><div class=''> 8:  sub $r4, $r1, $r3        # r4 = r1 - r3 = -37    (X->D)</div><div class=''> 9:  and $r5, $r1, $r3        # r5 = r1 & r3 = 80    (M->D)</div><div class=''>10:  sra $r6, $r4, 4         # r6 = r4 >> 4 = -3        (M->D)</div><div class=''>11:  sll $r7, $r6, 5         # r7 = r6 << 5 = -96    (X->D)</div><div class=''>12:  </div></div><div class='content-block'><div class=''>num cycles:17</div></div><div class='content-block'><div class=''>All registers passed!</div></div></div></div><div class="section" id="section-alu_double_bypass">
+                <div class='header success' onclick='toggleContent(this.querySelector(".collapse-btn"))'>
+                    <button class='collapse-btn'>▽</button>
+                    <span>alu_double_bypass</span>
+                    
+                    <button class='copy-button success' onclick='event.stopPropagation(); copyGTKWaveCommand("alu_double_bypass")'>
+                        Copy GTKWave Command
+                </button>
+                
+                </div>
+            <div class='content-container '><div class='content-block'><div class=''>0:  nop             # Values initialized using addi (positive only)</div><div class=''>1:  nop             # Author: Oliver Rodas</div><div class=''>2:  nop</div><div class=''>3:  nop</div><div class=''>4:  nop             # Bypassing 2 values to ALU</div><div class=''>5:  addi $r1, $r0, 37        # r1 = 37</div><div class=''>6:  addi $r2, $r0, 41        # r2 = 41</div><div class=''>7:  sub $r3, $r2, $r1        # r3 = r2 - r1 = 4        (X->D and M->D)</div><div class=''>8:  sub $r4, $r2, $r3        # r4 = r2 - r3 = 37        (X->D and M->D)</div><div class=''>9:  </div></div><div class='content-block'><div class=''>num cycles:14</div></div><div class='content-block'><div class=''>All registers passed!</div></div></div></div><div class="section" id="section-bex_bypass">
+                <div class='header success' onclick='toggleContent(this.querySelector(".collapse-btn"))'>
+                    <button class='collapse-btn'>▽</button>
+                    <span>bex_bypass</span>
+                    
+                    <button class='copy-button success' onclick='event.stopPropagation(); copyGTKWaveCommand("bex_bypass")'>
+                        Copy GTKWave Command
+                </button>
+                
+                </div>
+            <div class='content-container '><div class='content-block'><div class=''> 0:  				# Efficiency Test 4: Bypassing into BEX </div><div class=''> 1:  nop</div><div class=''> 2:  nop 	</div><div class=''> 3:  nop</div><div class=''> 4:  nop	</div><div class=''> 5:  nop</div><div class=''> 6:  setx 0				# r30 = 0</div><div class=''> 7:  nop				# Avoid RAW hazard from first setx</div><div class=''> 8:  setx 10				# r30 = 10 (with RAW hazard)</div><div class=''> 9:  bex e1				# r30 != 0 --> taken</div><div class=''>10:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''>11:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''>12:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''>13:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''>14:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''>15:  e1: addi $r10, $r10, 1		# r10 += 1 (Correct)</div><div class=''>16:  nop</div><div class=''>17:  nop</div><div class=''>18:  nop</div><div class=''>19:  nop</div><div class=''>20:  </div><div class=''>21:  # Final: $r10 should be 1, $r20 should be 0</div><div class=''>22:  </div><div class=''>23:  </div></div><div class='content-block'><div class=''>num cycles:23</div></div><div class='content-block'><div class=''>All registers passed!</div></div></div></div><div class="section" id="section-bex_setx">
+                <div class='header success' onclick='toggleContent(this.querySelector(".collapse-btn"))'>
+                    <button class='collapse-btn'>▽</button>
+                    <span>bex_setx</span>
+                    
+                    <button class='copy-button success' onclick='event.stopPropagation(); copyGTKWaveCommand("bex_setx")'>
+                        Copy GTKWave Command
+                </button>
+                
+                </div>
+            <div class='content-container '><div class='content-block'><div class=''> 0:  </div><div class=''> 1:  nop 			# simple bex and setx test case</div><div class=''> 2:  nop </div><div class=''> 3:  nop </div><div class=''> 4:  nop</div><div class=''> 5:  nop</div><div class=''> 6:  setx 0			# r30 = 0</div><div class=''> 7:  nop			# Avoid setx RAW hazard</div><div class=''> 8:  nop			# Avoid setx RAW hazard</div><div class=''> 9:  bex e1			# r30 == 0 --> not taken</div><div class=''>10:  nop			# nop in case of flush</div><div class=''>11:  nop			# nop in case of flush</div><div class=''>12:  nop			# Spacer</div><div class=''>13:  addi $r10, $r10, 1	# r10 += 1 (Correct)</div><div class=''>14:  e1: nop			# Landing pad for branch</div><div class=''>15:  setx 10			# r30 = 10</div><div class=''>16:  nop			# Avoid setx RAW hazard</div><div class=''>17:  nop			# Avoid setx RAW hazard</div><div class=''>18:  bex e2			# r30 != 0 --> taken</div><div class=''>19:  nop			# flushed instruction</div><div class=''>20:  nop			# flushed instruction</div><div class=''>21:  addi $r20, $r20, 1	# r20 += 1 (Incorrect)</div><div class=''>22:  addi $r20, $r20, 1	# r20 += 1 (Incorrect)</div><div class=''>23:  addi $r20, $r20, 1	# r20 += 1 (Incorrect)</div><div class=''>24:  e2: </div><div class=''>25:  addi $r10, $r10, 1	# r10 += 1 (Correct)</div><div class=''>26:  nop			# Avoid add RAW hazard</div><div class=''>27:  nop			# Avoid add RAW hazard</div><div class=''>28:  nop</div><div class=''>29:  </div><div class=''>30:  # Final: $r10 should be 2, $r20 should be 0</div></div><div class='content-block'><div class=''>num cycles:35</div></div><div class='content-block'><div class=''>All registers passed!</div></div></div></div><div class="section" id="section-blt">
+                <div class='header success' onclick='toggleContent(this.querySelector(".collapse-btn"))'>
+                    <button class='collapse-btn'>▽</button>
+                    <span>blt</span>
+                    
+                    <button class='copy-button success' onclick='event.stopPropagation(); copyGTKWaveCommand("blt")'>
+                        Copy GTKWave Command
+                </button>
+                
+                </div>
+            <div class='content-container '><div class='content-block'><div class=''> 0:  </div><div class=''> 1:  nop 	# simple blt test case</div><div class=''> 2:  nop </div><div class=''> 3:  nop </div><div class=''> 4:  nop</div><div class=''> 5:  nop</div><div class=''> 6:  nop</div><div class=''> 7:  addi    $r1, $r0, 4     # $r1 = 4</div><div class=''> 8:  addi    $r2, $r0, 5     # $r2 = 5</div><div class=''> 9:  sub     $r3, $r0, $r1   # $r3 = -4</div><div class=''>10:  sub     $r4, $r0, $r2   # $r4 = -5</div><div class=''>11:  nop</div><div class=''>12:  nop</div><div class=''>13:  nop 	</div><div class=''>14:  blt 	$r1, $r2, b3	# r1 < r2 --> taken</div><div class=''>15:  nop			# flushed instruction</div><div class=''>16:  nop			# flushed instruction</div><div class=''>17:  addi 	$r20, $r20, 1	# r20 += 1 (Incorrect)</div><div class=''>18:  addi 	$r20, $r20, 1	# r20 += 1 (Incorrect)</div><div class=''>19:  addi 	$r20, $r20, 1	# r20 += 1 (Incorrect)</div><div class=''>20:  b3: </div><div class=''>21:  addi $r10, $r10, 1	# r10 += 1 (Correct)</div><div class=''>22:  blt $r2, $r2, b4	# r2 == r2 --> not taken</div><div class=''>23:  nop			# nop in case of flush</div><div class=''>24:  nop			# nop in case of flush</div><div class=''>25:  nop			# Spacer </div><div class=''>26:  addi $r10, $r10, 1	# r10 += 1 (Correct) </div><div class=''>27:  b4: 			# Landing pad for branch</div><div class=''>28:  nop			</div><div class=''>29:  blt $r4, $r1, b5	# r4 < r1 --> taken</div><div class=''>30:  nop			# flushed instruction</div><div class=''>31:  nop			# flushed instruction</div><div class=''>32:  addi $r20, $r20, 1	# r20 += 1 (Incorrect)</div><div class=''>33:  addi $r20, $r20, 1	# r20 += 1 (Incorrect)</div><div class=''>34:  addi $r20, $r20, 1	# r20 += 1 (Incorrect)</div><div class=''>35:  b5: </div><div class=''>36:  addi $r10, $r10, 1	# r10 += 1 (Correct)</div><div class=''>37:  blt $r2, $r1, b6	# r2 > r1 --> not taken</div><div class=''>38:  nop			# nop in case of flush</div><div class=''>39:  nop			# nop in case of flush</div><div class=''>40:  nop			# Spacer</div><div class=''>41:  addi $r10, $r10, 1	# r10 += 1 (Correct) </div><div class=''>42:  b6: </div><div class=''>43:  nop			</div><div class=''>44:  blt $r4, $r3, b7	# r4 < r3 --> taken</div><div class=''>45:  nop			# flushed instruction</div><div class=''>46:  nop			# flushed instruction</div><div class=''>47:  addi $r20, $r20, 1	# r20 += 1 (Incorrect)</div><div class=''>48:  addi $r20, $r20, 1	# r20 += 1 (Incorrect)</div><div class=''>49:  addi $r20, $r20, 1	# r20 += 1 (Incorrect)</div><div class=''>50:  b7: </div><div class=''>51:  addi $r10, $r10, 1	# r10 += 1 (Correct)</div><div class=''>52:  blt $r3, $r4, b8	# r3 > r4 --> not taken</div><div class=''>53:  nop			# nop in case of flush</div><div class=''>54:  nop			# nop in case of flush</div><div class=''>55:  nop			# Spacer</div><div class=''>56:  addi $r10, $r10, 1	# r10 += 1 (Correct) </div><div class=''>57:  b8: </div><div class=''>58:  nop			# Landing pad for branch</div><div class=''>59:  nop			# Avoid add RAW hazard</div><div class=''>60:  nop			</div><div class=''>61:  </div><div class=''>62:  # Final: $r10 should be 6, $r20 should be 0</div><div class=''>63:  </div></div><div class='content-block'><div class=''>num cycles:62</div></div><div class='content-block'><div class=''>All registers passed!</div></div></div></div><div class="section" id="section-bne">
+                <div class='header success' onclick='toggleContent(this.querySelector(".collapse-btn"))'>
+                    <button class='collapse-btn'>▽</button>
+                    <span>bne</span>
+                    
+                    <button class='copy-button success' onclick='event.stopPropagation(); copyGTKWaveCommand("bne")'>
+                        Copy GTKWave Command
+                </button>
+                
+                </div>
+            <div class='content-container '><div class='content-block'><div class=''> 0:  </div><div class=''> 1:  nop 	# simple bne test case</div><div class=''> 2:  nop </div><div class=''> 3:  nop </div><div class=''> 4:  nop</div><div class=''> 5:  nop</div><div class=''> 6:  nop</div><div class=''> 7:  addi    $r1, $r0, 4     # $r1 = 4</div><div class=''> 8:  addi    $r2, $r0, 5     # $r2 = 5</div><div class=''> 9:  nop</div><div class=''>10:  nop</div><div class=''>11:  sub     $r3, $r0, $r1   # $r3 = -4</div><div class=''>12:  sub     $r4, $r0, $r2   # $r4 = -5</div><div class=''>13:  nop</div><div class=''>14:  nop</div><div class=''>15:  nop 	</div><div class=''>16:  bne 	$r1, $r2, b1	# $r1 != $r2 --> taken</div><div class=''>17:  nop			# flushed instruction</div><div class=''>18:  nop			# flushed instruction</div><div class=''>19:  addi 	$r20, $r20, 1	# $r20 += 1 (Incorrect)</div><div class=''>20:  addi 	$r20, $r20, 1	# $r20 += 1 (Incorrect)</div><div class=''>21:  addi 	$r20, $r20, 1	# $r20 += 1 (Incorrect)</div><div class=''>22:  b1: </div><div class=''>23:  addi 	$r10, $r10, 1	# $r10 += 1 (Correct)</div><div class=''>24:  bne 	$r2, $r2, b2	# r2 == r2 --> not taken</div><div class=''>25:  nop			# nop in case of flush</div><div class=''>26:  nop			# nop in case of flush</div><div class=''>27:  nop			# Spacer</div><div class=''>28:  addi 	$r10, $r10, 1	# r10 += 1 (Correct) </div><div class=''>29:  b2: </div><div class=''>30:  nop			# Landing pad for branch</div><div class=''>31:  nop			# Avoid add RAW hazard</div><div class=''>32:  nop</div><div class=''>33:  </div><div class=''>34:  # final: $r10 should be 2, $r20 should be 0</div><div class=''>35:  </div></div><div class='content-block'><div class=''>num cycles:38</div></div><div class='content-block'><div class=''>All registers passed!</div></div></div></div><div class="section" id="section-branch_bypass">
+                <div class='header success' onclick='toggleContent(this.querySelector(".collapse-btn"))'>
+                    <button class='collapse-btn'>▽</button>
+                    <span>branch_bypass</span>
+                    
+                    <button class='copy-button success' onclick='event.stopPropagation(); copyGTKWaveCommand("branch_bypass")'>
+                        Copy GTKWave Command
+                </button>
+                
+                </div>
+            <div class='content-container '><div class='content-block'><div class=''> 0:  				# Efficiency Test 3: Bypassing into Branch (with loops)</div><div class=''> 1:  nop</div><div class=''> 2:  nop 	</div><div class=''> 3:  nop</div><div class=''> 4:  nop	</div><div class=''> 5:  nop</div><div class=''> 6:  addi $r1, $r0, 5		# r1 = 5</div><div class=''> 7:  b1: addi $r2, $r2, 1		# r2 += 1</div><div class=''> 8:  blt $r2, $r1, b1		# if r2 < r1 take branch (5 times)</div><div class=''> 9:  b2: addi $r1, $r1, 1		# r1 += 1</div><div class=''>10:  addi $r3, $r3, 2		# r3 += 2</div><div class=''>11:  blt $r3, $r1, b2		# if r3 < r1 take branch (4 times)</div><div class=''>12:  add $r10, $r2, $r3		# r10 = r2 + r3</div><div class=''>13:  nop</div><div class=''>14:  nop</div><div class=''>15:  nop</div><div class=''>16:  nop</div><div class=''>17:  </div><div class=''>18:  # Final: $r10 should be 15</div><div class=''>19:  </div><div class=''>20:  </div></div><div class='content-block'><div class=''>num cycles:70</div></div><div class='content-block'><div class=''>All registers passed!</div></div></div></div><div class="section" id="section-branch_jump_race">
+                <div class='header success' onclick='toggleContent(this.querySelector(".collapse-btn"))'>
+                    <button class='collapse-btn'>▽</button>
+                    <span>branch_jump_race</span>
+                    
+                    <button class='copy-button success' onclick='event.stopPropagation(); copyGTKWaveCommand("branch_jump_race")'>
+                        Copy GTKWave Command
+                </button>
+                
+                </div>
+            <div class='content-container '><div class='content-block'><div class=''> 0:  				# Efficiency Test 5: Branch/Jump Race Condition</div><div class=''> 1:  nop</div><div class=''> 2:  nop 	</div><div class=''> 3:  nop</div><div class=''> 4:  nop	</div><div class=''> 5:  nop</div><div class=''> 6:  addi $r4, $r0, 1		# r4 = 1</div><div class=''> 7:  nop				# Avoid RAW hazard</div><div class=''> 8:  bne $r4, $r0, rgood		# Branch racing (should branch)</div><div class=''> 9:  j rbad				# Jump racing (should not jump)</div><div class=''>10:  nop				# Spacer</div><div class=''>11:  nop				# Spacer</div><div class=''>12:  nop				# Spacer</div><div class=''>13:  nop				# Spacer</div><div class=''>14:  rbad: nop			# Landing pad for jump</div><div class=''>15:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''>16:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''>17:  j end2				# Jump to test cleanup</div><div class=''>18:  nop				# Spacer</div><div class=''>19:  rgood: nop			# Landing pad for branch</div><div class=''>20:  addi $r10, $r10, 1		# r10 += 1 (Correct)</div><div class=''>21:  addi $r10, $r10, 1		# r10 += 1 (Correct)</div><div class=''>22:  end2: nop			# Landing pad for jump</div><div class=''>23:  nop				</div><div class=''>24:  nop</div><div class=''>25:  nop</div><div class=''>26:  nop</div><div class=''>27:  nop</div><div class=''>28:  </div><div class=''>29:  # Final: $r10 should be 2, $r20 should be 0</div><div class=''>30:  </div></div><div class='content-block'><div class=''>num cycles:25</div></div><div class='content-block'><div class=''>All registers passed!</div></div></div></div><div class="section" id="section-branch_memory">
+                <div class='header success' onclick='toggleContent(this.querySelector(".collapse-btn"))'>
+                    <button class='collapse-btn'>▽</button>
+                    <span>branch_memory</span>
+                    
+                    <button class='copy-button success' onclick='event.stopPropagation(); copyGTKWaveCommand("branch_memory")'>
+                        Copy GTKWave Command
+                </button>
+                
+                </div>
+            <div class='content-container '><div class='content-block'><div class=''> 0:  nop             # Comprehensive branching from memory tests</div><div class=''> 1:  nop             # Tests several memory edge cases</div><div class=''> 2:  nop             # Author: Vincent Chen</div><div class=''> 3:  nop             </div><div class=''> 4:  nop</div><div class=''> 5:  addi $r1, $r0, 10</div><div class=''> 6:  addi $r2, $r0, 50</div><div class=''> 7:  addi $r3, $r0, -10</div><div class=''> 8:  nop</div><div class=''> 9:  sw $r1, 5($r0)      # setup: puts 10 into memory address 5</div><div class=''>10:  sw $r2, 6($r0)      # setup: puts 45 into memory address 6</div><div class=''>11:  sw $r3, 7($r0)      # setup: puts -10 into memory address 6</div><div class=''>12:  nop</div><div class=''>13:  nop</div><div class=''>14:  lw $r4, 5($r0)</div><div class=''>15:  bne $r4, $r0, correct</div><div class=''>16:  nop</div><div class=''>17:  addi $r20, $r0, 1     # missed branch (rd bypassing into bne)</div><div class=''>18:  nop</div><div class=''>19:  correct: nop</div><div class=''>20:  lw $r5, 5($r0)</div><div class=''>21:  bne $r0, $r5, correcttwo</div><div class=''>22:  nop</div><div class=''>23:  addi $r20, $r0, 2     # missed branch (rs bypassing into bne)</div><div class=''>24:  nop</div><div class=''>25:  correcttwo: nop</div><div class=''>26:  lw $r6, 7($r0)</div><div class=''>27:  blt $r6, $r0, correctthree</div><div class=''>28:  nop</div><div class=''>29:  addi $r20, $r0, 4     # missed branch (rd bypassing into blt)</div><div class=''>30:  nop</div><div class=''>31:  correctthree: nop</div><div class=''>32:  lw $r7, 5($r0)</div><div class=''>33:  blt $r0, $r7, correctfour</div><div class=''>34:  nop</div><div class=''>35:  addi $r20, $r0, 8     # missed branch (rs bypassing into blt)</div><div class=''>36:  nop</div><div class=''>37:  correctfour: nop</div><div class=''>38:  lw $r8, 6($r0)</div><div class=''>39:  jr $r8</div><div class=''>40:  nop</div><div class=''>41:  addi $r20, $r20, 16    # missed branch</div><div class=''>42:  nop</div><div class=''>43:  nop</div><div class=''>44:  nop</div></div><div class='content-block'><div class=''>num cycles:60</div></div><div class='content-block'><div class=''>All registers passed!</div></div></div></div><div class="section" id="section-control_1">
+                <div class='header success' onclick='toggleContent(this.querySelector(".collapse-btn"))'>
+                    <button class='collapse-btn'>▽</button>
+                    <span>control_1</span>
+                    
+                    <button class='copy-button success' onclick='event.stopPropagation(); copyGTKWaveCommand("control_1")'>
+                        Copy GTKWave Command
+                </button>
+                
+                </div>
+            <div class='content-container '><div class='content-block'><div class=''>  0:  nop # Basic Control Test with no Data Hazards</div><div class=''>  1:  nop # Values initialized using addi (positive only) and sub</div><div class=''>  2:  nop # Registers 10,11 track correct and 20,21 track incorrect</div><div class=''>  3:  nop # Values and comments in the test of JR must be updated if code modified.</div><div class=''>  4:  nop # Author: Nathaniel Brooke</div><div class=''>  5:  nop</div><div class=''>  6:  nop</div><div class=''>  7:  nop # Initialize Values</div><div class=''>  8:  addi $r1, $r0, 4		# r1 = 4</div><div class=''>  9:  addi $r2, $r0, 5		# r2 = 5</div><div class=''> 10:  sub $r3, $r0, $r1		# r3 = -4</div><div class=''> 11:  sub $r4, $r0, $r2		# r4 = -5</div><div class=''> 12:  nop</div><div class=''> 13:  nop 				# Basic Test of BNE</div><div class=''> 14:  bne $r1, $r2, b1		# r1 != r2 --> taken</div><div class=''> 15:  nop				# flushed instruction</div><div class=''> 16:  nop				# flushed instruction</div><div class=''> 17:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''> 18:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''> 19:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''> 20:  b1: addi $r10, $r10, 1		# r10 += 1 (Correct)</div><div class=''> 21:  bne $r2, $r2, b2		# r2 == r2 --> not taken</div><div class=''> 22:  nop				# nop in case of flush</div><div class=''> 23:  nop				# nop in case of flush</div><div class=''> 24:  nop				# Spacer</div><div class=''> 25:  addi $r10, $r10, 1		# r10 += 1 (Correct)</div><div class=''> 26:  b2: nop				# Landing pad for branch</div><div class=''> 27:  nop				# Avoid add RAW hazard</div><div class=''> 28:  add $r11, $r10, $r11		# Accumulate r10 score</div><div class=''> 29:  add $r21, $r20, $r21		# Accumulate r20 score</div><div class=''> 30:  and $r10, $r0, $r10		# r10 should be 0</div><div class=''> 31:  and $r20, $r0, $r20		# r20 should be 0</div><div class=''> 32:  nop</div><div class=''> 33:  nop # Basic Test of BLT</div><div class=''> 34:  blt $r1, $r2, b3		# r1 < r2 --> taken</div><div class=''> 35:  nop				# flushed instruction</div><div class=''> 36:  nop				# flushed instruction</div><div class=''> 37:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''> 38:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''> 39:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''> 40:  b3: addi $r10, $r10, 1		# r10 += 1 (Correct)</div><div class=''> 41:  blt $r2, $r2, b4		# r2 == r2 --> not taken</div><div class=''> 42:  nop				# nop in case of flush</div><div class=''> 43:  nop				# nop in case of flush</div><div class=''> 44:  nop				# Spacer</div><div class=''> 45:  addi $r10, $r10, 1			# r10 += 1 (Correct)</div><div class=''> 46:  b4: nop				# Landing pad for branch</div><div class=''> 47:  blt $r4, $r1, b5			# r4 < r1 --> taken</div><div class=''> 48:  nop				# flushed instruction</div><div class=''> 49:  nop				# flushed instruction</div><div class=''> 50:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''> 51:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''> 52:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''> 53:  b5: addi $r10, $r10, 1		# r10 += 1 (Correct)</div><div class=''> 54:  blt $r2, $r1, b6		# r2 > r1 --> not taken</div><div class=''> 55:  nop				# nop in case of flush</div><div class=''> 56:  nop				# nop in case of flush</div><div class=''> 57:  nop				# Spacer</div><div class=''> 58:  addi $r10, $r10, 1		# r10 += 1 (Correct)</div><div class=''> 59:  b6: nop				# Landing pad for branch</div><div class=''> 60:  blt $r4, $r3, b7		# r4 < r3 --> taken</div><div class=''> 61:  nop				# flushed instruction</div><div class=''> 62:  nop				# flushed instruction</div><div class=''> 63:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''> 64:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''> 65:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''> 66:  b7: addi $r10, $r10, 1		# r10 += 1 (Correct)</div><div class=''> 67:  blt $r3, $r4, b8		# r3 > r4 --> not taken</div><div class=''> 68:  nop				# nop in case of flush</div><div class=''> 69:  nop				# nop in case of flush</div><div class=''> 70:  nop				# Spacer</div><div class=''> 71:  addi $r10, $r10, 1		# r10 += 1 (Correct)</div><div class=''> 72:  b8: nop				# Landing pad for branch</div><div class=''> 73:  nop				# Avoid add RAW hazard</div><div class=''> 74:  add $r11, $r10, $r11		# Accumulate r10 score</div><div class=''> 75:  add $r21, $r20, $r21		# Accumulate r20 score</div><div class=''> 76:  and $r10, $r0, $r10		# r10 should be 6</div><div class=''> 77:  and $r20, $r0, $r20		# r20 should be 0</div><div class=''> 78:  nop</div><div class=''> 79:  nop 				# Basic Test of J</div><div class=''> 80:  j j1				# Jump to j1</div><div class=''> 81:  nop				# flushed instruction</div><div class=''> 82:  nop				# flushed instruction</div><div class=''> 83:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''> 84:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''> 85:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''> 86:  j1: addi $r10, $r10, 1		# r10 += 1 (Correct)</div><div class=''> 87:  nop				# Avoid add RAW hazard</div><div class=''> 88:  nop				# Avoid add RAW hazard</div><div class=''> 89:  add $r11, $r10, $r11		# Accumulate r10 score</div><div class=''> 90:  add $r21, $r20, $r21		# Accumulate r20 score</div><div class=''> 91:  and $r10, $r0, $r10		# r10 should be 1</div><div class=''> 92:  and $r20, $r0, $r20		# r20 should be 0</div><div class=''> 93:  nop</div><div class=''> 94:  nop 				# Basic test of JAL, JR</div><div class=''> 95:  addi $r31, $r0, 100		# r31 = 100</div><div class=''> 96:  jal j2				# Jump to j2, r31 = PC + 1 = 97</div><div class=''> 97:  nop				# flushed instruction</div><div class=''> 98:  nop				# flushed instruction</div><div class=''> 99:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''>100:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''>101:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''>102:  j2: addi $r10, $r10, 1		# r10 += 1 (Correct)</div><div class=''>103:  nop				# nop to avoid JAL hazard</div><div class=''>104:  addi $r31, $r31, 16		# r31 = r31 + 16 = 113</div><div class=''>105:  nop				# Avoid add RAW hazard</div><div class=''>106:  nop				# Avoid add RAW hazard</div><div class=''>107:  jr $r31				# PC = r31 = 113</div><div class=''>108:  nop				# flushed instruction</div><div class=''>109:  nop				# flushed instruction</div><div class=''>110:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''>111:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''>112:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''>113:  addi $r10, $r10, 1		# r10 += 1 (Correct)</div><div class=''>114:  nop				# Avoid add RAW hazard</div><div class=''>115:  nop				# Avoid add RAW hazard</div><div class=''>116:  add $r11, $r10, $r11		# Accumulate r10 score</div><div class=''>117:  add $r21, $r20, $r21		# Accumulate r20 score</div><div class=''>118:  and $r10, $r0, $r10		# r10 should be 2</div><div class=''>119:  and $r20, $r0, $r20		# r20 should be 0</div><div class=''>120:  nop</div><div class=''>121:  nop 				# Basic Text of BEX, SETX</div><div class=''>122:  setx 0				# r30 = 0</div><div class=''>123:  nop				# Avoid setx RAW hazard</div><div class=''>124:  nop				# Avoid setx RAW hazard</div><div class=''>125:  bex e1				# r30 == 0 --> not taken</div><div class=''>126:  nop				# nop in case of flush</div><div class=''>127:  nop				# nop in case of flush</div><div class=''>128:  nop				# Spacer</div><div class=''>129:  addi $r10, $r10, 1		# r10 += 1 (Correct)</div><div class=''>130:  e1: nop				# Landing pad for branch</div><div class=''>131:  setx 10				# r30 = 10</div><div class=''>132:  nop				# Avoid setx RAW hazard</div><div class=''>133:  nop				# Avoid setx RAW hazard</div><div class=''>134:  bex e2				# r30 != 0 --> taken</div><div class=''>135:  nop				# flushed instruction</div><div class=''>136:  nop				# flushed instruction</div><div class=''>137:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''>138:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''>139:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''>140:  e2: addi $r10, $r10, 1		# r10 += 1 (Correct)</div><div class=''>141:  nop				# Avoid add RAW hazard</div><div class=''>142:  nop				# Avoid add RAW hazard</div><div class=''>143:  add $r11, $r10, $r11		# Accumulate r10 score</div><div class=''>144:  add $r21, $r20, $r21		# Accumulate r20 score</div><div class=''>145:  and $r10, $r0, $r10		# r10 should be 2</div><div class=''>146:  and $r20, $r0, $r20		# r20 should be 0</div><div class=''>147:  nop</div><div class=''>148:  nop # Test of Flushing</div><div class=''>149:  bne $r0, $r1, f1		# r0 != r1 --> taken</div><div class=''>150:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''>151:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''>152:  nop				# Spacer</div><div class=''>153:  nop				# Spacer</div><div class=''>154:  nop				# Spacer</div><div class=''>155:  f1: nop				# Landing pad for branch</div><div class=''>156:  bne $r0, $r0, f2		# r0 == r0 --> not taken</div><div class=''>157:  addi $r10, $r10, 1		# r10 += 1 (Correct)</div><div class=''>158:  nop				# Spacer</div><div class=''>159:  nop				# Spacer</div><div class=''>160:  nop				# Spacer</div><div class=''>161:  nop				# Spacer</div><div class=''>162:  f2: nop				# Landing pad for branch</div><div class=''>163:  blt $r0, $r1, f3		# r0 < r1 --> taken</div><div class=''>164:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''>165:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''>166:  nop				# Spacer</div><div class=''>167:  nop				# Spacer</div><div class=''>168:  nop				# Spacer</div><div class=''>169:  f3: nop				# Landing pad for branch</div><div class=''>170:  blt $r0, $r0, f4		# r0 == r0 --> not taken</div><div class=''>171:  nop				# Spacer</div><div class=''>172:  addi $r10, $r10, 1		# r10 += 1 (Correct)</div><div class=''>173:  nop				# Spacer</div><div class=''>174:  nop				# Spacer</div><div class=''>175:  nop				# Spacer</div><div class=''>176:  f4: nop				# Landing pad for branch</div><div class=''>177:  j f5				# Jump to f3</div><div class=''>178:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''>179:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''>180:  nop				# Spacer</div><div class=''>181:  nop				# Spacer</div><div class=''>182:  nop				# Spacer</div><div class=''>183:  f5: nop				# Landing pad for jump</div><div class=''>184:  jal f6				# Jump to f4</div><div class=''>185:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''>186:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''>187:  nop				# Spacer</div><div class=''>188:  nop				# Spacer</div><div class=''>189:  nop				# Spacer</div><div class=''>190:  f6: nop				# Landing pad for jump</div><div class=''>191:  bex f7				# r30 != 0 --> taken</div><div class=''>192:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''>193:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''>194:  nop				# Spacer</div><div class=''>195:  nop				# Spacer</div><div class=''>196:  nop				# Spacer</div><div class=''>197:  f7: nop				# Landing pad for branch</div><div class=''>198:  nop				# Avoid add RAW hazard</div><div class=''>199:  add $r11, $r10, $r11		# Accumulate r10 score</div><div class=''>200:  add $r21, $r20, $r21		# Accumulate r20 score</div><div class=''>201:  nop # Final Check (All Correct)</div><div class=''>202:  nop				# r10 should be 2</div><div class=''>203:  nop				# r11 should be 15</div><div class=''>204:  nop				# r20 should be 0</div><div class=''>205:  nop				# r21 should be 0</div><div class=''>206:  </div></div><div class='content-block'><div class=''>num cycles:203</div></div><div class='content-block'><div class=''>All registers passed!</div></div></div></div><div class="section" id="section-control_2">
+                <div class='header success' onclick='toggleContent(this.querySelector(".collapse-btn"))'>
+                    <button class='collapse-btn'>▽</button>
+                    <span>control_2</span>
+                    
+                    <button class='copy-button success' onclick='event.stopPropagation(); copyGTKWaveCommand("control_2")'>
+                        Copy GTKWave Command
+                </button>
+                
+                </div>
+            <div class='content-container '><div class='content-block'><div class=''> 0:  </div><div class=''> 1:  nop 				# Advanced Control Test with Bypassing</div><div class=''> 2:  nop 				# Values initialized using addi (positive only)</div><div class=''> 3:  nop 				# Registers 10,11 track correct and 20,21 track incorrect</div><div class=''> 4:  nop 				# Values in the first two tests be updated if the number of lines is modified</div><div class=''> 5:  nop 				# Author: Nathaniel Brooke</div><div class=''> 6:  nop</div><div class=''> 7:  nop</div><div class=''> 8:  nop 				    # Test Bypassing into JR</div><div class=''> 9:  addi $r31, $r0, 12		# r31 = 12</div><div class=''>10:  nop				        # Avoid RAW hazard for jr</div><div class=''>11:  addi $r31, $r0, 16		# r31 = 16 (with RAW hazard)</div><div class=''>12:  jr $r31     			# PC = r31 = 16</div><div class=''>13:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''>14:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''>15:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''>16:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''>17:  addi $r10, $r10, 1		# r10 += 1 (Correct)</div><div class=''>18:  add $r11, $r10, $r11		# Accumulate r10 score</div><div class=''>19:  add $r21, $r20, $r21		# Accumulate r20 score</div><div class=''>20:  and $r10, $r0, $r10		# r10 should be 1</div><div class=''>21:  and $r20, $r0, $r20		# r20 should be 0</div><div class=''>22:  nop</div><div class=''>23:  nop 				# Test JAL into JR</div><div class=''>24:  addi $r31, $r0, 32		# r31 = 32</div><div class=''>25:  nop				# Avoid RAW hazard for jr</div><div class=''>26:  jal j1				# jal to jr (with RAW hazard)</div><div class=''>27:  nop				# Spacer</div><div class=''>28:  nop				# Spacer</div><div class=''>29:  j end1				# Jump to test cleanup</div><div class=''>30:  nop				# Spacer</div><div class=''>31:  nop				# Spacer</div><div class=''>32:  j1: jr $r31 			# jr immediately after jal</div><div class=''>33:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''>34:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''>35:  end1: nop			# Landing pad for jump</div><div class=''>36:  add $r11, $r10, $r11		# Accumulate r10 score</div><div class=''>37:  add $r21, $r20, $r21		# Accumulate r20 score</div><div class=''>38:  and $r10, $r0, $r10		# r10 should be 0</div><div class=''>39:  and $r20, $r0, $r20		# r20 should be 0</div><div class=''>40:  nop</div><div class=''>41:  nop 				# Test Bypassing into Branch (with loops)</div><div class=''>42:  addi $r1, $r0, 5		# r1 = 5</div><div class=''>43:  b1: addi $r2, $r2, 1		# r2 += 1</div><div class=''>44:  blt $r2, $r1, b1		# if r2 < r1 take branch (5 times)</div><div class=''>45:  b2: addi $r1, $r1, 1		# r1 += 1</div><div class=''>46:  addi $r3, $r3, 2		# r3 += 2</div><div class=''>47:  blt $r3, $r1, b2		# if r3 < r1 take branch (4 times)</div><div class=''>48:  add $r10, $r2, $r3		# r10 = r2 + r3</div><div class=''>49:  add $r11, $r10, $r11		# Accumulate r10 score</div><div class=''>50:  add $r21, $r20, $r21		# Accumulate r20 score</div><div class=''>51:  and $r10, $r0, $r10		# r10 should be 15</div><div class=''>52:  and $r20, $r0, $r20		# r20 should be 0</div><div class=''>53:  nop</div><div class=''>54:  nop 				# Test bypassing into bex</div><div class=''>55:  setx 0				# r30 = 0</div><div class=''>56:  nop				# Avoid RAW hazard from first setx</div><div class=''>57:  setx 10				# r30 = 10 (with RAW hazard)</div><div class=''>58:  bex e1				# r30 != 0 --> taken</div><div class=''>59:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''>60:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''>61:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''>62:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''>63:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''>64:  e1: addi $r10, $r10, 1		# r10 += 1 (Correct)</div><div class=''>65:  add $r11, $r10, $r11		# Accumulate r10 score</div><div class=''>66:  add $r21, $r20, $r21		# Accumulate r20 score</div><div class=''>67:  and $r10, $r0, $r10		# r10 should be 1</div><div class=''>68:  and $r20, $r0, $r20		# r20 should be 0</div><div class=''>69:  nop</div><div class=''>70:  nop 				# Test Branch/Jump Race Condition</div><div class=''>71:  addi $r4, $r0, 1		# r4 = 1</div><div class=''>72:  nop				# Avoid RAW hazard</div><div class=''>73:  bne $r4, $r0, rgood		# Branch racing (should branch)</div><div class=''>74:  j rbad				# Jump racing (should not jump)</div><div class=''>75:  nop				# Spacer</div><div class=''>76:  nop				# Spacer</div><div class=''>77:  nop				# Spacer</div><div class=''>78:  nop				# Spacer</div><div class=''>79:  rbad: nop			# Landing pad for jump</div><div class=''>80:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''>81:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''>82:  j end2				# Jump to test cleanup</div><div class=''>83:  nop				# Spacer</div><div class=''>84:  rgood: nop			# Landing pad for branch</div><div class=''>85:  addi $r10, $r10, 1		# r10 += 1 (Correct)</div><div class=''>86:  addi $r10, $r10, 1		# r10 += 1 (Correct)</div><div class=''>87:  end2: nop			# Landing pad for jump</div><div class=''>88:  nop				# Avoid RAW hazard</div><div class=''>89:  add $r11, $r10, $r11		# Accumulate r10 score</div><div class=''>90:  add $r21, $r20, $r21		# Accumulate r20 score</div><div class=''>91:  nop 			# Final Check (All Correct)</div><div class=''>92:  nop				# r10 should be 2</div><div class=''>93:  nop				# r11 should be 19</div><div class=''>94:  nop				# r20 should be 0</div><div class=''>95:  nop				# r21 should be 0</div><div class=''>96:  </div></div><div class='content-block'><div class=''>num cycles:148</div></div><div class='content-block'><div class=''>All registers passed!</div></div></div></div><div class="section" id="section-exception_bypass">
+                <div class='header success' onclick='toggleContent(this.querySelector(".collapse-btn"))'>
+                    <button class='collapse-btn'>▽</button>
+                    <span>exception_bypass</span>
+                    
+                    <button class='copy-button success' onclick='event.stopPropagation(); copyGTKWaveCommand("exception_bypass")'>
+                        Copy GTKWave Command
+                </button>
+                
+                </div>
+            <div class='content-container '><div class='content-block'><div class=''> 0:  nop             # Values initialized using addi (positive only)</div><div class=''> 1:  nop             # Author: Oliver Rodas</div><div class=''> 2:  nop</div><div class=''> 3:  nop</div><div class=''> 4:  nop             # Exception Bypassing</div><div class=''> 5:  addi $r1, $r0, 32767    # r1 = 32767</div><div class=''> 6:  sll $r1, $r1, 16        # r1 = 2147418112</div><div class=''> 7:  addi $r1, $r1, 65535    # r1 = 2147483647 (Max positive integer)</div><div class=''> 8:  addi $r2, $r0, 2        # r2 = 2</div><div class=''> 9:  addi $r3, $r0, 1        # r3 = 1</div><div class=''>10:  add $r5, $r1, $r3        # add ovfl --> rstatus = 1</div><div class=''>11:  add $r4, $r2, $r30        # r4 = r2 + rstatus = 3    (X->D)</div><div class=''>12:  </div></div><div class='content-block'><div class=''>num cycles:18</div></div><div class='content-block'><div class=''>All registers passed!</div></div></div></div><div class="section" id="section-exceptions">
+                <div class='header success' onclick='toggleContent(this.querySelector(".collapse-btn"))'>
+                    <button class='collapse-btn'>▽</button>
+                    <span>exceptions</span>
+                    
+                    <button class='copy-button success' onclick='event.stopPropagation(); copyGTKWaveCommand("exceptions")'>
+                        Copy GTKWave Command
+                </button>
+                
+                </div>
+            <div class='content-container '><div class='content-block'><div class=''> 0:  nop             # Exception testing</div><div class=''> 1:  nop             # Author: Jack Proudfoot</div><div class=''> 2:  nop</div><div class=''> 3:  nop</div><div class=''> 4:  nop             </div><div class=''> 5:  addi $r1, $r0, 1        # r1 = 1</div><div class=''> 6:  sll $r2, $r1, 31        # r2 = -2147483648 (Max negative integer)</div><div class=''> 7:  sub $r3, $r2, $r1       # sub unfl --> rstatus = 3</div><div class=''> 8:  nop</div><div class=''> 9:  nop</div><div class=''>10:  add $r20, $r20, $r30    # r20 = 3</div><div class=''>11:  nop</div><div class=''>12:  nop</div><div class=''>13:  addi $r3, $r0, 32767    # r3 = 32767</div><div class=''>14:  sll $r3, $r3, 16        # r3 = 2147418112</div><div class=''>15:  addi $r3, $r3, 65535    # r3 = 2147483647 (Max positive integer)</div><div class=''>16:  add $r4, $r3, $r1       # add ovfl --> rstatus = 1</div><div class=''>17:  nop</div><div class=''>18:  nop</div><div class=''>19:  sll $r20, $r20, 3       # r20 = 24</div><div class=''>20:  add $r20, $r20, $r30    # r20 = 25</div><div class=''>21:  nop</div><div class=''>22:  nop</div><div class=''>23:  addi $r4, $r3, 1        # addi ovfl --> rstatus = 2</div><div class=''>24:  nop</div><div class=''>25:  nop</div><div class=''>26:  sll $r20, $r20, 3       # r20 = 200</div><div class=''>27:  add $r20, $r20, $r30    # r20 = 202</div><div class=''>28:  nop</div><div class=''>29:  nop</div><div class=''>30:  mul $r4, $r3, $r30     # mul ovfl --> rstatus = 4</div><div class=''>31:  nop</div><div class=''>32:  add $r21, $r20, $r0     # r21 = 202</div><div class=''>33:  sll $r21, $r21, 3       # r21 = 1616</div><div class=''>34:  add $r21, $r21, $r30    # r21 = 1620</div><div class=''>35:  nop</div><div class=''>36:  nop</div><div class=''>37:  div $r4, $r3, $r0       # div exception --> rstatus = 5</div><div class=''>38:  nop</div><div class=''>39:  nop</div><div class=''>40:  sll $r21, $r21, 3       # r21 = 12960</div><div class=''>41:  add $r21, $r21, $r30    # r21 = 12965</div><div class=''>42:  nop</div><div class=''>43:  nop</div><div class=''>44:  nop</div><div class=''>45:  nop</div></div><div class='content-block'><div class=''>num cycles:150</div></div><div class='content-block'><div class=''>All registers passed!</div></div></div></div><div class="section" id="section-j">
+                <div class='header success' onclick='toggleContent(this.querySelector(".collapse-btn"))'>
+                    <button class='collapse-btn'>▽</button>
+                    <span>j</span>
+                    
+                    <button class='copy-button success' onclick='event.stopPropagation(); copyGTKWaveCommand("j")'>
+                        Copy GTKWave Command
+                </button>
+                
+                </div>
+            <div class='content-container '><div class='content-block'><div class=''> 0:  </div><div class=''> 1:  nop 	# simple j test case</div><div class=''> 2:  nop </div><div class=''> 3:  nop </div><div class=''> 4:  nop</div><div class=''> 5:  nop</div><div class=''> 6:  nop</div><div class=''> 7:  addi    $r1, $r0, 4     # $r1 = 4</div><div class=''> 8:  addi    $r2, $r0, 5     # $r2 = 5</div><div class=''> 9:  nop</div><div class=''>10:  nop</div><div class=''>11:  sub     $r3, $r0, $r1   # $r3 = -4</div><div class=''>12:  sub     $r4, $r0, $r2   # $r4 = -5</div><div class=''>13:  nop</div><div class=''>14:  nop</div><div class=''>15:  nop 	</div><div class=''>16:  j 	j1		# Jump to j1</div><div class=''>17:  nop			# flushed instruction</div><div class=''>18:  nop			# flushed instruction</div><div class=''>19:  addi 	$r20, $r20, 1	# r20 += 1 (Incorrect)</div><div class=''>20:  addi 	$r20, $r20, 1	# r20 += 1 (Incorrect)</div><div class=''>21:  addi 	$r20, $r20, 1	# r20 += 1 (Incorrect)</div><div class=''>22:  j1: </div><div class=''>23:  addi 	$r10, $r10, 1	# r10 += 1 (Correct)</div><div class=''>24:  nop			# Avoid add RAW hazard</div><div class=''>25:  nop			# Avoid add RAW hazard</div><div class=''>26:  nop</div><div class=''>27:  nop</div><div class=''>28:  </div><div class=''>29:  # Final: $r10 should be 1, $r20 should be 0</div></div><div class='content-block'><div class=''>num cycles:32</div></div><div class='content-block'><div class=''>All registers passed!</div></div></div></div><div class="section" id="section-jal">
+                <div class='header success' onclick='toggleContent(this.querySelector(".collapse-btn"))'>
+                    <button class='collapse-btn'>▽</button>
+                    <span>jal</span>
+                    
+                    <button class='copy-button success' onclick='event.stopPropagation(); copyGTKWaveCommand("jal")'>
+                        Copy GTKWave Command
+                </button>
+                
+                </div>
+            <div class='content-container '><div class='content-block'><div class=''> 0:  </div><div class=''> 1:  nop 	# simple jal test case</div><div class=''> 2:  nop </div><div class=''> 3:  nop </div><div class=''> 4:  nop</div><div class=''> 5:  nop</div><div class=''> 6:  nop</div><div class=''> 7:  addi    $r1, $r0, 4     # $r1 = 4</div><div class=''> 8:  addi    $r2, $r0, 5     # $r2 = 5</div><div class=''> 9:  nop</div><div class=''>10:  nop</div><div class=''>11:  sub     $r3, $r0, $r1   # $r3 = -4</div><div class=''>12:  sub     $r4, $r0, $r2   # $r4 = -5</div><div class=''>13:  nop</div><div class=''>14:  nop</div><div class=''>15:  nop 	</div><div class=''>16:  addi	$r31, $r0, 100	# $r31 = 100</div><div class=''>17:  jal 	j2		# jump to j2, $r31 = PC + 1 = 17</div><div class=''>18:  addi 	$r20, $r20, 1	# r20 += 1 (Incorrect)</div><div class=''>19:  addi 	$r20, $r20, 1	# r20 += 1 (Incorrect)</div><div class=''>20:  addi 	$r20, $r20, 1	# r20 += 1 (Incorrect)</div><div class=''>21:  j2:</div><div class=''>22:  addi	$r10, $r10, 1	# r10 += 1 (Correct)</div><div class=''>23:  nop</div><div class=''>24:  add	$r10, $r10, $r31 # r10 = r10 + 17</div><div class=''>25:  nop</div><div class=''>26:  nop</div><div class=''>27:  nop</div><div class=''>28:  </div><div class=''>29:  # Final: $r10 should be 18, $r20 should be 0</div><div class=''>30:  </div></div><div class='content-block'><div class=''>num cycles:36</div></div><div class='content-block'><div class=''>All registers passed!</div></div></div></div><div class="section" id="section-jal_bypass">
+                <div class='header success' onclick='toggleContent(this.querySelector(".collapse-btn"))'>
+                    <button class='collapse-btn'>▽</button>
+                    <span>jal_bypass</span>
+                    
+                    <button class='copy-button success' onclick='event.stopPropagation(); copyGTKWaveCommand("jal_bypass")'>
+                        Copy GTKWave Command
+                </button>
+                
+                </div>
+            <div class='content-container '><div class='content-block'><div class=''> 0:  nop             # jal bypass</div><div class=''> 1:  nop             # Tests jal bypassing</div><div class=''> 2:  nop             # Author: Vincent Chen</div><div class=''> 3:  nop             </div><div class=''> 4:  nop</div><div class=''> 5:  jal main</div><div class=''> 6:  nop</div><div class=''> 7:  nop</div><div class=''> 8:  main: sw $r31, 5($r0)</div><div class=''> 9:  nop</div><div class=''>10:  nop</div><div class=''>11:  lw $r1, 5($r0)                 # r1 should be 6</div><div class=''>12:  nop</div><div class=''>13:  nop</div><div class=''>14:  addi $r31, $r0, 0</div><div class=''>15:  nop</div><div class=''>16:  nop</div><div class=''>17:  jal maintwo</div><div class=''>18:  nop</div><div class=''>19:  nop</div><div class=''>20:  maintwo: addi $r2, $r31, 0     #r2 should be 18</div><div class=''>21:  nop</div><div class=''>22:  nop</div><div class=''>23:  addi $r31, $r0, 0</div><div class=''>24:  nop</div><div class=''>25:  nop</div><div class=''>26:  jal mainthree</div><div class=''>27:  nop</div><div class=''>28:  nop</div><div class=''>29:  mainthree:</div><div class=''>30:  bne $r31, $r0, end  </div><div class=''>31:  nop</div><div class=''>32:  addi $r3, $r0, 1               # incorrect branch</div><div class=''>33:  nop</div><div class=''>34:  end:                          </div><div class=''>35:  addi $r3, $r3, 1               # r3 should be 1</div><div class=''>36:  nop</div><div class=''>37:  nop         </div></div><div class='content-block'><div class=''>num cycles:100</div></div><div class='content-block'><div class=''>All registers passed!</div></div></div></div><div class="section" id="section-jal_jr_bypass">
+                <div class='header success' onclick='toggleContent(this.querySelector(".collapse-btn"))'>
+                    <button class='collapse-btn'>▽</button>
+                    <span>jal_jr_bypass</span>
+                    
+                    <button class='copy-button success' onclick='event.stopPropagation(); copyGTKWaveCommand("jal_jr_bypass")'>
+                        Copy GTKWave Command
+                </button>
+                
+                </div>
+            <div class='content-container '><div class='content-block'><div class=''> 0:  				# Efficiency Test 2: JAL into JR</div><div class=''> 1:  nop</div><div class=''> 2:  nop 	</div><div class=''> 3:  nop</div><div class=''> 4:  nop	</div><div class=''> 5:  nop</div><div class=''> 6:  addi $r31, $r0, 14		# r31 = 32</div><div class=''> 7:  nop				# Avoid RAW hazard for jr</div><div class=''> 8:  jal j1				# jal to jr (with RAW hazard)</div><div class=''> 9:  nop				# Spacer</div><div class=''>10:  nop				# Spacer</div><div class=''>11:  j end1				# Jump to test cleanup</div><div class=''>12:  nop				# Spacer</div><div class=''>13:  nop				# Spacer</div><div class=''>14:  j1: jr $r31 			# jr immediately after jal</div><div class=''>15:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''>16:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''>17:  end1: nop			# Landing pad for jump</div><div class=''>18:  add $r11, $r10, $r11		# Accumulate r10 score</div><div class=''>19:  add $r21, $r20, $r21		# Accumulate r20 score</div><div class=''>20:  and $r10, $r0, $r10		# r10 should be 0</div><div class=''>21:  and $r20, $r0, $r20		# r20 should be 0</div><div class=''>22:  nop</div><div class=''>23:  nop</div><div class=''>24:  nop</div><div class=''>25:  nop</div><div class=''>26:  </div><div class=''>27:  # Final: $r10 should be 0, $r20 should be 0</div><div class=''>28:  </div></div><div class='content-block'><div class=''>num cycles:35</div></div><div class='content-block'><div class=''>All registers passed!</div></div></div></div><div class="section" id="section-jr">
+                <div class='header success' onclick='toggleContent(this.querySelector(".collapse-btn"))'>
+                    <button class='collapse-btn'>▽</button>
+                    <span>jr</span>
+                    
+                    <button class='copy-button success' onclick='event.stopPropagation(); copyGTKWaveCommand("jr")'>
+                        Copy GTKWave Command
+                </button>
+                
+                </div>
+            <div class='content-container '><div class='content-block'><div class=''> 0:  </div><div class=''> 1:  nop 	# simple jr test case</div><div class=''> 2:  nop </div><div class=''> 3:  nop </div><div class=''> 4:  nop</div><div class=''> 5:  nop</div><div class=''> 6:  nop</div><div class=''> 7:  addi    $r1, $r0, 4     # $r1 = 4</div><div class=''> 8:  addi    $r2, $r0, 5     # $r2 = 5</div><div class=''> 9:  nop</div><div class=''>10:  nop</div><div class=''>11:  sub     $r3, $r0, $r1   # $r3 = -4</div><div class=''>12:  sub     $r4, $r0, $r2   # $r4 = -5</div><div class=''>13:  nop</div><div class=''>14:  nop</div><div class=''>15:  nop 	</div><div class=''>16:  addi	$r31, $r0, 20	# $r31 = 20</div><div class=''>17:  jr	$r31		# go to j2</div><div class=''>18:  addi 	$r20, $r20, 1	# r20 += 1 (Incorrect)</div><div class=''>19:  addi 	$r20, $r20, 1	# r20 += 1 (Incorrect)</div><div class=''>20:  addi 	$r20, $r20, 1	# r20 += 1 (Incorrect)</div><div class=''>21:  j2:</div><div class=''>22:  addi	$r10, $r10, 1	# r10 += 1 (Correct)</div><div class=''>23:  nop</div><div class=''>24:  nop</div><div class=''>25:  nop</div><div class=''>26:  nop</div><div class=''>27:  </div><div class=''>28:  # Final: $r10 should be 1, $r20 should be 0</div><div class=''>29:  </div></div><div class='content-block'><div class=''>num cycles:36</div></div><div class='content-block'><div class=''>All registers passed!</div></div></div></div><div class="section" id="section-jr_bypass">
+                <div class='header success' onclick='toggleContent(this.querySelector(".collapse-btn"))'>
+                    <button class='collapse-btn'>▽</button>
+                    <span>jr_bypass</span>
+                    
+                    <button class='copy-button success' onclick='event.stopPropagation(); copyGTKWaveCommand("jr_bypass")'>
+                        Copy GTKWave Command
+                </button>
+                
+                </div>
+            <div class='content-container '><div class='content-block'><div class=''> 0:  				# Efficiency Test 1: Bypassing into JR</div><div class=''> 1:  nop</div><div class=''> 2:  nop 	</div><div class=''> 3:  nop</div><div class=''> 4:  nop	</div><div class=''> 5:  nop</div><div class=''> 6:  addi $r31, $r0, 9		# r31 = 12</div><div class=''> 7:  nop				# Avoid RAW hazard for jr</div><div class=''> 8:  addi $r31, $r0, 13		# r31 = 13 (with RAW hazard)</div><div class=''> 9:  jr $r31 				# PC = r31 = 16</div><div class=''>10:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''>11:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''>12:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''>13:  addi $r20, $r20, 1		# r20 += 1 (Incorrect)</div><div class=''>14:  addi $r10, $r10, 1		# r10 += 1 (Correct)</div><div class=''>15:  nop</div><div class=''>16:  nop</div><div class=''>17:  nop</div><div class=''>18:  nop</div><div class=''>19:  </div><div class=''>20:  # Final: $r10 should be 1, $r20 should be 0</div><div class=''>21:  </div></div><div class='content-block'><div class=''>num cycles:23</div></div><div class='content-block'><div class=''>All registers passed!</div></div></div></div><div class="section" id="section-load_to_save_bypass">
+                <div class='header success' onclick='toggleContent(this.querySelector(".collapse-btn"))'>
+                    <button class='collapse-btn'>▽</button>
+                    <span>load_to_save_bypass</span>
+                    
+                    <button class='copy-button success' onclick='event.stopPropagation(); copyGTKWaveCommand("load_to_save_bypass")'>
+                        Copy GTKWave Command
+                </button>
+                
+                </div>
+            <div class='content-container '><div class='content-block'><div class=''> 0:  nop             # Values initialized using addi (positive only)</div><div class=''> 1:  nop             # Author: Oliver Rodas</div><div class=''> 2:  nop</div><div class=''> 3:  nop</div><div class=''> 4:  nop             # Bypassing from lw to sw (M->X)</div><div class=''> 5:  addi $1, $0, 830        # r1 = 830</div><div class=''> 6:  nop            # Avoid RAW hazard to test only lw/sw</div><div class=''> 7:  nop            # Avoid RAW hazard to test only lw/sw</div><div class=''> 8:  sw $1, 2($0)         # mem[2] = r1 = 830</div><div class=''> 9:  nop            # Avoid RAW hazard to test only lw/sw</div><div class=''>10:  nop            # Avoid RAW hazard to test only lw/sw</div><div class=''>11:  lw $2, 2($0)         # r2 = mem[2] = 830</div><div class=''>12:  sw $2, 3($0)         # mem[3] = r2 = 830        (M->X)</div><div class=''>13:  lw $3, 3($0)         # r3 = mem[3] = 830</div><div class=''>14:  </div></div><div class='content-block'><div class=''>num cycles:19</div></div><div class='content-block'><div class=''>All registers passed!</div></div></div></div><div class="section" id="section-lw_add">
+                <div class='header success' onclick='toggleContent(this.querySelector(".collapse-btn"))'>
+                    <button class='collapse-btn'>▽</button>
+                    <span>lw_add</span>
+                    
+                    <button class='copy-button success' onclick='event.stopPropagation(); copyGTKWaveCommand("lw_add")'>
+                        Copy GTKWave Command
+                </button>
+                
+                </div>
+            <div class='content-container '><div class='content-block'><div class=''> 0:  nop            # Specifically tests lw into add</div><div class=''> 1:  nop            # Author: Philip Xue</div><div class=''> 2:  nop</div><div class=''> 3:  nop            # EDGE CASE: Stalling 1 cycle for lw to ALUop</div><div class=''> 4:  nop            # checking for undefined behavior while stalling</div><div class=''> 5:  addi $1, $0, 830        # r1 = 830</div><div class=''> 6:  nop</div><div class=''> 7:  nop</div><div class=''> 8:  sw $1, 2($0)         # mem[2] = r1 = 830</div><div class=''> 9:  lw $4, 2($0)         # r4 = mem[2] = 830</div><div class=''>10:  addi $4, $4, 12      # r4 = r4 + 12 = 842    (M->D) 1 cycle stall required</div><div class=''>11:  nop                  # r4 should remain 830 while stalling</div><div class=''>12:  nop</div><div class=''>13:  nop</div><div class=''>14:  nop</div><div class=''>15:  nop</div><div class=''>16:  nop</div></div><div class='content-block'><div class=''>num cycles:25</div></div><div class='content-block'><div class=''>All registers passed!</div></div></div></div><div class="section" id="section-lw_branch">
+                <div class='header success' onclick='toggleContent(this.querySelector(".collapse-btn"))'>
+                    <button class='collapse-btn'>▽</button>
+                    <span>lw_branch</span>
+                    
+                    <button class='copy-button success' onclick='event.stopPropagation(); copyGTKWaveCommand("lw_branch")'>
+                        Copy GTKWave Command
+                </button>
+                
+                </div>
+            <div class='content-container '><div class='content-block'><div class=''> 0:  nop            # Miscellaneous lw -> branch tests</div><div class=''> 1:  nop            # Author: Philip Xue</div><div class=''> 2:  nop</div><div class=''> 3:  nop            # EDGE CASE: lw -> lw -> blt</div><div class=''> 4:  nop            # blt depends on both lw values</div><div class=''> 5:  addi $1, $0, -350	# r1 = -350</div><div class=''> 6:  addi $2, $0, -175	# r2 = -175</div><div class=''> 7:  addi $3, $0, 175	# r3 = 175</div><div class=''> 8:  addi $4, $0, 350	# r4 = 350</div><div class=''> 9:  nop</div><div class=''>10:  nop</div><div class=''>11:  sw $1, 1($0)		# mem[1] = r1 = -350</div><div class=''>12:  sw $2, 2($0)		# mem[2] = r2 = -175</div><div class=''>13:  sw $3, 3($0)		# mem[3] = r3 = 175</div><div class=''>14:  sw $4, 4($0)		# mem[4] = r4 = 350</div><div class=''>15:  nop</div><div class=''>16:  nop</div><div class=''>17:  addi $3, $0, 0		# set to 0</div><div class=''>18:  addi $4, $0, 0</div><div class=''>19:  nop</div><div class=''>20:  nop</div><div class=''>21:  lw $4, 4($0)  # r4 = mem[4] = 350</div><div class=''>22:  lw $3, 3($0)  # r3 = mem[3] = 175</div><div class=''>23:  blt $3, $4, skip1	# branch should be taken</div><div class=''>24:  nop</div><div class=''>25:  nop</div><div class=''>26:  addi $7, $7, 1		# this line should not be reached</div><div class=''>27:  skip1:</div><div class=''>28:  addi $3, $0, 0		# set to 0</div><div class=''>29:  addi $4, $0, 0</div><div class=''>30:  nop</div><div class=''>31:  nop</div><div class=''>32:  lw $4, 3($0)  # r4 = mem[3] = 175</div><div class=''>33:  lw $3, 4($0)  # r3 = mem[4] = 350</div><div class=''>34:  blt $3, $4, skip2	# branch should not be taken</div><div class=''>35:  nop</div><div class=''>36:  nop</div><div class=''>37:  addi $8, $8, 1		# this line should be reached</div><div class=''>38:  skip2:</div><div class=''>39:  addi $3, $0, 0		# set to 0</div><div class=''>40:  addi $4, $0, 0</div><div class=''>41:  nop</div><div class=''>42:  nop</div><div class=''>43:  lw $3, 1($0)  # r3 = mem[1] = -350</div><div class=''>44:  lw $4, 2($0)  # r4 = mem[2] = -175</div><div class=''>45:  blt $3, $4, skip3	# branch should be taken</div><div class=''>46:  nop</div><div class=''>47:  nop</div><div class=''>48:  addi $7, $7, 2		# this line should not be reached</div><div class=''>49:  skip3:</div><div class=''>50:  addi $3, $0, 0		# set to 0</div><div class=''>51:  addi $4, $0, 0</div><div class=''>52:  nop</div><div class=''>53:  nop</div><div class=''>54:  lw $3, 2($0)  # r3 = mem[2] = -175</div><div class=''>55:  lw $4, 1($0)  # r4 = mem[1] = -350</div><div class=''>56:  blt $3, $4, skip4	# branch should not be taken</div><div class=''>57:  nop</div><div class=''>58:  nop</div><div class=''>59:  addi $8, $8, 2		# this line should be reached</div><div class=''>60:  skip4:				# r7 should be 0, r8 should be 3</div><div class=''>61:  nop					# r7 = 1 means 1st blt wrong, = 2 means 3rd blt wrong, = 3 means both</div><div class=''>62:  nop					# r8 = 2 means 2nd blt wrong, = 1 means 4th blt wrong, = 0 means both</div><div class=''>63:  addi $1, $0, 350</div><div class=''>64:  addi $2, $0, 175</div><div class=''>65:  addi $3, $0, 350</div><div class=''>66:  addi $4, $0, 175</div><div class=''>67:  lw $1, 3($0)		# r1 = mem[3] = 175</div><div class=''>68:  bne $1, $2, skip5	# branch should not be taken</div><div class=''>69:  addi $9, $0, 1		# should not be flushed</div><div class=''>70:  addi $9, $9, 2		# should not be flushed</div><div class=''>71:  nop</div><div class=''>72:  nop</div><div class=''>73:  skip5:</div><div class=''>74:  lw $1, 4($0)		# r1 = mem[4] = 350</div><div class=''>75:  bne $1, $2, skip6	# branch should be taken</div><div class=''>76:  addi $10, $0, 1		# should be flushed</div><div class=''>77:  addi $10, $10, 2	# should be flushed</div><div class=''>78:  nop</div><div class=''>79:  nop</div><div class=''>80:  skip6:</div><div class=''>81:  lw $4, 4($0)		# r4 = mem[4] = 350</div><div class=''>82:  bne $3, $4, skip7	# branch should not be taken</div><div class=''>83:  addi $11, $0, 1		# should not be flushed</div><div class=''>84:  addi $11, $11, 2	# should not be flushed</div><div class=''>85:  nop</div><div class=''>86:  nop</div><div class=''>87:  skip7:</div><div class=''>88:  lw $4, 3($0)		# r4 = mem[3] = 175</div><div class=''>89:  bne $3, $4, skip8	# branch should be taken</div><div class=''>90:  addi $12, $0, 1		# should be flushed</div><div class=''>91:  addi $12, $12, 2	# should be flushed</div><div class=''>92:  nop</div><div class=''>93:  nop</div><div class=''>94:  skip8:				# r9, r11 should be 3</div><div class=''>95:  addi $1, $0, 0		# r10, r12 should be 0</div><div class=''>96:  addi $2, $0, 0</div><div class=''>97:  addi $3, $0, 0</div><div class=''>98:  addi $4, $0, 0</div><div class=''>99:  </div></div><div class='content-block'><div class=''>num cycles:125</div></div><div class='content-block'><div class=''>All registers passed!</div></div></div></div><div class="section" id="section-lw_jr">
+                <div class='header success' onclick='toggleContent(this.querySelector(".collapse-btn"))'>
+                    <button class='collapse-btn'>▽</button>
+                    <span>lw_jr</span>
+                    
+                    <button class='copy-button success' onclick='event.stopPropagation(); copyGTKWaveCommand("lw_jr")'>
+                        Copy GTKWave Command
+                </button>
+                
+                </div>
+            <div class='content-container '><div class='content-block'><div class=''> 0:  nop            # Specifically tests lw into jr</div><div class=''> 1:  nop            # Author: Philip Xue</div><div class=''> 2:  nop</div><div class=''> 3:  nop            # EDGE CASE: bypassing from lw -> jr</div><div class=''> 4:  nop            # checks if the value of lw is being bypassed, not the address</div><div class=''> 5:  addi $1, $0, 10        # r1 = 10</div><div class=''> 6:  addi $4, $0, 11        # r4 = 11</div><div class=''> 7:  nop</div><div class=''> 8:  sw $1, 12($0)         # mem[12] = r1 = 10</div><div class=''> 9:  lw $4, 12($0)         # r4 = mem[12] = 10</div><div class=''>10:  jr $4          # This is line 10: the program should get stuck here</div><div class=''>11:  nop</div><div class=''>12:  nop</div><div class=''>13:  addi $2, $0, 1 # This line should never be reached</div><div class=''>14:  </div></div><div class='content-block'><div class=''>num cycles:50</div></div><div class='content-block'><div class=''>All registers passed!</div></div></div></div><div class="section" id="section-memory_bypass">
+                <div class='header success' onclick='toggleContent(this.querySelector(".collapse-btn"))'>
+                    <button class='collapse-btn'>▽</button>
+                    <span>memory_bypass</span>
+                    
+                    <button class='copy-button success' onclick='event.stopPropagation(); copyGTKWaveCommand("memory_bypass")'>
+                        Copy GTKWave Command
+                </button>
+                
+                </div>
+            <div class='content-container '><div class='content-block'><div class=''> 0:  nop             # Values initialized using addi (positive only)</div><div class=''> 1:  nop             # Author: Oliver Rodas</div><div class=''> 2:  nop</div><div class=''> 3:  nop</div><div class=''> 4:  nop             # Basic Bypassing to Memory</div><div class=''> 5:  addi $1, $0, 12        # r1 = 12</div><div class=''> 6:  sw $1, 1($0)        # mem[1] = r1 = 12        (X->D)</div><div class=''> 7:  addi $2, $0, 14        # r2 = 14</div><div class=''> 8:  addi $3, $0, 51        # r3 = 51</div><div class=''> 9:  sw $3, 0($2)         # mem[r2] = r3 = 51        (X->D and M->D)</div><div class=''>10:  lw $4, 1($0)        # r4 = mem[1] = 12</div><div class=''>11:  lw $5, 0($2)        # r5 = mem[r2] = 51</div><div class=''>12:  </div></div><div class='content-block'><div class=''>num cycles:17</div></div><div class='content-block'><div class=''>All registers passed!</div></div></div></div><div class="section" id="section-memory_no_bypass">
+                <div class='header success' onclick='toggleContent(this.querySelector(".collapse-btn"))'>
+                    <button class='collapse-btn'>▽</button>
+                    <span>memory_no_bypass</span>
+                    
+                    <button class='copy-button success' onclick='event.stopPropagation(); copyGTKWaveCommand("memory_no_bypass")'>
+                        Copy GTKWave Command
+                </button>
+                
+                </div>
+            <div class='content-container '><div class='content-block'><div class=''> 0:  nop 			# Basic Arithmetic Test with no Hazards</div><div class=''> 1:  nop 			# Values initialized using addi (positive only) and sub</div><div class=''> 2:  nop 			# Author: Oliver Rodas</div><div class=''> 3:  nop</div><div class=''> 4:  nop</div><div class=''> 5:  nop 			# Initialize Values</div><div class=''> 6:  addi $3, $0, 1	# r3 = 1</div><div class=''> 7:  addi $4, $0, 35	# r4 = 35</div><div class=''> 8:  addi $1, $0, 3	# r1 = 3</div><div class=''> 9:  addi $2, $0, 21	# r2 = 21</div><div class=''>10:  sub $3, $0, $3	# r3 = -1</div><div class=''>11:  sub $4, $0, $4	# r4 = -35</div><div class=''>12:  nop </div><div class=''>13:  nop 			# Load/Store Tests</div><div class=''>14:  sw $1, 1($0) 		# mem[1] = r1 = 3</div><div class=''>15:  sw $2, 2($0) 		# mem[2] = r2 = 21</div><div class=''>16:  sw $3, 0($1) 		# mem[r1] = r3 = -1 (should be mem[3])</div><div class=''>17:  lw $16, 1($0) 	# r16 = mem[1] = 3</div><div class=''>18:  lw $17, 2($0) 	# r17 = mem[2] = 21</div><div class=''>19:  lw $18, 0($1) 	# r18 = mem[3] = -1</div><div class=''>20:  </div><div class=''>21:  </div></div><div class='content-block'><div class=''>num cycles:25</div></div><div class='content-block'><div class=''>All registers passed!</div></div></div></div><div class="section" id="section-misc_memory">
+                <div class='header success' onclick='toggleContent(this.querySelector(".collapse-btn"))'>
+                    <button class='collapse-btn'>▽</button>
+                    <span>misc_memory</span>
+                    
+                    <button class='copy-button success' onclick='event.stopPropagation(); copyGTKWaveCommand("misc_memory")'>
+                        Copy GTKWave Command
+                </button>
+                
+                </div>
+            <div class='content-container '><div class='content-block'><div class=''> 0:  nop             # Misc memory tests</div><div class=''> 1:  nop             # Tests several memory edge cases</div><div class=''> 2:  nop             # Author: Vincent Chen</div><div class=''> 3:  nop             </div><div class=''> 4:  nop</div><div class=''> 5:  addi $r1, $r0, 10</div><div class=''> 6:  addi $r2, $r0, 20</div><div class=''> 7:  nop</div><div class=''> 8:  nop</div><div class=''> 9:  nop</div><div class=''>10:  sw $r1, 5($r0)      </div><div class=''>11:  sw $r2, 6($r0)      </div><div class=''>12:  nop</div><div class=''>13:  nop</div><div class=''>14:  md:                 # [SECTION] multdiv following lw</div><div class=''>15:  lw $r3, 5($r0)      </div><div class=''>16:  lw $r4, 6($r0)      </div><div class=''>17:  mul $r6, $r3, $r4   # [CHECK] r6 should be 200</div><div class=''>18:  nop</div><div class=''>19:  lw $r7, 5($r0)</div><div class=''>20:  lw $r8, 6($r0)</div><div class=''>21:  div $r9, $r8, $r7   # [CHECK] r9 should be 2</div><div class=''>22:  nop</div><div class=''>23:  nop</div><div class=''>24:  lwsw:               # [SECTION] various lw/sw bypassing tests</div><div class=''>25:  lw $r10, 5($r0)     # lw -> sw rd bypassing</div><div class=''>26:  sw $r10, 7($r0)</div><div class=''>27:  lw $r11, 7($r0)     # [CHECK] r11 should be 10</div><div class=''>28:  nop</div><div class=''>29:  lw $r12, 6($r0)     # lw -> sw rs bypassing</div><div class=''>30:  sw $r1, 0($r12)</div><div class=''>31:  lw $r13, 20($r0)    # [CHECK] r13 should be 10</div><div class=''>32:  nop</div><div class=''>33:  sw $r1, 8($r0)      # sw -> sw rd no bypassing</div><div class=''>34:  sw $r1, 9($r0)</div><div class=''>35:  nop</div><div class=''>36:  nop</div><div class=''>37:  nop</div><div class=''>38:  lw $r14, 8($r0)     # [CHECK] r14 should be 10</div><div class=''>39:  lw $r15, 9($r0)     # [CHECK] r15 should be 10</div><div class=''>40:  nop</div><div class=''>41:  nop</div><div class=''>42:  sw $r2, 10($r0)</div><div class=''>43:  lw $r16, 5($r0)     # lw -> lw rd -> rs bypassing </div><div class=''>44:  lw $r17, 0($r16)    # [CHECK] r17 should be 20</div><div class=''>45:  nop</div><div class=''>46:  nop</div><div class=''>47:  lw $r18, 6($r0)     # lw -> lw rd -> rd no bypassing </div><div class=''>48:  lw $r18, 5($r0)     # [CHECK] r18 should be 10</div><div class=''>49:  nop</div><div class=''>50:  nop</div><div class=''>51:  addi $r19, $r0, 10  # sw WX bypassing test</div><div class=''>52:  addi $r20, $r0, 20</div><div class=''>53:  sw $r19, 21($r0)      </div><div class=''>54:  sw $r20, 22($r0)  </div><div class=''>55:  nop</div><div class=''>56:  nop</div><div class=''>57:  lw $r21, 21($r0)    # [CHECK] r21 should be 10</div><div class=''>58:  lw $r22, 22($r0)    # [CHECK] r22 should be 20</div><div class=''>59:  nop</div><div class=''>60:  nop</div></div><div class='content-block'><div class=''>num cycles:250</div></div><div class='content-block'><div class=''>All registers passed!</div></div></div></div><div class="section" id="section-multdiv_bypass_fast">
+                <div class='header success' onclick='toggleContent(this.querySelector(".collapse-btn"))'>
+                    <button class='collapse-btn'>▽</button>
+                    <span>multdiv_bypass_fast</span>
+                    
+                    <button class='copy-button success' onclick='event.stopPropagation(); copyGTKWaveCommand("multdiv_bypass_fast")'>
+                        Copy GTKWave Command
+                </button>
+                
+                </div>
+            <div class='content-container '><div class='content-block'><div class=''> 0:  nop             # Values initialized using addi (positive only)</div><div class=''> 1:  nop             # Author: Oliver Rodas</div><div class=''> 2:  nop</div><div class=''> 3:  nop</div><div class=''> 4:  nop             # Bypassing to and from Multdiv</div><div class=''> 5:  addi $r1, $r0, 12        # r1 = 12</div><div class=''> 6:  nop            # Avoid RAW hazard to test bypassing 1 value</div><div class=''> 7:  addi $r2, $r0, 13        # r2 = 13</div><div class=''> 8:  mul $r3, $r1, $r2        # r3 = r1 * r2 = 156    (X->D)</div><div class=''> 9:  sub $r4, $r3, $r1        # r4 = r3 - r1 = 144    (X->D)</div><div class=''>10:  addi $r5, $r0, 4        # r5 = 4</div><div class=''>11:  div $r6, $r1, $r5        # r6 = r1 / r5 = 3        (X->D)</div><div class=''>12:  addi $r7, $r0, 8        # r7 = 8</div><div class=''>13:  addi $r8, $r0, 3        # r8 = 3</div><div class=''>14:  mul $r9, $r8, $r7        # r9 = r8 * r7 = 24        (X->D and M->D)</div><div class=''>15:  div $r10, $r9, $r1        # r10 = r9 / r1 = 2        (X->D)</div><div class=''>16:  div $r11, $r9, $r10        # r11 = r9 / r10 = 12    (X->D and M->D)</div><div class=''>17:  </div></div><div class='content-block'><div class=''>num cycles:185</div></div><div class='content-block'><div class=''>All registers passed!</div></div></div></div><div class="section" id="section-multdiv_bypass_regular">
+                <div class='header success' onclick='toggleContent(this.querySelector(".collapse-btn"))'>
+                    <button class='collapse-btn'>▽</button>
+                    <span>multdiv_bypass_regular</span>
+                    
+                    <button class='copy-button success' onclick='event.stopPropagation(); copyGTKWaveCommand("multdiv_bypass_regular")'>
+                        Copy GTKWave Command
+                </button>
+                
+                </div>
+            <div class='content-container '><div class='content-block'><div class=''> 0:  nop             # Values initialized using addi (positive only)</div><div class=''> 1:  nop             # Author: Oliver Rodas</div><div class=''> 2:  nop</div><div class=''> 3:  nop</div><div class=''> 4:  nop             # Bypassing to and from Multdiv</div><div class=''> 5:  addi $r1, $r0, 12        # r1 = 12</div><div class=''> 6:  nop            # Avoid RAW hazard to test bypassing 1 value</div><div class=''> 7:  addi $r2, $r0, 13        # r2 = 13</div><div class=''> 8:  mul $r3, $r1, $r2        # r3 = r1 * r2 = 156    (X->D)</div><div class=''> 9:  sub $r4, $r3, $r1        # r4 = r3 - r1 = 144    (X->D)</div><div class=''>10:  addi $r5, $r0, 4        # r5 = 4</div><div class=''>11:  div $r6, $r1, $r5        # r6 = r1 / r5 = 3        (X->D)</div><div class=''>12:  addi $r7, $r0, 8        # r7 = 8</div><div class=''>13:  addi $r8, $r0, 3        # r8 = 3</div><div class=''>14:  mul $r9, $r8, $r7        # r9 = r8 * r7 = 24        (X->D and M->D)</div><div class=''>15:  div $r10, $r9, $r1        # r10 = r9 / r1 = 2        (X->D)</div><div class=''>16:  div $r11, $r9, $r10        # r11 = r9 / r10 = 12    (X->D and M->D)</div><div class=''>17:  </div></div><div class='content-block'><div class=''>num cycles:200</div></div><div class='content-block'><div class=''>All registers passed!</div></div></div></div><div class="section" id="section-multdiv_bypass_slow">
+                <div class='header success' onclick='toggleContent(this.querySelector(".collapse-btn"))'>
+                    <button class='collapse-btn'>▽</button>
+                    <span>multdiv_bypass_slow</span>
+                    
+                    <button class='copy-button success' onclick='event.stopPropagation(); copyGTKWaveCommand("multdiv_bypass_slow")'>
+                        Copy GTKWave Command
+                </button>
+                
+                </div>
+            <div class='content-container '><div class='content-block'><div class=''> 0:  nop             # Values initialized using addi (positive only)</div><div class=''> 1:  nop             # Author: Oliver Rodas</div><div class=''> 2:  nop</div><div class=''> 3:  nop</div><div class=''> 4:  nop             # Bypassing to and from Multdiv</div><div class=''> 5:  addi $r1, $r0, 12        # r1 = 12</div><div class=''> 6:  nop            # Avoid RAW hazard to test bypassing 1 value</div><div class=''> 7:  addi $r2, $r0, 13        # r2 = 13</div><div class=''> 8:  mul $r3, $r1, $r2        # r3 = r1 * r2 = 156    (X->D)</div><div class=''> 9:  sub $r4, $r3, $r1        # r4 = r3 - r1 = 144    (X->D)</div><div class=''>10:  addi $r5, $r0, 4        # r5 = 4</div><div class=''>11:  div $r6, $r1, $r5        # r6 = r1 / r5 = 3        (X->D)</div><div class=''>12:  addi $r7, $r0, 8        # r7 = 8</div><div class=''>13:  addi $r8, $r0, 3        # r8 = 3</div><div class=''>14:  mul $r9, $r8, $r7        # r9 = r8 * r7 = 24        (X->D and M->D)</div><div class=''>15:  div $r10, $r9, $r1        # r10 = r9 / r1 = 2        (X->D)</div><div class=''>16:  div $r11, $r9, $r10        # r11 = r9 / r10 = 12    (X->D and M->D)</div><div class=''>17:  </div></div><div class='content-block'><div class=''>num cycles:255</div></div><div class='content-block'><div class=''>All registers passed!</div></div></div></div><div class="section" id="section-multdiv_no_bypass_fast">
+                <div class='header success' onclick='toggleContent(this.querySelector(".collapse-btn"))'>
+                    <button class='collapse-btn'>▽</button>
+                    <span>multdiv_no_bypass_fast</span>
+                    
+                    <button class='copy-button success' onclick='event.stopPropagation(); copyGTKWaveCommand("multdiv_no_bypass_fast")'>
+                        Copy GTKWave Command
+                </button>
+                
+                </div>
+            <div class='content-container '><div class='content-block'><div class=''> 0:  nop             # Values initialized using addi (positive only)</div><div class=''> 1:  nop             # Author: Oliver Rodas</div><div class=''> 2:  nop</div><div class=''> 3:  nop             # Multdiv without Bypassing</div><div class=''> 4:  nop 			# Multdiv Tests</div><div class=''> 5:  addi $3, $0, 1	# r3 = 1</div><div class=''> 6:  addi $4, $0, 35	# r4 = 35</div><div class=''> 7:  addi $1, $0, 3	# r1 = 3</div><div class=''> 8:  addi $2, $0, 21	# r2 = 21</div><div class=''> 9:  sub $3, $0, $3	# r3 = -1</div><div class=''>10:  sub $4, $0, $4	# r4 = -35</div><div class=''>11:  nop</div><div class=''>12:  nop</div><div class=''>13:  mul $19, $2, $1	# r19 = r2 * r1 = 63</div><div class=''>14:  div $20, $2, $1	# r20 = r2 / r1 = 7</div><div class=''>15:  mul $21, $3, $1	# r21 = r3 * r1 = -3</div><div class=''>16:  div $22, $4, $1	# r22 = r4 / r1 = -11</div></div><div class='content-block'><div class=''>num cycles:155</div></div><div class='content-block'><div class=''>All registers passed!</div></div></div></div><div class="section" id="section-multdiv_no_bypass_regular">
+                <div class='header success' onclick='toggleContent(this.querySelector(".collapse-btn"))'>
+                    <button class='collapse-btn'>▽</button>
+                    <span>multdiv_no_bypass_regular</span>
+                    
+                    <button class='copy-button success' onclick='event.stopPropagation(); copyGTKWaveCommand("multdiv_no_bypass_regular")'>
+                        Copy GTKWave Command
+                </button>
+                
+                </div>
+            <div class='content-container '><div class='content-block'><div class=''> 0:  nop             # Values initialized using addi (positive only)</div><div class=''> 1:  nop             # Author: Oliver Rodas</div><div class=''> 2:  nop</div><div class=''> 3:  nop             # Multdiv without Bypassing</div><div class=''> 4:  nop 			# Multdiv Tests</div><div class=''> 5:  addi $3, $0, 1	# r3 = 1</div><div class=''> 6:  addi $4, $0, 35	# r4 = 35</div><div class=''> 7:  addi $1, $0, 3	# r1 = 3</div><div class=''> 8:  addi $2, $0, 21	# r2 = 21</div><div class=''> 9:  sub $3, $0, $3	# r3 = -1</div><div class=''>10:  sub $4, $0, $4	# r4 = -35</div><div class=''>11:  nop</div><div class=''>12:  nop</div><div class=''>13:  mul $19, $2, $1	# r19 = r2 * r1 = 63</div><div class=''>14:  div $20, $2, $1	# r20 = r2 / r1 = 7</div><div class=''>15:  mul $21, $3, $1	# r21 = r3 * r1 = -3</div><div class=''>16:  div $22, $4, $1	# r22 = r4 / r1 = -11</div></div><div class='content-block'><div class=''>num cycles:200</div></div><div class='content-block'><div class=''>All registers passed!</div></div></div></div><div class="section" id="section-multdiv_no_bypass_slow">
+                <div class='header success' onclick='toggleContent(this.querySelector(".collapse-btn"))'>
+                    <button class='collapse-btn'>▽</button>
+                    <span>multdiv_no_bypass_slow</span>
+                    
+                    <button class='copy-button success' onclick='event.stopPropagation(); copyGTKWaveCommand("multdiv_no_bypass_slow")'>
+                        Copy GTKWave Command
+                </button>
+                
+                </div>
+            <div class='content-container '><div class='content-block'><div class=''> 0:  nop             # Values initialized using addi (positive only)</div><div class=''> 1:  nop             # Author: Oliver Rodas</div><div class=''> 2:  nop</div><div class=''> 3:  nop             # Multdiv without Bypassing</div><div class=''> 4:  nop 			# Multdiv Tests</div><div class=''> 5:  addi $3, $0, 1	# r3 = 1</div><div class=''> 6:  addi $4, $0, 35	# r4 = 35</div><div class=''> 7:  addi $1, $0, 3	# r1 = 3</div><div class=''> 8:  addi $2, $0, 21	# r2 = 21</div><div class=''> 9:  sub $3, $0, $3	# r3 = -1</div><div class=''>10:  sub $4, $0, $4	# r4 = -35</div><div class=''>11:  nop</div><div class=''>12:  nop</div><div class=''>13:  mul $19, $2, $1	# r19 = r2 * r1 = 63</div><div class=''>14:  div $20, $2, $1	# r20 = r2 / r1 = 7</div><div class=''>15:  mul $21, $3, $1	# r21 = r3 * r1 = -3</div><div class=''>16:  div $22, $4, $1	# r22 = r4 / r1 = -11</div></div><div class='content-block'><div class=''>num cycles:255</div></div><div class='content-block'><div class=''>All registers passed!</div></div></div></div><div class="section" id="section-negative_no_bypass">
+                <div class='header success' onclick='toggleContent(this.querySelector(".collapse-btn"))'>
+                    <button class='collapse-btn'>▽</button>
+                    <span>negative_no_bypass</span>
+                    
+                    <button class='copy-button success' onclick='event.stopPropagation(); copyGTKWaveCommand("negative_no_bypass")'>
+                        Copy GTKWave Command
+                </button>
+                
+                </div>
+            <div class='content-container '><div class='content-block'><div class=''> 0:  nop 			# Basic Arithmetic Test with no Hazards</div><div class=''> 1:  nop 			# Values initialized using addi (positive only) and sub</div><div class=''> 2:  nop 			# Author: Oliver Rodas</div><div class=''> 3:  nop</div><div class=''> 4:  nop</div><div class=''> 5:  nop 			# Initialize Values</div><div class=''> 6:  addi $3, $0, 1	# r3 = 1</div><div class=''> 7:  addi $4, $0, 35	# r4 = 35</div><div class=''> 8:  addi $1, $0, 3	# r1 = 3</div><div class=''> 9:  addi $2, $0, 21	# r2 = 21</div><div class=''>10:  sub $3, $0, $3	# r3 = -1</div><div class=''>11:  sub $4, $0, $4	# r4 = -35</div><div class=''>12:  nop </div><div class=''>13:  nop 			# Negative Value Tests</div><div class=''>14:  addi $11, $2, -89	# r11 = r2 - 89 = -68</div><div class=''>15:  add $12, $4, $2	# r12 = r4 + r2 = -14</div><div class=''>16:  sub $13, $4, $2	# r13 = r4 - r2 = -56</div><div class=''>17:  sll $14, $3, 16	# r14 = r3 << 16 = -65536</div><div class=''>18:  sra $15, $4, 16	# r15 = r4 >> 16 = -1</div></div><div class='content-block'><div class=''>num cycles:24</div></div><div class='content-block'><div class=''>All registers passed!</div></div></div></div><div class="section" id="section-positive_no_bypass">
+                <div class='header success' onclick='toggleContent(this.querySelector(".collapse-btn"))'>
+                    <button class='collapse-btn'>▽</button>
+                    <span>positive_no_bypass</span>
+                    
+                    <button class='copy-button success' onclick='event.stopPropagation(); copyGTKWaveCommand("positive_no_bypass")'>
+                        Copy GTKWave Command
+                </button>
+                
+                </div>
+            <div class='content-container '><div class='content-block'><div class=''> 0:  nop 			# Basic Arithmetic Test with no Hazards</div><div class=''> 1:  nop 			# Values initialized using addi (positive only) and sub</div><div class=''> 2:  nop 			# Author: Oliver Rodas</div><div class=''> 3:  nop</div><div class=''> 4:  nop</div><div class=''> 5:  nop 			# Initialize Values</div><div class=''> 6:  addi $3, $0, 1	# r3 = 1</div><div class=''> 7:  addi $4, $0, 35	# r4 = 35</div><div class=''> 8:  addi $1, $0, 3	# r1 = 3</div><div class=''> 9:  addi $2, $0, 21	# r2 = 21</div><div class=''>10:  sub $3, $0, $3	# r3 = -1</div><div class=''>11:  sub $4, $0, $4	# r4 = -35</div><div class=''>12:  nop </div><div class=''>13:  nop 			# Positive Value Tests</div><div class=''>14:  add $5, $2, $1	# r5 = r2 + r1 = 24</div><div class=''>15:  sub $6, $2, $1	# r6 = r2 - r1 = 18</div><div class=''>16:  and $7, $2, $1	# r7 = r2 & r1 = 1</div><div class=''>17:  or $8, $2, $1 	# r8 = r2 | r1 = 23</div><div class=''>18:  sll $9, $1, 4 	# r9 = r1 << 4 = 48</div><div class=''>19:  sra $10, $2, 2	# r10 = r2 >> 2 = 5</div></div><div class='content-block'><div class=''>num cycles:25</div></div><div class='content-block'><div class=''>All registers passed!</div></div></div></div><div class="section" id="section-pre_sort">
+                <div class='header success' onclick='toggleContent(this.querySelector(".collapse-btn"))'>
+                    <button class='collapse-btn'>▽</button>
+                    <span>pre_sort</span>
+                    
+                    <button class='copy-button success' onclick='event.stopPropagation(); copyGTKWaveCommand("pre_sort")'>
+                        Copy GTKWave Command
+                </button>
+                
+                </div>
+            <div class='content-container '><div class='content-block'><div class=''> 0:  nop 				# Test to make sure eveything works correctly</div><div class=''> 1:  nop 				# before sort. Passing this test should also </div><div class=''> 2:  nop                 # pass sort.</div><div class=''> 3:  nop 				# Register 10 tracks correct and 20 tracks incorrect</div><div class=''> 4:  nop 				# Author: Will Denton</div><div class=''> 5:  nop</div><div class=''> 6:  addi  $1, $0, 123   # Init values</div><div class=''> 7:  addi  $2, $0, 124</div><div class=''> 8:  addi  $3, $0, 122</div><div class=''> 9:  sw $1, 2($0)        # Init value in memory</div><div class=''>10:  nop                 </div><div class=''>11:  nop</div><div class=''>12:  nop                 # Test 1: lw into bne hazard + bypass</div><div class=''>13:  lw $11, 2($0)</div><div class=''>14:  bne $11, $0, e1      # Taken</div><div class=''>15:  nop</div><div class=''>16:  nop</div><div class=''>17:  addi $r20, $r20, 1	# r20 += 1 (Incorrect)</div><div class=''>18:  addi $r20, $r20, 1	# r20 += 1 (Incorrect)</div><div class=''>19:  addi $r20, $r20, 1	# r20 += 1 (Incorrect)</div><div class=''>20:  e1: nop</div><div class=''>21:  addi $r10, $r10, 1  # r10 += 1 (Correct)</div><div class=''>22:  nop</div><div class=''>23:  nop</div><div class=''>24:  nop</div><div class=''>25:  lw $12, 2($0)</div><div class=''>26:  bne $0, $12, e2      # Taken</div><div class=''>27:  nop</div><div class=''>28:  nop</div><div class=''>29:  addi $r20, $r20, 1	# r20 += 1 (Incorrect)</div><div class=''>30:  addi $r20, $r20, 1	# r20 += 1 (Incorrect)</div><div class=''>31:  addi $r20, $r20, 1	# r20 += 1 (Incorrect)</div><div class=''>32:  e2: nop</div><div class=''>33:  addi $r10, $r10, 1  # r10 += 1 (Correct)</div><div class=''>34:  nop</div><div class=''>35:  nop</div><div class=''>36:  nop</div><div class=''>37:  nop                 # Test 2: lw into blt hazard + bypass</div><div class=''>38:  lw $13, 2($0)</div><div class=''>39:  blt $13, $2, e3</div><div class=''>40:  nop</div><div class=''>41:  nop</div><div class=''>42:  addi $r20, $r20, 1	# r20 += 1 (Incorrect)</div><div class=''>43:  addi $r20, $r20, 1	# r20 += 1 (Incorrect)</div><div class=''>44:  addi $r20, $r20, 1	# r20 += 1 (Incorrect)</div><div class=''>45:  e3: nop</div><div class=''>46:  addi $r10, $r10, 1  # r10 += 1 (Correct)</div><div class=''>47:  nop</div><div class=''>48:  nop</div><div class=''>49:  nop</div><div class=''>50:  lw $14, 2($0)</div><div class=''>51:  blt $3, $14, e4</div><div class=''>52:  nop</div><div class=''>53:  nop</div><div class=''>54:  addi $r20, $r20, 1	# r20 += 1 (Incorrect)</div><div class=''>55:  addi $r20, $r20, 1	# r20 += 1 (Incorrect)</div><div class=''>56:  addi $r20, $r20, 1	# r20 += 1 (Incorrect)</div><div class=''>57:  e4: nop</div><div class=''>58:  addi $r10, $r10, 1  # r10 += 1 (Correct)</div><div class=''>59:  nop</div><div class=''>60:  nop</div><div class=''>61:  nop</div><div class=''>62:  </div><div class=''>63:  # Final, $r10 should be 4, $r20 should be 0</div><div class=''>64:  </div></div><div class='content-block'><div class=''>num cycles:60</div></div><div class='content-block'><div class=''>All registers passed!</div></div></div></div><div class="section" id="section-setx_bypass">
+                <div class='header success' onclick='toggleContent(this.querySelector(".collapse-btn"))'>
+                    <button class='collapse-btn'>▽</button>
+                    <span>setx_bypass</span>
+                    
+                    <button class='copy-button success' onclick='event.stopPropagation(); copyGTKWaveCommand("setx_bypass")'>
+                        Copy GTKWave Command
+                </button>
+                
+                </div>
+            <div class='content-container '><div class='content-block'><div class=''> 0:  nop             # setx bypassing test</div><div class=''> 1:  nop             # tests incorrect and correct branching of bex if a setx happens right before</div><div class=''> 2:  nop             # Author: Vincent Chen</div><div class=''> 3:  nop             </div><div class=''> 4:  nop</div><div class=''> 5:  setx 5        </div><div class=''> 6:  bex correct</div><div class=''> 7:  incorrect:</div><div class=''> 8:  nop</div><div class=''> 9:  nop</div><div class=''>10:  nop</div><div class=''>11:  addi $r1, $r0, 10   # bex not taken, incorrect</div><div class=''>12:  nop</div><div class=''>13:  correct:</div><div class=''>14:  nop</div><div class=''>15:  setx 10</div><div class=''>16:  setx 0</div><div class=''>17:  bex incorrecttwo    # bex taken, incorrect</div><div class=''>18:  correct:  </div><div class=''>19:  nop</div><div class=''>20:  j next</div><div class=''>21:  nop</div><div class=''>22:  incorrecttwo:          </div><div class=''>23:  addi $r1, $r1, 100  </div><div class=''>24:  nop</div><div class=''>25:  nop</div><div class=''>26:  next:</div><div class=''>27:  setx 5        </div><div class=''>28:  bex end</div><div class=''>29:  addi $r1, $r1, 1000     # test flushing after bex</div><div class=''>30:  end:                # r1=0      [Correct]</div><div class=''>31:  nop                 # r1=xx10   [Failed taken case]</div><div class=''>32:  nop                 # r1=x100   [Failed not taken case]</div><div class=''>33:  nop                 # r1=1000   [Failed flushing case]</div></div><div class='content-block'><div class=''>num cycles:50</div></div><div class='content-block'><div class=''>All registers passed!</div></div></div></div><div class="section" id="section-sort">
+                <div class='header success' onclick='toggleContent(this.querySelector(".collapse-btn"))'>
+                    <button class='collapse-btn'>▽</button>
+                    <span>sort</span>
+                    
+                    <button class='copy-button success' onclick='event.stopPropagation(); copyGTKWaveCommand("sort")'>
+                        Copy GTKWave Command
+                </button>
+                
+                </div>
+            <div class='content-container '><div class='content-block'><div class=''>  0:  nop             # Sort</div><div class=''>  1:  nop             # Author: Jack Proudfoot</div><div class=''>  2:  nop             </div><div class=''>  3:  nop</div><div class=''>  4:  init:</div><div class=''>  5:  addi $sp, $zero, 256        # $sp = 256</div><div class=''>  6:  addi $27, $zero, 3840       # $27 = 3840 address for bottom of heap</div><div class=''>  7:  </div><div class=''>  8:  addi $t0, $zero, 50</div><div class=''>  9:  addi $t1, $zero, 3</div><div class=''> 10:  sw $t1, 0($t0)</div><div class=''> 11:  addi $t1, $zero, 1</div><div class=''> 12:  sw $t1, 1($t0)</div><div class=''> 13:  addi $t1, $zero, 4</div><div class=''> 14:  sw $t1, 2($t0)</div><div class=''> 15:  addi $t1, $zero, 2</div><div class=''> 16:  sw $t1, 3($t0)</div><div class=''> 17:  </div><div class=''> 18:  add $a0, $zero, $t0</div><div class=''> 19:  j main</div><div class=''> 20:  </div><div class=''> 21:  malloc:                     # $a0 = number of words to allocate</div><div class=''> 22:  sub $27, $27, $a0           # allocate $a0 words of memory</div><div class=''> 23:  blt $sp, $27, mallocep      # check for heap overflow</div><div class=''> 24:  mallocep:</div><div class=''> 25:  add $v0, $27, $zero</div><div class=''> 26:  jr $ra</div><div class=''> 27:  </div><div class=''> 28:  buildlist:                  # $a0 = memory address of input data</div><div class=''> 29:  sw $ra, 0($sp)</div><div class=''> 30:  addi $sp, $sp, 1</div><div class=''> 31:  </div><div class=''> 32:  add $t0, $a0, $zero         # index of input data</div><div class=''> 33:  add $t1, $zero, $zero       # current list pointer</div><div class=''> 34:  </div><div class=''> 35:  addi $a0, $zero, 0</div><div class=''> 36:  jal malloc</div><div class=''> 37:  addi $t3, $v0, -3           # list head pointer</div><div class=''> 38:  </div><div class=''> 39:  lw $t2, 0($t0)              # load first data value</div><div class=''> 40:  </div><div class=''> 41:  j blguard</div><div class=''> 42:  blstart:</div><div class=''> 43:  addi $a0, $zero, 3</div><div class=''> 44:  jal malloc</div><div class=''> 45:  sw $t2, 0($v0)              # set new[0] = data</div><div class=''> 46:  sw $t1, 1($v0)              # set new[1] = prev</div><div class=''> 47:  sw $zero, 2($v0)            # set new[2] = next</div><div class=''> 48:  sw $v0, 2($t1)              # set curr.next = new</div><div class=''> 49:  addi $t0, $t0, 1            # increment input data index</div><div class=''> 50:  lw $t2, 0($t0)              # load next input data value</div><div class=''> 51:  add $t1, $zero, $v0         # set curr = new</div><div class=''> 52:  </div><div class=''> 53:  blguard:</div><div class=''> 54:  bne $t2, $zero, blstart</div><div class=''> 55:  add $v0, $t3, $zero         # set $v0 = list head</div><div class=''> 56:  </div><div class=''> 57:  addi $sp, $sp, -1</div><div class=''> 58:  lw $ra, 0($sp)</div><div class=''> 59:  jr $ra</div><div class=''> 60:  </div><div class=''> 61:  </div><div class=''> 62:  sort:                       # $a0 = head of list</div><div class=''> 63:  sw $ra, 0($sp)</div><div class=''> 64:  addi $sp, $sp, 1</div><div class=''> 65:  </div><div class=''> 66:  sortrecur:</div><div class=''> 67:  addi $t7, $zero, 0          # $t7 = 0</div><div class=''> 68:  </div><div class=''> 69:  add $t0, $a0, $zero         # $t0 = head</div><div class=''> 70:  </div><div class=''> 71:  add $t1, $t0, $zero         # $t1 = current</div><div class=''> 72:  j siguard</div><div class=''> 73:  </div><div class=''> 74:  sortiter:</div><div class=''> 75:  lw $t2, 0($t1)              # $t2 = current.data</div><div class=''> 76:  lw $t3, 0($t6)              # $t3 = current.next.data</div><div class=''> 77:  blt $t2, $t3, sinext</div><div class=''> 78:  </div><div class=''> 79:  addi $t7, $zero, 1          # $t7 = 1</div><div class=''> 80:  </div><div class=''> 81:  lw $t4, 1($t1)              # $t4 = current.prev</div><div class=''> 82:  bne $t4, $zero, supprev</div><div class=''> 83:  j supprevd</div><div class=''> 84:  supprev:</div><div class=''> 85:  sw $t6, 2($t4)              # current.prev.next = current.next</div><div class=''> 86:  supprevd:</div><div class=''> 87:  sw $t4, 1($t6)              # current.next.prev = current.prev</div><div class=''> 88:  lw $t5, 2($t6)              # $t5 = current.next.next</div><div class=''> 89:  bne $t5, $zero, supnnprev</div><div class=''> 90:  j supnnprevd</div><div class=''> 91:  supnnprev:</div><div class=''> 92:  sw $t1, 1($t5)              # current.next.next.prev = current</div><div class=''> 93:  supnnprevd:</div><div class=''> 94:  sw $t5, 2($t1)              # current.next = current.next.next</div><div class=''> 95:  </div><div class=''> 96:  sw $t1, 2($t6)              # current.next.next = current</div><div class=''> 97:  sw $t6, 1($t1)              # current.prev = current.next</div><div class=''> 98:  </div><div class=''> 99:  bne $t0, $t1, sinext</div><div class=''>100:  add $t0, $t6, $zero         # head = current.next</div><div class=''>101:  </div><div class=''>102:  sinext:</div><div class=''>103:  add $t1, $t6, $zero         # $t1 = current.next</div><div class=''>104:  siguard:</div><div class=''>105:  lw $t6, 2($t1)              # $t6 = current.next</div><div class=''>106:  bne $t6, $zero, sortiter</div><div class=''>107:  </div><div class=''>108:  add $a0, $t0, $zero</div><div class=''>109:  bne $t7, $zero, sortrecur</div><div class=''>110:  </div><div class=''>111:  add $v0, $t0, $zero         # $v0 = head</div><div class=''>112:  </div><div class=''>113:  addi $sp, $sp, -1</div><div class=''>114:  lw $ra, 0($sp)</div><div class=''>115:  jr $ra</div><div class=''>116:  </div><div class=''>117:  </div><div class=''>118:  main:</div><div class=''>119:  jal buildlist</div><div class=''>120:  add $t0, $v0, $zero         # $t0 = head of list</div><div class=''>121:  </div><div class=''>122:  add $a0, $t0, $zero         # $a0 = head of list</div><div class=''>123:  jal sort</div><div class=''>124:  add $t0, $v0, $zero         # $t0 = head of sorted list</div><div class=''>125:  </div><div class=''>126:  </div><div class=''>127:  add $t5, $zero, $zero</div><div class=''>128:  add $t6, $zero, $zero</div><div class=''>129:  </div><div class=''>130:  add $t1, $t0, $zero</div><div class=''>131:  j procguard</div><div class=''>132:  </div><div class=''>133:  proclist:</div><div class=''>134:  lw $t2, 0($t1)</div><div class=''>135:  add $t5, $t5, $t2</div><div class=''>136:  sll $t6, $t6, 3</div><div class=''>137:  add $t6, $t6, $t5</div><div class=''>138:  </div><div class=''>139:  lw $t1, 2($t1)</div><div class=''>140:  procguard:</div><div class=''>141:  bne $t1, $zero, proclist</div><div class=''>142:  </div><div class=''>143:  stop:</div><div class=''>144:  nop</div><div class=''>145:  nop</div><div class=''>146:  nop</div><div class=''>147:  j stop</div></div><div class='content-block'><div class=''>num cycles:1000</div></div><div class='content-block'><div class=''>All registers passed!</div></div></div></div><div class="section" id="section-stall_edge">
+                <div class='header success' onclick='toggleContent(this.querySelector(".collapse-btn"))'>
+                    <button class='collapse-btn'>▽</button>
+                    <span>stall_edge</span>
+                    
+                    <button class='copy-button success' onclick='event.stopPropagation(); copyGTKWaveCommand("stall_edge")'>
+                        Copy GTKWave Command
+                </button>
+                
+                </div>
+            <div class='content-container '><div class='content-block'><div class=''> 0:  nop             # Values initialized using addi (positive only)</div><div class=''> 1:  nop             # Author: Oliver Rodas</div><div class=''> 2:  nop</div><div class=''> 3:  nop</div><div class=''> 4:  nop             # EDGE CASE: Stalling 1 cycle for lw to ALUop</div><div class=''> 5:  addi $1, $0, 830        # r1 = 830</div><div class=''> 6:  nop            # Avoid RAW hazard to test only lw/sw</div><div class=''> 7:  nop            # Avoid RAW hazard to test only lw/sw</div><div class=''> 8:  sw $1, 2($0)         # mem[2] = r1 = 830</div><div class=''> 9:  lw $4, 2($0)         # r4 = mem[2] = 830</div><div class=''>10:  addi $5, $4, 12        # r5 = r4 + 12 = 842    (M->D) 1 cycle stall required</div><div class=''>11:  </div></div><div class='content-block'><div class=''>num cycles:17</div></div><div class='content-block'><div class=''>All registers passed!</div></div></div></div><div class="section" id="section-wrong_bypass">
+                <div class='header success' onclick='toggleContent(this.querySelector(".collapse-btn"))'>
+                    <button class='collapse-btn'>▽</button>
+                    <span>wrong_bypass</span>
+                    
+                    <button class='copy-button success' onclick='event.stopPropagation(); copyGTKWaveCommand("wrong_bypass")'>
+                        Copy GTKWave Command
+                </button>
+                
+                </div>
+            <div class='content-container '><div class='content-block'><div class=''>  0:  nop				# Tests for faulty bypassing</div><div class=''>  1:  nop				# Author: Philip Xue</div><div class=''>  2:  nop</div><div class=''>  3:  nop</div><div class=''>  4:  nop</div><div class=''>  5:  addi $1, $0, 11		# set values that jr should jump to if bypassing is done correctly</div><div class=''>  6:  addi $2, $0, 17</div><div class=''>  7:  nop</div><div class=''>  8:  nop</div><div class=''>  9:  sw $1, 15($0)		# shouldn't be bypassed</div><div class=''> 10:  jr $1				# should NOT Jump to 255</div><div class=''> 11:  nop</div><div class=''> 12:  nop</div><div class=''> 13:  addi $5, $0, 1		# r5 = 1</div><div class=''> 14:  sw $2, 21($0)		# shouldn't be bypassed</div><div class=''> 15:  nop</div><div class=''> 16:  jr $2				# should NOT jump to 255</div><div class=''> 17:  nop</div><div class=''> 18:  nop</div><div class=''> 19:  addi $6, $0, 1		# r6 = 1</div><div class=''> 20:  nop</div><div class=''> 21:  nop</div><div class=''> 22:  addi $1, $0, 30		# set values that jr should jump to if bypassing is done correctly</div><div class=''> 23:  addi $2, $0, 30</div><div class=''> 24:  addi $3, $0, 36</div><div class=''> 25:  addi $4, $0, 36</div><div class=''> 26:  nop</div><div class=''> 27:  nop</div><div class=''> 28:  bne $1, $2, wrongjr1	# shouldn't branch or be bypassed</div><div class=''> 29:  jr $1</div><div class=''> 30:  nop</div><div class=''> 31:  nop</div><div class=''> 32:  addi $7, $0, 1		# r7 = 1</div><div class=''> 33:  wrongjr1: bne $3, $4, wrongjr2	# shouldn't branch or be bypassed</div><div class=''> 34:  nop</div><div class=''> 35:  jr $3</div><div class=''> 36:  nop</div><div class=''> 37:  nop</div><div class=''> 38:  addi $8, $0, 1		# r8 = 1</div><div class=''> 39:  wrongjr2: addi $1, $0, 45		# set values that jr should jump to if bypassing is done correctly</div><div class=''> 40:  addi $2, $0, 45</div><div class=''> 41:  addi $3, $0, 51</div><div class=''> 42:  addi $4, $0, 51</div><div class=''> 43:  blt $1, $2, wrongjr3	# shouldn't branch or be bypassed</div><div class=''> 44:  jr $1</div><div class=''> 45:  nop</div><div class=''> 46:  nop</div><div class=''> 47:  addi $9, $0, 1		# r9 = 1</div><div class=''> 48:  wrongjr3: blt $3, $4, wrongjr4	# shouldn't branch or be bypassed</div><div class=''> 49:  nop</div><div class=''> 50:  jr $3</div><div class=''> 51:  nop</div><div class=''> 52:  nop</div><div class=''> 53:  addi $10, $0, 1		# r10 = 1</div><div class=''> 54:  wrongjr4: addi $1, $0, 175</div><div class=''> 55:  nop</div><div class=''> 56:  nop</div><div class=''> 57:  sw $1, 350($0)</div><div class=''> 58:  lw $11, 175($1)		# r11 = mem[350] = 175</div><div class=''> 59:  nop</div><div class=''> 60:  nop</div><div class=''> 61:  sw $1, 350($0)</div><div class=''> 62:  nop</div><div class=''> 63:  lw $12, 175($1)		# r12 = mem[350] = 175</div><div class=''> 64:  addi $1, $0, 175	# r1 = 175</div><div class=''> 65:  addi $2, $0, 350	# r2 = 350</div><div class=''> 66:  nop</div><div class=''> 67:  nop</div><div class=''> 68:  sw $1, 1($0)</div><div class=''> 69:  sw $2, 2($0)</div><div class=''> 70:  add $13, $1, $2		# r13 = 525</div><div class=''> 71:  nop</div><div class=''> 72:  nop</div><div class=''> 73:  sw $2, 1($0)</div><div class=''> 74:  sw $1, 2($0)</div><div class=''> 75:  add $14, $1, $2		# r14 = 525</div><div class=''> 76:  nop</div><div class=''> 77:  nop</div><div class=''> 78:  sw $1, 1($0)</div><div class=''> 79:  sw $2, 1($0)</div><div class=''> 80:  sw $1, 0($2)		# mem[350] = 175</div><div class=''> 81:  nop</div><div class=''> 82:  nop</div><div class=''> 83:  sw $1, 1($0)</div><div class=''> 84:  sw $2, 1($0)</div><div class=''> 85:  sw $2, 0($1)		# mem[175] = 350</div><div class=''> 86:  nop</div><div class=''> 87:  nop</div><div class=''> 88:  lw $15, 350($0)		# r15 = 175</div><div class=''> 89:  lw $16, 175($0)		# r16 = 350</div><div class=''> 90:  nop</div><div class=''> 91:  nop</div><div class=''> 92:  lw $1, 1($0)		# r1 = 350</div><div class=''> 93:  lw $2, 2($0)		# r2 = 175</div><div class=''> 94:  add $17, $1, $2		# r17 = 525</div><div class=''> 95:  nop</div><div class=''> 96:  nop</div><div class=''> 97:  addi $1, $0, 0</div><div class=''> 98:  addi $2, $0, 0</div><div class=''> 99:  nop</div><div class=''>100:  nop</div><div class=''>101:  lw $2, 1($0)</div><div class=''>102:  lw $1, 2($0)</div><div class=''>103:  add $18, $1, $2		# r18 = 525</div><div class=''>104:  nop</div><div class=''>105:  nop					# tests for NOT bypassing to zero</div><div class=''>106:  addi $1, $0, 0		# make sure r1 = 0</div><div class=''>107:  addi $19, $0, 1		# non-zero if failing</div><div class=''>108:  nop</div><div class=''>109:  nop</div><div class=''>110:  addi $0, $1, 175	# shouldn't be bypassed</div><div class=''>111:  addi $0, $1, 175	# shouldn't be bypassed</div><div class=''>112:  add $19, $0, $0		# r19 should be 0, if it isn't zero I'm going to fight god</div><div class=''>113:  nop</div><div class=''>114:  nop</div><div class=''>115:  addi $1, $0, 350	# r1 = 350</div><div class=''>116:  addi $2, $0, 350	# r2 = 350</div><div class=''>117:  addi $3, $0, 175	# r3 = 175</div><div class=''>118:  addi $4, $0, 175	# r4 = 175</div><div class=''>119:  nop					# none of the following branches should be taken</div><div class=''>120:  nop					# they are there merely to check for improper bypassing</div><div class=''>121:  bne $1, $2, dummy	# should not branch</div><div class=''>122:  bne $2, $1, dummy	# should not branch</div><div class=''>123:  add $20, $1, $2 	# r20 = 700</div><div class=''>124:  nop</div><div class=''>125:  nop</div><div class=''>126:  bne $2, $1, dummy	# should not branch</div><div class=''>127:  bne $1, $2, dummy	# should not branch</div><div class=''>128:  add $21, $1, $2 	# r21 = 700</div><div class=''>129:  nop</div><div class=''>130:  nop</div><div class=''>131:  addi $1, $0, 350	# make sure these values are still 350</div><div class=''>132:  addi $2, $0, 350</div><div class=''>133:  nop</div><div class=''>134:  nop</div><div class=''>135:  blt $1, $2, dummy	# should not branch</div><div class=''>136:  blt $2, $1, dummy	# should not branch</div><div class=''>137:  add $22, $1, $2 	# r22 = 700</div><div class=''>138:  nop</div><div class=''>139:  nop</div><div class=''>140:  blt $2, $1, dummy	# should not branch</div><div class=''>141:  blt $1, $2, dummy	# should not branch</div><div class=''>142:  add $23, $1, $2 	# r23 = 700</div><div class=''>143:  nop</div><div class=''>144:  nop</div><div class=''>145:  blt $1, $3, dummy</div><div class=''>146:  blt $2, $4, dummy</div><div class=''>147:  bne $1, $2, wrongbranch1	# NONE OF THESE BRANCHES SHOULD BE TAKEN</div><div class=''>148:  nop</div><div class=''>149:  nop</div><div class=''>150:  addi $24, $0, 1		# r24 = 1</div><div class=''>151:  wrongbranch1: nop</div><div class=''>152:  nop</div><div class=''>153:  blt $1, $3, dummy</div><div class=''>154:  blt $2, $4, dummy</div><div class=''>155:  bne $2, $1, wrongbranch2	# SHOULD NOT BRANCH I SWEAR TO GOD</div><div class=''>156:  nop</div><div class=''>157:  nop</div><div class=''>158:  addi $25, $0, 1		# r25 = 1</div><div class=''>159:  wrongbranch2: nop</div><div class=''>160:  nop</div><div class=''>161:  bne $1, $2, dummy</div><div class=''>162:  blt $1, $2, wrongbranch3	# NOT YOU EITHER FOR</div><div class=''>163:  nop</div><div class=''>164:  nop</div><div class=''>165:  addi $26, $0, 1		# r26 = 1</div><div class=''>166:  wrongbranch3: nop</div><div class=''>167:  nop</div><div class=''>168:  bne $1, $2, dummy</div><div class=''>169:  nop</div><div class=''>170:  blt $1, $2, wrongbranch4	# DO NOT DARE</div><div class=''>171:  nop</div><div class=''>172:  nop</div><div class=''>173:  addi $27, $0, 1		# r27 = 1</div><div class=''>174:  wrongbranch4: nop</div><div class=''>175:  nop</div><div class=''>176:  addi $1, $0, 35		# set r1 and r2 to smaller values to test erroneous bypassing</div><div class=''>177:  addi $2, $0, 35</div><div class=''>178:  nop</div><div class=''>179:  nop</div><div class=''>180:  bne $1, $2, dummy</div><div class=''>181:  blt $2, $1, wrongbranch5	# (╯°□°)╯︵ ┻━┻</div><div class=''>182:  nop</div><div class=''>183:  nop</div><div class=''>184:  addi $28, $0, 1		# r28 = 1</div><div class=''>185:  wrongbranch5: nop</div><div class=''>186:  nop</div><div class=''>187:  bne $1, $2, dummy</div><div class=''>188:  nop</div><div class=''>189:  blt $2, $1, wrongbranch6	# ┻━┻ ︵╰(°□°╰)</div><div class=''>190:  nop</div><div class=''>191:  nop</div><div class=''>192:  addi $29, $0, 1		# r29 = 1</div><div class=''>193:  wrongbranch6: nop</div><div class=''>194:  nop</div><div class=''>195:  sw $1, 1($0)</div><div class=''>196:  sw $2, 2($0)</div><div class=''>197:  bne $1, $2, wrongbranch7	# ┬─┬ノ( º _ ºノ)</div><div class=''>198:  nop</div><div class=''>199:  nop</div><div class=''>200:  addi $30, $0, 1		# r30 = 1</div><div class=''>201:  wrongbranch7: nop</div><div class=''>202:  nop</div><div class=''>203:  sw $2, 2($0)</div><div class=''>204:  sw $1, 1($0)</div><div class=''>205:  bne $1, $2, wrongbranch8	# ┻━┻︵ \(°□°)/ ︵ ┻━┻</div><div class=''>206:  nop</div><div class=''>207:  nop</div><div class=''>208:  addi $31, $0, 1		# r31 = 1</div><div class=''>209:  wrongbranch8: nop</div><div class=''>210:  nop</div><div class=''>211:  sw $1, 1($0)</div><div class=''>212:  sw $2, 70($0)</div><div class=''>213:  blt $1, $2, wrongbranch9	# ┏━┓┏━┓┏━┓ ︵ /(^.^/)</div><div class=''>214:  nop</div><div class=''>215:  nop</div><div class=''>216:  addi $3, $0, 1		# r3 = 1</div><div class=''>217:  wrongbranch9: nop</div><div class=''>218:  nop</div><div class=''>219:  sw $2, 70($0)</div><div class=''>220:  sw $1, 1($0)</div><div class=''>221:  blt $1, $2, wrongbranch10	# (╯°Д°)╯︵/(.□ . \)</div><div class=''>222:  nop</div><div class=''>223:  nop</div><div class=''>224:  addi $4, $0, 1		# r4 = 1</div><div class=''>225:  wrongbranch10: nop</div><div class=''>226:  nop</div><div class=''>227:  sw $1, 1($0)</div><div class=''>228:  addi $1, $1, 0		# r1 = 35</div><div class=''>229:  nop</div><div class=''>230:  nop</div><div class=''>231:  sw $2, 1($0)</div><div class=''>232:  nop</div><div class=''>233:  addi $2, $2, 0		# r2 = 35</div><div class=''>234:  dummy: nop</div><div class=''>235:  nop</div><div class=''>236:  nop</div><div class=''>237:  </div></div><div class='content-block'><div class=''>num cycles:250</div></div><div class='content-block'><div class=''>All registers passed!</div></div></div></div><div class="section" id="section-zero_bypass">
+                <div class='header success' onclick='toggleContent(this.querySelector(".collapse-btn"))'>
+                    <button class='collapse-btn'>▽</button>
+                    <span>zero_bypass</span>
+                    
+                    <button class='copy-button success' onclick='event.stopPropagation(); copyGTKWaveCommand("zero_bypass")'>
+                        Copy GTKWave Command
+                </button>
+                
+                </div>
+            <div class='content-container '><div class='content-block'><div class=''> 0:  nop             # Values initialized using addi (positive only)</div><div class=''> 1:  nop             # Author: Oliver Rodas</div><div class=''> 2:  nop</div><div class=''> 3:  nop</div><div class=''> 4:  nop             # Bypassing Register 0</div><div class=''> 5:  addi $0, $0, 12        # r0 = 12 (doesn't write)</div><div class=''> 6:  addi $1, $0, 3        # r1 = r0 + 3 = 3</div><div class=''> 7:  add $2, $0, $0        # r2 = r0 + r0 = 0</div><div class=''> 8:  sub $3, $0, $0        # r3 = r0 - r0 = 0</div><div class=''> 9:  sw $1, 3($0)         # mem[3] = r1 = 3</div><div class=''>10:  lw $0, 3($0)         # r0 = mem[3] (doesn't write)</div><div class=''>11:  add $4, $0, $0        # r4 = r0 + r0 = 0</div><div class=''>12:  </div></div><div class='content-block'><div class=''>num cycles:18</div></div><div class='content-block'><div class=''>All registers passed!</div></div></div></div></body></html>

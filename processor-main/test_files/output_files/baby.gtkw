@@ -1,0 +1,52 @@
+[*]
+[*] GTKWave Analyzer v3.3.100 (w)1999-2019 BSI
+[*] Wed Feb 19 22:43:23 2025
+[*]
+[dumpfile] "C:\Users\pzhen\VSCodeProjects\ECE_350_Workspace\ece-350-processor\processor-main\test_files\output_files\test_files\output_files\negative_no_bypass.vcd"
+[savefile] "C:\Users\pzhen\VSCodeProjects\ECE_350_Workspace\ece-350-processor\processor-main\test_files\output_files\baby.gtkw"
+[timestart] 0
+[size] 1600 996
+[pos] -165 -165
+*-16.636045 228600 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] Wrapper_tb.
+[sst_width] 211
+[signals_width] 438
+[sst_expanded] 1
+[sst_vpaned_height] 560
+@28
+Wrapper_tb.clock
+@24
+Wrapper_tb.instAddr[31:0]
+@800200
+-insn
+@28
+Wrapper_tb.instData[31:0]
+Wrapper_tb.CPU.q_imem[31:0]
+Wrapper_tb.CPU.fd_insn_out[31:0]
+Wrapper_tb.CPU.dx_insn_out[31:0]
+Wrapper_tb.CPU.xm_insn_out[31:0]
+Wrapper_tb.CPU.mw_insn_out[31:0]
+@1000200
+-insn
+@420
+Wrapper_tb.CPU.data_readRegA[31:0]
+Wrapper_tb.CPU.data_readRegB[31:0]
+Wrapper_tb.CPU.dx_a_out[31:0]
+Wrapper_tb.CPU.dx_b_out[31:0]
+Wrapper_tb.CPU.immediate[31:0]
+@28
+Wrapper_tb.CPU.alu_op[4:0]
+@420
+Wrapper_tb.CPU.alu_r_out[31:0]
+Wrapper_tb.CPU.alu_i_out[31:0]
+Wrapper_tb.CPU.alu_out[31:0]
+Wrapper_tb.CPU.xw_out[31:0]
+Wrapper_tb.CPU.mw_xw_out[31:0]
+@28
+Wrapper_tb.CPU.ctrl_writeEnable
+@24
+Wrapper_tb.CPU.ctrl_writeReg[4:0]
+@420
+Wrapper_tb.CPU.data_writeReg[31:0]
+[pattern_trace] 1
+[pattern_trace] 0

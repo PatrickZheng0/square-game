@@ -1,0 +1,14 @@
+positive_no_bypass
+negative_no_bypass
+memory_no_bypass
+multdiv_no_bypass_fast
+multdiv_no_bypass_regular
+multdiv_no_bypass_slow
+bex_setx_no_bypass
+blt_no_bypass
+bne_no_bypass
+control_no_bypass
+exceptions_no_bypass
+j_no_bypass
+jal_no_bypass
+jr_no_bypass

@@ -1,0 +1,65 @@
+#! /c/Source/iverilog-install/bin/vvp
+:ivl_version "12.0 (devel)" "(s20150603-1539-g2693dd32b)";
+:ivl_delay_selection "TYPICAL";
+:vpi_time_precision - 10;
+:vpi_module "C:\iverilog\lib\ivl\system.vpi";
+:vpi_module "C:\iverilog\lib\ivl\vhdl_sys.vpi";
+:vpi_module "C:\iverilog\lib\ivl\vhdl_textio.vpi";
+:vpi_module "C:\iverilog\lib\ivl\v2005_math.vpi";
+:vpi_module "C:\iverilog\lib\ivl\va_math.vpi";
+S_0000018e7a3cde40 .scope module, "decoder_32_tb" "decoder_32_tb" 2 2;
+ .timescale -9 -10;
+v0000018e7a24bcc0_0 .var/i "A", 31 0;
+v0000018e7a24bd60_0 .net "Eq", 0 0, L_0000018e7a2984b0;  1 drivers
+v0000018e7a24be00_0 .net "Exp", 31 0, L_0000018e7a298af0;  1 drivers
+v0000018e7a24bea0_0 .net *"_ivl_0", 31 0, L_0000018e7a298410;  1 drivers
+L_0000018e7a299018 .functor BUFT 1, C4<0000000000000000000000000000000>, C4<0>, C4<0>, C4<0>;
+v0000018e7a24bf40_0 .net *"_ivl_3", 30 0, L_0000018e7a299018;  1 drivers
+v0000018e7a24bfe0_0 .net "en", 0 0, L_0000018e7a298370;  1 drivers
+v0000018e7a298d70_0 .var/i "i", 31 0;
+v0000018e7a298f50_0 .net "out", 31 0, L_0000018e7a298550;  1 drivers
+v0000018e7a298190_0 .net "select", 4 0, L_0000018e7a298b90;  1 drivers
+L_0000018e7a298410 .concat [ 1 31 0 0], L_0000018e7a298370, L_0000018e7a299018;
+L_0000018e7a298af0 .shift/l 32, L_0000018e7a298410, L_0000018e7a298b90;
+L_0000018e7a2984b0 .cmp/eq 32, L_0000018e7a298af0, L_0000018e7a298550;
+L_0000018e7a298370 .part v0000018e7a298d70_0, 0, 1;
+L_0000018e7a298b90 .part v0000018e7a298d70_0, 0, 5;
+S_0000018e7a3cdfd0 .scope module, "decoder_32_1" "decoder_32" 2 15, 3 1 0, S_0000018e7a3cde40;
+ .timescale -9 -10;
+    .port_info 0 /OUTPUT 32 "out";
+    .port_info 1 /INPUT 5 "select";
+    .port_info 2 /INPUT 1 "en";
+L_0000018e7a299060 .functor BUFT 1, C4<0000000000000000000000000000000>, C4<0>, C4<0>, C4<0>;
+v0000018e7a3c9b70_0 .net/2u *"_ivl_0", 30 0, L_0000018e7a299060;  1 drivers
+v0000018e7a3c99b0_0 .net *"_ivl_2", 31 0, L_0000018e7a2989b0;  1 drivers
+v0000018e7a3ca810_0 .net "en", 0 0, L_0000018e7a298370;  alias, 1 drivers
+v0000018e7a3ce160_0 .net "out", 31 0, L_0000018e7a298550;  alias, 1 drivers
+v0000018e7a3ce200_0 .net "select", 4 0, L_0000018e7a298b90;  alias, 1 drivers
+L_0000018e7a2989b0 .concat [ 1 31 0 0], L_0000018e7a298370, L_0000018e7a299060;
+L_0000018e7a298550 .shift/l 32, L_0000018e7a2989b0, L_0000018e7a298b90;
+    .scope S_0000018e7a3cde40;
+T_0 ;
+    %pushi/vec4 0, 0, 32;
+    %store/vec4 v0000018e7a298d70_0, 0, 32;
+T_0.0 ;
+    %load/vec4 v0000018e7a298d70_0;
+    %cmpi/s 32, 0, 32;
+    %jmp/0xz T_0.1, 5;
+    %vpi_func 2 19 "$random" 32 {0 0 0};
+    %store/vec4 v0000018e7a24bcc0_0, 0, 32;
+    %delay 200, 0;
+    %vpi_call 2 22 "$display", "select:%b, en:%b, => out:%b, Exp:%b, Eq:%d", v0000018e7a298190_0, v0000018e7a24bfe0_0, v0000018e7a298f50_0, v0000018e7a24be00_0, v0000018e7a24bd60_0 {0 0 0};
+    %load/vec4 v0000018e7a298d70_0;
+    %addi 1, 0, 32;
+    %store/vec4 v0000018e7a298d70_0, 0, 32;
+    %jmp T_0.0;
+T_0.1 ;
+    %vpi_call 2 24 "$finish" {0 0 0};
+    %end;
+    .thread T_0;
+# The file index is used to find the file name in the following table.
+:file_names 4;
+    "N/A";
+    "<interactive>";
+    "decoder/decoder_32_tb.v";
+    "decoder/decoder_32.v";

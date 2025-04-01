@@ -1,0 +1,45 @@
+[*]
+[*] GTKWave Analyzer v3.3.107 (w)1999-2020 BSI
+[*] Mon Dec 23 02:18:51 2024
+[*]
+[dumpfile] "/Users/vchen21/Documents/proc-toolchain/gtkwave_lab_test_files/output_files/bypass.vcd"
+[dumpfile_mtime] "Mon Dec 23 02:17:36 2024"
+[dumpfile_size] 34789
+[savefile] "/Users/vchen21/Documents/proc-toolchain/gtkwave_lab_test_files/output_files/bypass.gtkw"
+[timestart] 14000
+[size] 1512 827
+[pos] -1 -1
+*-14.460723 66800 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] Wrapper_tb.
+[sst_width] 193
+[signals_width] 333
+[sst_expanded] 1
+[sst_vpaned_height] 246
+@28
+Wrapper_tb.clock
+@24
+Wrapper_tb.CPU.address_imem[7:0]
+@28
+Wrapper_tb.CPU.ctrl_writeEnable
+@420
+Wrapper_tb.CPU.data_writeReg[7:0]
+@24
+Wrapper_tb.CPU.ctrl_writeReg[2:0]
+@28
+Wrapper_tb.CPU.xwinsn_out[14:0]
+@420
+Wrapper_tb.CPU.xwo_out[7:0]
+Wrapper_tb.CPU.alu_out[7:0]
+Wrapper_tb.CPU.alu_op_a[7:0]
+Wrapper_tb.CPU.immediate[7:0]
+@28
+Wrapper_tb.CPU.dxinsn_out[14:0]
+Wrapper_tb.CPU.WXBypass
+@24
+Wrapper_tb.CPU.xwo_out[7:0]
+Wrapper_tb.CPU.dxa_out[7:0]
+@25
+Wrapper_tb.CPU.DX_RS[3:0]
+Wrapper_tb.CPU.XW_RD[3:0]
+[pattern_trace] 1
+[pattern_trace] 0

@@ -1,0 +1,6 @@
+WriteEnable,Reset,WriteReg,WriteData,ReadRegA,ReadRegB,ExpReadDataA,ExpReadDataB
+1,0,0,1,0,0,0,0
+1,1,5,100,0,0,0,0
+1,0,2,1000,0,0,0,0
+0,0,2,200,2,0,1000,0
+1,0,0,1000,2,5,1000,0
