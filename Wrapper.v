@@ -26,8 +26,8 @@
 
 module Wrapper (
 	// Board Signals
-	input clk_50mhz, 
-	input CPU_RESETN,
+	input clk_100mHz, 
+	input reset,
 
 	// VGA Controller
 	output[3:0] VGA_R,  // Red Signal Bits
@@ -35,30 +35,59 @@ module Wrapper (
 	output[3:0] VGA_B,  // Blue Signal Bits
 	inout ps2_clk,
 	inout ps2_data,
-	output VGA_HS, 		// H Sync Signal
-	output VGA_VS, 		// Veritcal Sync Signal
+	output hSync, 		// H Sync Signal
+	output vSync, 		// Veritcal Sync Signal
 
 	// Accelerometer
 	output sclk,
 	input miso,
 	output mosi,
-	output ss
+	output ss,
+
+	// Buttons
+	input BTND,
+	input BTNL,
+	input BTNR,
+	input BTNU
+	);
+
+	// Clock Management
+	wire locked, clk_25mHz, clk_50mHz;
+	clk_wiz_0 pll_25MHz (
+		// Clock out ports
+		.clk_out50(clk_50mHz),
+		.clk_out25(clk_25mHz),
+		// Status and control signals
+		.reset(1'b0),
+		.locked(locked),
+		// Clock in ports
+		.clk_in100(clk_100mHz)
 	);
 
 
 	// VGA
 	VGAController vga_control(
-		.clk(clock),
+		.clk_25mHz(clk_25mHz),
 		.reset(reset),
-		.hSync(VGA_HS),
-		.vSync(VGA_VS),
+		.hSync(hSync),
+		.vSync(vSync),
 		.VGA_R(VGA_R),
 		.VGA_G(VGA_G),
 		.VGA_B(VGA_B),
 		.ps2_clk(ps2_clk),
-		.ps2_data(ps2_data)
+		.ps2_data(ps2_data),
+		.BTNU(BTNU),
+		.BTNR(BTNR),
+		.BTNL(BTNL),
+		.BTND(BTND),
+		.accel_x(accel_x_out),
+		.accel_y(accel_y_out)
 	);
 
+
+	// Clock
+	wire clock;
+	assign clock = clk_50mHz;
 
 	// Accelerometer
 	wire[8:0] accel_x_out, accel_y_out;
@@ -75,10 +104,6 @@ module Wrapper (
 
 
 	// CPU
-	wire clock, reset;
-	assign clock = clk_50mhz;
-	assign reset = CPU_RESETN;
-
 	wire rwe, mwe;
 	wire[4:0] rd, rs1, rs2;
 	wire[31:0] instAddr, instData, 
