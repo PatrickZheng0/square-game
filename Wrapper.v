@@ -98,8 +98,8 @@ module Wrapper (
 		.MOSI(mosi),
 		.MISO(miso),
 		.SS(ss),
-		.ACCEL_X_OUT(accel_x_out),
-		.ACCEL_Y_OUT(accel_y_out)
+		.ACCEL_X_OUT(accel_y_out), // accelerometer on FPGA is sideways
+		.ACCEL_Y_OUT(accel_x_out) // accelerometer on FPGA is sideways
 	);
 
 
@@ -127,7 +127,12 @@ module Wrapper (
 									
 		// RAM
 		.wren(mwe), .address_dmem(memAddr), 
-		.data(memDataIn), .q_dmem(memDataOut)); 
+		.data(memDataIn), .q_dmem(memDataOut),
+		
+		// Piped
+		.player_position_x_raw_in(accel_x_out),
+		.player_position_y_raw_in(accel_y_out)
+		); 
 	
 	// Instruction Memory (ROM)
 	ROM #(.MEMFILE({INSTR_FILE, ".mem"}))

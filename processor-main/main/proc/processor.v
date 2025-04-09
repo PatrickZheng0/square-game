@@ -42,8 +42,8 @@ module processor(
     data_readRegB,                   // I: Data from port B of RegFile
 
     // Wrapper Data Interfacing
-    player_position_x_in,              // I: Data From IMU
-    player_position_y_in,              // I: Data From IMU
+    player_position_x_raw_in,              // I: Data From IMU
+    player_position_y_raw_in,              // I: Data From IMU
     // player_position_out,               // O: Position data from player position register
     // box_position,                      // O: Position data of the box
 	// game_state,                        // O: Game state data to the VGA
@@ -68,8 +68,8 @@ module processor(
 	input [31:0] data_readRegA, data_readRegB;
 
     // Data Interfacing
-    input [9:0] player_position_x_in;
-    input [8:0] player_position_y_in;
+    input [9:0] player_position_x_raw_in;
+    input [9:0] player_position_y_raw_in;
 
 	/* YOUR CODE STARTS HERE */
 
@@ -250,9 +250,9 @@ module processor(
 
     // Modify x_new_output for custom instructions
     wire player_x_select, player_y_select;
-    wire [31:0] player_position_x, player_position_y;
-    assign player_position_x = {{22{player_position_x_in[9]}}, player_position_x_in[9:0]};
-    assign player_position_y = {{23{player_position_y_in[8]}}, player_position_y_in[8:0]};
+    wire [31:0] player_position_x_raw, player_position_y_raw;
+    assign player_position_x_raw = {{22{player_position_x_raw_in[9]}}, player_position_x_raw_in[9:0]};
+    assign player_position_y_raw = {{23{player_position_y_raw_in[8]}}, player_position_y_raw_in[8:0]};
     assign player_x_select = (dx_ir_out[31:27] == 5'b0 & dx_ir_out[6:0] == 7'b0100000);
     assign player_y_select = (dx_ir_out[31:27] == 5'b0 & dx_ir_out[6:0] == 7'b0100001);
     tri_state_buffer_32 x_player_x_output(x_new_output, player_position_x, player_x_select);

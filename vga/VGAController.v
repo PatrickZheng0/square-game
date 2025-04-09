@@ -85,14 +85,16 @@ module VGAController(
 	wire[BITS_PER_COLOR-1:0] colorScreen;
 
 	// Draw Box
-	reg[9:0] tl_x, tl_y;
-	wire[9:0] right_x, bottom_y;
+	reg[9:0] center_x, center_y;
+	wire[9:0] left_x, right_x, top_y, bottom_y;
 	
-	assign right_x = 10'd50 + tl_x;
-	assign bottom_y = 10'd50 + tl_y;
+	assign left_x = center_x - 10'd25;
+	assign right_x = center_x + 10'd25;
+	assign top_y = center_y - 10'd25;
+	assign bottom_y = center_y + 10'd25;
 
 	wire within_box;
-	assign within_box = (tl_x < x && x < right_x) && (tl_y < y && y < bottom_y);
+	assign within_box = (left_x < x && x < right_x) && (top_y < y && y < bottom_y);
 	assign box_colorData = 12'd15;
 
 	assign colorScreen = within_box ? 12'h0F0 : bg_colorData;
@@ -103,13 +105,13 @@ module VGAController(
 
 
 	initial begin
-		tl_x = 0;
-		tl_y = 0;
+		center_x = 0;
+		center_y = 0;
 	end
 
 	always @(posedge screenEnd) begin
-		tl_x = accel_y;
-		tl_y = accel_x;
+		center_x = accel_x;
+		center_y = accel_y;
 	end
 
 
