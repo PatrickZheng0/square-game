@@ -1,7 +1,6 @@
 .\processor.v
 .\RAM.v
 .\ROM.v
-.\Wrapper.v
 .\alu-main\alu\alu.v
 .\alu-main\alu\alu_tb.v
 .\alu-main\and\and_32.v

@@ -30,14 +30,21 @@ def is_int(n):
 def instr_to_bin(instr, line_num):
 	mnemonic = instr[0]
 	instr_type,opcode,*_ = instrs[mnemonic]
-	rd = aliases[instr[1]] if instr_type != 'JI' else None
-	rs = aliases[instr[2]] if (instr_type == 'R' or instr_type == 'I') else None
+	rd = aliases[instr[1]] if instr_type != 'JI' and mnemonic not in ['upx','upy'] else None
+	rs = aliases[instr[2]] if (instr_type == 'R' or instr_type == 'I') and mnemonic not in ['upx','upy'] else None
 	pre_target = instr[-1]
 	if instr_type == 'R':
-		sll_or_sra = mnemonic == 'sll' or mnemonic == 'sra'
-		shamt = bin(int(instr[3]))[2:].zfill(5) if sll_or_sra else '00000'
-		rt = '00000' if sll_or_sra else aliases[instr[3]]
-		return f"00000{rd}{rs}{rt}{shamt}{opcode}00\n"
+		if mnemonic == 'upx':
+			rd = bin(28)[2:].zfill(5)
+			return f'00000{rd}000000000000000{opcode}00\n'
+		elif mnemonic == 'upy':
+			rd = bin(26)[2:].zfill(5)
+			return f'00000{rd}000000000000000{opcode}00\n'
+		else:
+			sll_or_sra = mnemonic == 'sll' or mnemonic == 'sra'
+			shamt = bin(int(instr[3]))[2:].zfill(5) if sll_or_sra else '00000'
+			rt = '00000' if sll_or_sra else aliases[instr[3]]
+			return f"00000{rd}{rs}{rt}{shamt}{opcode}00\n"
 	elif instr_type == 'I':
 		bne_or_blt = mnemonic == 'bne' or mnemonic == 'blt'
 		imm = bin((labels[instr[3]]-line_num-1 if bne_or_blt else int(instr[3]))&0x1ffff)[2:].zfill(17)
@@ -66,6 +73,7 @@ def valid_operands(mnemonic, operands):
 	instr_type = instrs[mnemonic][0]
 	sll_or_sra = mnemonic == 'sll' or mnemonic == 'sra'
 	bne_or_blt = mnemonic == 'bne' or mnemonic == 'blt'
+	if mnemonic == 'upx' or mnemonic == 'upy': return True
 	if len(operands) != types_exp_operands[instr_type]:
 		return False
 	if instr_type == 'R':
@@ -142,13 +150,13 @@ aliases = {'$zero':'00000',
 			'$s4': '10100',
 			'$s5': '10101',
 			'$s6': '10110',
-			'$s7': '10111',
-			'$t8': '11000',
-			'$t9': '11001',
-			'$k0': '11010',
-			'$k1': '11011',
-			'$gp': '11100',
-			'$sp': '11101',
+			'$by': '10111',
+			'$bx': '11000',
+			'$py': '11001',
+			'$ay': '11010',
+			'$px': '11011',
+			'$ax': '11100',
+			'$gs': '11101',
 			'$fp': '11110',
 			'$ra': '11111'}
 			 
@@ -163,12 +171,15 @@ for i in range(32):
 instrs = {	'nop' : ('R',  '00000'),
 			'add' : ('R',  '00000'),
 			'sub' : ('R',  '00001'),
-			'and' : ('R',  '00010'),
+			'and' : ('R'
+			'',  '00010'),
 			'or'  : ('R',  '00011'),
 			'sll' : ('R',  '00100'),
 			'sra' : ('R',  '00101'),
 			'mul' : ('R',  '00110'),
 			'div' : ('R',  '00111'),
+			'upx' : ('R',  '01000'),
+			'upy' : ('R',  '01001'),
 			'j'   : ('JI', '00001'),
 			'bne' : ('I',  '00010'),
 			'jal' : ('JI', '00011'),
@@ -187,6 +198,8 @@ instrs_inv = {	'00000R': 'add',
 				'00101R': 'sra',
 				'00110R': 'mul',
 				'00111R': 'div',
+				'01000R': 'upx',
+				'01001R': 'upy',
 				'00001' : 'j'  ,
 				'00010' : 'bne',
 				'00011' : 'jal',
@@ -308,7 +321,7 @@ with open(input_file, 'r', encoding="utf8") as f:
 		if mnemonic == "nop" and len(split_instr) == 1:
 			assembly_lines.append(['add', '$zero', '$zero', '$zero'])
 			continue
-		operands = [operand.strip() for operand in split_instr[1].split(',')]
+		operands = [operand.strip() for operand in split_instr[1].split(',')] if len(split_instr) > 1 else []
 		# convert lw and sw into proper I-type instruction format before validation
 		if mnemonic == 'sw' or mnemonic == 'lw':
 			imm,lb,reg = operands[-1].partition('(')

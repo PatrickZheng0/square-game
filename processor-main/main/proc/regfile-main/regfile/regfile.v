@@ -2,14 +2,15 @@ module regfile (
 	clock,
 	ctrl_writeEnable, ctrl_reset, ctrl_writeReg,
 	ctrl_readRegA, ctrl_readRegB, data_writeReg,
-	data_readRegA, data_readRegB
+	data_readRegA, data_readRegB,
+	data_player_x, data_player_y
 );
 
 	input clock, ctrl_writeEnable, ctrl_reset;
 	input [4:0] ctrl_writeReg, ctrl_readRegA, ctrl_readRegB;
 	input [31:0] data_writeReg;
 
-	output [31:0] data_readRegA, data_readRegB;
+	output [31:0] data_readRegA, data_readRegB, data_player_x, data_player_y;
 
 	// add your code here
 	wire[31:0] reg_write_en;
@@ -44,5 +45,9 @@ module regfile (
 			tri_state_buffer_32 a_tri_buffer(data_readRegB, data_out[i], read_B_en[i]);
 		end
 	endgenerate
+
+	// Piping
+	assign data_player_x = data_out[27];
+	assign data_player_y = data_out[25];
 
 endmodule

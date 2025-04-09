@@ -44,7 +44,6 @@ module processor(
     // Wrapper Data Interfacing
     player_position_x_raw_in,              // I: Data From IMU
     player_position_y_raw_in,              // I: Data From IMU
-    // player_position_out,               // O: Position data from player position register
     // box_position,                      // O: Position data of the box
 	// game_state,                        // O: Game state data to the VGA
 	);
@@ -68,8 +67,8 @@ module processor(
 	input [31:0] data_readRegA, data_readRegB;
 
     // Data Interfacing
-    input [9:0] player_position_x_raw_in;
-    input [9:0] player_position_y_raw_in;
+    input [8:0] player_position_x_raw_in;
+    input [8:0] player_position_y_raw_in;
 
 	/* YOUR CODE STARTS HERE */
 
@@ -251,12 +250,12 @@ module processor(
     // Modify x_new_output for custom instructions
     wire player_x_select, player_y_select;
     wire [31:0] player_position_x_raw, player_position_y_raw;
-    assign player_position_x_raw = {{22{player_position_x_raw_in[9]}}, player_position_x_raw_in[9:0]};
-    assign player_position_y_raw = {{23{player_position_y_raw_in[8]}}, player_position_y_raw_in[8:0]};
-    assign player_x_select = (dx_ir_out[31:27] == 5'b0 & dx_ir_out[6:0] == 7'b0100000);
-    assign player_y_select = (dx_ir_out[31:27] == 5'b0 & dx_ir_out[6:0] == 7'b0100001);
-    tri_state_buffer_32 x_player_x_output(x_new_output, player_position_x, player_x_select);
-    tri_state_buffer_32 x_player_y_output(x_new_output, player_position_y, player_y_select);
+    assign player_position_x_raw = {{23{1'b0}}, player_position_x_raw_in[8:0]};
+    assign player_position_y_raw = {{23{1'b0}}, player_position_y_raw_in[8:0]};
+    assign player_x_select = (dx_ir_out[31:27] == 5'b0 & dx_ir_out[6:2] == 5'b01000);
+    assign player_y_select = (dx_ir_out[31:27] == 5'b0 & dx_ir_out[6:2] == 5'b01001);
+    tri_state_buffer_32 x_player_x_output(x_new_output, player_position_x_raw, player_x_select);
+    tri_state_buffer_32 x_player_y_output(x_new_output, player_position_y_raw, player_y_select);
 
     // ====Execute Bypassing==== //
     wire M_update_RD, W_update_RD;

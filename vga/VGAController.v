@@ -13,8 +13,8 @@ module VGAController(
 	input BTNL,
 	input BTNR,
 	input BTND,
-	input[8:0] accel_x,
-	input[8:0] accel_y
+	input[31:0] accel_x,
+	input[31:0] accel_y
 	);
 
 	// Lab Memory Files Location
@@ -110,8 +110,8 @@ module VGAController(
 	end
 
 	always @(posedge screenEnd) begin
-		center_x = accel_x;
-		center_y = accel_y;
+		center_x = accel_x[9:0];
+		center_y = accel_y[8:0];
 	end
 
 
