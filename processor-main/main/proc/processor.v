@@ -247,7 +247,7 @@ module processor(
     tri_state_buffer_32 x_mult_output(x_new_output, 32'd4, mult_en2 & pulse_mult_div_exception);
     tri_state_buffer_32 x_div_output(x_new_output, 32'd5, div_en2 & pulse_mult_div_exception);
 
-    // Modify x_new_output for custom instructions
+    // Modify x_new_output for updating player location
     wire player_x_select, player_y_select;
     wire [31:0] player_position_x_raw, player_position_y_raw;
     assign player_position_x_raw = {{23{1'b0}}, player_position_x_raw_in[8:0]};
@@ -256,6 +256,18 @@ module processor(
     assign player_y_select = (dx_ir_out[31:27] == 5'b0 & dx_ir_out[6:2] == 5'b01001);
     tri_state_buffer_32 x_player_x_output(x_new_output, player_position_x_raw, player_x_select);
     tri_state_buffer_32 x_player_y_output(x_new_output, player_position_y_raw, player_y_select);
+
+    // Modify x_new_output for updating random number
+    // wire rand_number_select;
+    // wire [31:0] rand_number;
+    // genvar i;
+    // generate
+    //     for (i = 0; i < 32; i = i + 1) begin: loop1
+    //         linear_shift linear_shift_register(.f(rand_number[i]), .clk(clock), .reset(reset));
+    //     end
+    // endgenerate
+    // assign rand_number_select = (dx_ir_out[31:27] == 5'b0 & dx_ir_out[6:2] == 5'b01010);
+    // tri_state_buffer_32 x_rand_output(x_new_output, rand_number, rand_number_select);
 
     // ====Execute Bypassing==== //
     wire M_update_RD, W_update_RD;

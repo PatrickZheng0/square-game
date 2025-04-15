@@ -31,7 +31,7 @@ def instr_to_bin(instr, line_num):
 	mnemonic = instr[0]
 	instr_type,opcode,*_ = instrs[mnemonic]
 	rd = aliases[instr[1]] if instr_type != 'JI' and mnemonic not in ['upx','upy'] else None
-	rs = aliases[instr[2]] if (instr_type == 'R' or instr_type == 'I') and mnemonic not in ['upx','upy'] else None
+	rs = aliases[instr[2]] if (instr_type == 'R' or instr_type == 'I') and mnemonic not in ['upx','upy','rand'] else None
 	pre_target = instr[-1]
 	if instr_type == 'R':
 		if mnemonic == 'upx':
@@ -39,6 +39,8 @@ def instr_to_bin(instr, line_num):
 			return f'00000{rd}000000000000000{opcode}00\n'
 		elif mnemonic == 'upy':
 			rd = bin(26)[2:].zfill(5)
+			return f'00000{rd}000000000000000{opcode}00\n'
+		elif mnemonic == 'rand':
 			return f'00000{rd}000000000000000{opcode}00\n'
 		else:
 			sll_or_sra = mnemonic == 'sll' or mnemonic == 'sra'
@@ -105,7 +107,7 @@ instr_file = args.instr_file
 invalid_argv_exp = ''
 
 if not output_file:
-	output_file = input_file[:input_file.rfind('.')] + '.mem'
+	output_file = input_file[:input_file.rfind('.')] + 'P'
 if not output_file.endswith(".mem"):
 	invalid_argv_exp += "assemble.py: error: output file must end with .mem\n"
 	invalid_argv = True
@@ -180,6 +182,7 @@ instrs = {	'nop' : ('R',  '00000'),
 			'div' : ('R',  '00111'),
 			'upx' : ('R',  '01000'),
 			'upy' : ('R',  '01001'),
+			'rand': ('R',  '01010'),
 			'j'   : ('JI', '00001'),
 			'bne' : ('I',  '00010'),
 			'jal' : ('JI', '00011'),
@@ -200,6 +203,7 @@ instrs_inv = {	'00000R': 'add',
 				'00111R': 'div',
 				'01000R': 'upx',
 				'01001R': 'upy',
+				'01010R': 'rand',
 				'00001' : 'j'  ,
 				'00010' : 'bne',
 				'00011' : 'jal',

@@ -1,6 +1,7 @@
 `timescale 1 ns/ 100 ps
 module VGAController(     
 	input clk_25mHz, 	// 25 MHz PLL Clock
+	input clk_100mHz,
 	input reset, 		// Reset Signal
 	output hSync, 		// H Sync Signal
 	output vSync, 		// Veritcal Sync Signal
@@ -18,7 +19,7 @@ module VGAController(
 	);
 
 	// Lab Memory Files Location
-	localparam FILES_PATH = "C:/Users/pzhen/VSCodeProjects/ECE_350_Workspace/square-game/vga/";
+	localparam FILES_PATH = "C:/Users/mathe/Documents/Duke/ECE350/Project/square-game/vga/";
 
 	// VGA Timing Generation for a Standard VGA Screen
 	localparam 
@@ -60,7 +61,7 @@ module VGAController(
 		.ADDRESS_WIDTH(PIXEL_ADDRESS_WIDTH),     // Set address with according to the pixel count
 		.MEMFILE({FILES_PATH, "image.mem"})) // Memory initialization
 	ImageData(
-		.clk(clk), 						 		// Falling edge of the 100 MHz clk
+		.clk(clk_100mHz), 						 		// Falling edge of the 100 MHz clk
 		.addr(imgAddress),					 // Image data address
 		.dataOut(colorAddr),				 // Color palette address
 		.wEn(1'b0)); 						 // We're always reading
@@ -75,7 +76,7 @@ module VGAController(
 		.ADDRESS_WIDTH(PALETTE_ADDRESS_WIDTH),     // Set address width according to the color count
 		.MEMFILE({FILES_PATH, "colors.mem"}))  	// Memory initialization
 	ColorPalette(
-		.clk(clk), 							   	   // Rising edge of the 100 MHz clk
+		.clk(clk_100mHz), 							   	   // Rising edge of the 100 MHz clk
 		.addr(colorAddr),					       // Address from the ImageData RAM
 		.dataOut(bg_colorData),				       // Color at current pixel
 		.wEn(1'b0)); 						       // We're always reading
@@ -103,7 +104,6 @@ module VGAController(
 	// Quickly assign the output colors to their channels using concatenation
 	assign {VGA_R, VGA_G, VGA_B} = colorOut;
 
-
 	initial begin
 		center_x = 0;
 		center_y = 0;
@@ -119,7 +119,7 @@ module VGAController(
 	wire read_data;
 	wire[7:0] rx_data;
 	reg[7:0] latched_rx_data;
-	Ps2Interface controller(.ps2_clk(ps2_clk), .ps2_data(ps2_data), .clk(clk), .rst(reset), .rx_data(rx_data), .read_data(read_data));
+	Ps2Interface controller(.ps2_clk(ps2_clk), .ps2_data(ps2_data), .clk(clk_100mHz), .rst(reset), .rx_data(rx_data), .read_data(read_data));
 	always @(posedge read_data) begin
 		latched_rx_data = rx_data;
 	end
