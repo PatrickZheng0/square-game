@@ -26,7 +26,7 @@
 
 module Wrapper (
 	// Board Signals
-	input clk_100mHz, 
+	input clk_100mHzin, 
 	input reset,
 
 	// VGA Controller
@@ -57,11 +57,12 @@ module Wrapper (
 		// Clock out ports
 		.clk_out50(clk_50mHz),
 		.clk_out25(clk_25mHz),
+		.clk_out100(clk_100mHz),
 		// Status and control signals
 		.reset(1'b0),
 		.locked(locked),
 		// Clock in ports
-		.clk_in100(clk_100mHz)
+		.clk_in100(clk_100mHzin)
 	);
 
 
