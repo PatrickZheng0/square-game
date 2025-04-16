@@ -76,6 +76,8 @@ def valid_operands(mnemonic, operands):
 	sll_or_sra = mnemonic == 'sll' or mnemonic == 'sra'
 	bne_or_blt = mnemonic == 'bne' or mnemonic == 'blt'
 	if mnemonic == 'upx' or mnemonic == 'upy': return True
+	if mnemonic == 'rand':
+		return len(operands) == 1
 	if len(operands) != types_exp_operands[instr_type]:
 		return False
 	if instr_type == 'R':

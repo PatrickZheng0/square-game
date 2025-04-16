@@ -68,7 +68,7 @@ module VGAController(
 
 	// Color Palette to Map Color Address to 12-Bit Color
 	wire[BITS_PER_COLOR-1:0] bg_colorData; // 12-bit color data at current pixel
-	wire[BITS_PER_COLOR-1:0] box_colorData; // 12-bit color data at current pixel
+	wire[BITS_PER_COLOR-1:0] player_box_colorData; // 12-bit color data at current pixel
 
 	RAM #(
 		.DEPTH(PALETTE_COLOR_COUNT), 		       // Set depth to contain every color		
@@ -83,37 +83,60 @@ module VGAController(
 
 	// Assign to output color from register if active
 	wire[BITS_PER_COLOR-1:0] colorOut; 			  // Output color 
-	wire[BITS_PER_COLOR-1:0] colorScreen;
+	wire[BITS_PER_COLOR-1:0] colorScreen_final, colorScreen_inter;
 
-	// Draw Box
-	reg[9:0] center_x, center_y;
-	wire[9:0] left_x, right_x, top_y, bottom_y;
-	
-	assign left_x = center_x - 10'd25;
-	assign right_x = center_x + 10'd25;
-	assign top_y = center_y - 10'd25;
-	assign bottom_y = center_y + 10'd25;
-
-	wire within_box;
-	assign within_box = (left_x < x && x < right_x) && (top_y < y && y < bottom_y);
-	assign box_colorData = 12'd15;
-
-	assign colorScreen = within_box ? 12'h0F0 : bg_colorData;
-	assign colorOut = active ? colorScreen : 12'd0; // When not active, output black
-
-	// Quickly assign the output colors to their channels using concatenation
-	assign {VGA_R, VGA_G, VGA_B} = colorOut;
+	// Draw Player Box
+	reg[9:0] player_center_x, player_center_y;
+	wire[9:0] player_left_x, player_right_x, player_top_y, player_bottom_y;
 
 	initial begin
-		center_x = 0;
-		center_y = 0;
+		player_center_x = 0;
+		player_center_y = 0;
 	end
 
 	always @(posedge screenEnd) begin
-		center_x = accel_x[9:0];
-		center_y = accel_y[8:0];
+		player_center_x = accel_x[9:0];
+		player_center_y = accel_y[8:0];
+	end
+	
+	assign player_left_x = player_center_x - 10'd25;
+	assign player_right_x = player_center_x + 10'd25;
+	assign player_top_y = player_center_y - 10'd25;
+	assign player_bottom_y = player_center_y + 10'd25;
+
+	wire within_player_box;
+	assign within_player_box = (player_left_x < x && x < player_right_x) && (player_top_y < y && y < player_bottom_y);
+	assign player_box_colorData = 12'h0F0;
+
+	// Draw Target Box
+	reg[9:0] target_center_x, target_center_y;
+	wire[9:0] target_left_x, target_right_x, target_top_y, target_bottom_y;
+
+	initial begin
+		target_center_x = 0;
+		target_center_y = 0;
 	end
 
+	always @(posedge screenEnd) begin
+		target_center_x = 9'd320;
+		target_center_y = 9'd240;
+	end
+	
+	assign target_left_x = target_center_x - 10'd30;
+	assign target_right_x = target_center_x + 10'd30;
+	assign target_top_y = target_center_y - 10'd30;
+	assign target_bottom_y = target_center_y + 10'd30;
+
+	wire within_target_box;
+	assign within_target_box = (target_left_x < x && x < target_right_x) && (target_top_y < y && y < target_bottom_y);
+	assign target_box_colorData = 12'h00F;
+
+	assign colorScreen_inter = within_target_box ? target_box_colorData : bg_colorData;
+	assign colorScreen_final = within_player_box ? player_box_colorData : colorScreen_inter;
+	assign colorOut = active ? colorScreen_final : 12'd0; // When not active, output black
+
+	// Quickly assign the output colors to their channels using concatenation
+	assign {VGA_R, VGA_G, VGA_B} = colorOut;
 
 	// Get PS2 Controller
 	wire read_data;
