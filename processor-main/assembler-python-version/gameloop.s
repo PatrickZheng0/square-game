@@ -11,7 +11,7 @@ addi $t4, $zero, 12416
 # and $t7, $t7, $t8
 # add $t7, $t7, $t8
 addi $t7, $zero, 12416
-sll $t7, $t7, 4
+sll $t7, $t7, 2
 
 addi $bx, $zero, 320
 addi $by, $zero, 240
@@ -60,7 +60,7 @@ _reset_direction_counter:
     # and $t7, $t7, $t8
     # add $t7, $t7, $t8
     addi $t7, $zero, 12416
-    sll $t7, $t7, 4
+    sll $t7, $t7, 2
 
     j _after_box_dir
 
@@ -114,31 +114,31 @@ _reset_movement_counter:
     j _update_player_pos
 
 _increase_box_pos_x:
-    addi $t5, $zero, -440
+    addi $t5, $zero, -540
     sub $t6, $zero, $bx # negate bx for blt to work
-    blt $t6, $t5, _reset_movement_counter # if box too close to edge of screen don't move it more
+    blt $t6, $t5, _decrease_box_pos_x # if box too close to edge of screen don't move it more
 
     addi $bx, $bx, 1
     j _reset_movement_counter
 
 _decrease_box_pos_x:
-    addi $t5, $zero, 200
-    blt $bx, $t5, _reset_movement_counter # if box too close to edge of screen don't move it more
+    addi $t5, $zero, 100
+    blt $bx, $t5, _increase_box_pos_x # if box too close to edge of screen don't move it more
 
     addi $bx, $bx, -1
     j _reset_movement_counter
 
 _increase_box_pos_y:
-    addi $t5, $zero, -280
+    addi $t5, $zero, -380
     sub $t6, $zero, $by # negate by for blt to work
-    blt $t6, $t5, _reset_movement_counter # if box too close to edge of screen don't move it more
+    blt $t6, $t5, _decrease_box_pos_y # if box too close to edge of screen don't move it more
 
     addi $by, $by, 1
     j _reset_movement_counter
 
 _decrease_box_pos_y:
-    addi $t5, $zero, 200
-    blt $by, $t5, _reset_movement_counter # if box too close to edge of screen don't move it more
+    addi $t5, $zero, 100
+    blt $by, $t5, _increase_box_pos_y # if box too close to edge of screen don't move it more
 
     addi $by, $by, -1
     j _reset_movement_counter
