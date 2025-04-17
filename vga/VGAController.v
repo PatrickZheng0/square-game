@@ -21,7 +21,7 @@ module VGAController(
 	);
 
 	// Lab Memory Files Location
-	localparam FILES_PATH = "C:/Users/mathe/Documents/Duke/ECE350/Project/square-game/vga/";
+	localparam FILES_PATH = "C:/Users/pzhen/VSCodeProjects/ECE_350_Workspace/square-game/vga/";
 
 	// VGA Timing Generation for a Standard VGA Screen
 	localparam 
