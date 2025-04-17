@@ -15,7 +15,9 @@ module VGAController(
 	input BTNR,
 	input BTND,
 	input[31:0] accel_x,
-	input[31:0] accel_y
+	input[31:0] accel_y,
+	input[31:0] target_x,
+	input[31:0] target_y
 	);
 
 	// Lab Memory Files Location
@@ -68,7 +70,7 @@ module VGAController(
 
 	// Color Palette to Map Color Address to 12-Bit Color
 	wire[BITS_PER_COLOR-1:0] bg_colorData; // 12-bit color data at current pixel
-	wire[BITS_PER_COLOR-1:0] player_box_colorData; // 12-bit color data at current pixel
+	wire[BITS_PER_COLOR-1:0] player_box_colorData, target_box_colorData; // 12-bit color data at current pixel
 
 	RAM #(
 		.DEPTH(PALETTE_COLOR_COUNT), 		       // Set depth to contain every color		
@@ -118,8 +120,8 @@ module VGAController(
 	end
 
 	always @(posedge screenEnd) begin
-		target_center_x = 9'd320;
-		target_center_y = 9'd240;
+		target_center_x = target_x[8:0];
+		target_center_y = target_y[8:0];
 	end
 	
 	assign target_left_x = target_center_x - 10'd30;

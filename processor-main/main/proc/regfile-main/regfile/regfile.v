@@ -3,14 +3,15 @@ module regfile (
 	ctrl_writeEnable, ctrl_reset, ctrl_writeReg,
 	ctrl_readRegA, ctrl_readRegB, data_writeReg,
 	data_readRegA, data_readRegB,
-	data_player_x, data_player_y
+	data_player_x, data_player_y,
+	data_target_x, data_target_y
 );
 
 	input clock, ctrl_writeEnable, ctrl_reset;
 	input [4:0] ctrl_writeReg, ctrl_readRegA, ctrl_readRegB;
 	input [31:0] data_writeReg;
 
-	output [31:0] data_readRegA, data_readRegB, data_player_x, data_player_y;
+	output [31:0] data_readRegA, data_readRegB, data_player_x, data_player_y, data_target_x, data_target_y;
 
 	// add your code here
 	wire[31:0] reg_write_en;
@@ -49,5 +50,6 @@ module regfile (
 	// Piping
 	assign data_player_x = data_out[27];
 	assign data_player_y = data_out[25];
-
+	assign data_target_x = data_out[24];
+ 	assign data_target_y = data_out[23];
 endmodule

@@ -348,7 +348,7 @@ module processor(
     // Note pulse_mult_div_exception is on for a whole cycle, but only want to use it until next falling edge to not mess up following instruction
     wire[31:0] x_instruction, x_output;
     assign x_instruction = (ovf_select | jal_select | setx_select | (pulse_mult_div_exception & clock)) ? x_new_instruction : dx_ir_out;
-    assign x_output = (ovf_select | jal_select | setx_select | player_x_select | player_y_select | (pulse_mult_div_exception & clock)) ? x_new_output : final_math_out;
+    assign x_output = (ovf_select | jal_select | setx_select | player_x_select | player_y_select | rand_number_select | (pulse_mult_div_exception & clock)) ? x_new_output : final_math_out;
 
     // Latch execute output result
     wire[31:0] xm_O_out;

@@ -3,7 +3,7 @@ module linear_shift (x_bus, clk, reset);
     output [31:0] x_bus;
 
     wire f;
-    xor f_out(f, x_bus[31], x_bus[0]);
+    xor f_out(f, ~x_bus[31], x_bus[0]);
 
     dffe_ref ff_31(x_bus[31], f, clk, 1'b1, reset);
     genvar i;
