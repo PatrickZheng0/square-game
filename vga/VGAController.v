@@ -90,46 +90,54 @@ module VGAController(
 	wire[BITS_PER_COLOR-1:0] colorScreen_final, colorScreen_inter;
 
 	// Draw Player Box
-	reg[9:0] player_center_x, player_center_y;
-	wire[9:0] player_left_x, player_right_x, player_top_y, player_bottom_y;
-
+	reg[9:0] player_center_x;
+	reg[8:0] player_center_y;
+	reg[9:0] player_left_x, player_right_x; 
+	reg[8:0] player_top_y, player_bottom_y;
 	initial begin
-		player_center_x = 0;
-		player_center_y = 0;
+		player_left_x <= 10'd0;
+		player_right_x <= 10'd0;
+		player_top_y <= 9'd0;
+		player_bottom_y <= 9'd0;
 	end
 
-	always @(posedge screenEnd) begin
-		player_center_x = accel_x[9:0];
-		player_center_y = accel_y[8:0];
+	always @(negedge screenEnd) begin
+		player_center_x <= accel_x[9:0];
+		player_center_y <= accel_y[8:0];
 	end
 	
-	assign player_left_x = player_center_x - 10'd25;
-	assign player_right_x = player_center_x + 10'd25;
-	assign player_top_y = player_center_y - 10'd25;
-	assign player_bottom_y = player_center_y + 10'd25;
+	always @(posedge screenEnd) begin
+		player_left_x <= player_center_x - 10'd30;
+		player_right_x <= player_center_x + 10'd30;
+		player_top_y <= player_center_y - 9'd30;
+		player_bottom_y <= player_center_y + 9'd30;
+	end
 
 	wire within_player_box;
 	assign within_player_box = (player_left_x < x && x < player_right_x) && (player_top_y < y && y < player_bottom_y);
 	assign player_box_colorData = 12'h0F0;
 
 	// Draw Target Box
-	reg[9:0] target_center_x, target_center_y;
-	wire[9:0] target_left_x, target_right_x, target_top_y, target_bottom_y;
-
+	wire[9:0] target_center_x;
+	wire[8:0] target_center_y;
+	reg[9:0] target_left_x, target_right_x; 
+	reg[8:0] target_center_y, target_top_y, target_bottom_y;
 	initial begin
-		target_center_x = 0;
-		target_center_y = 0;
+		target_left_x <= 10'd0;
+		target_right_x <= 10'd0;
+		target_top_y <= 9'd0;
+		target_bottom_y <= 9'd0;
 	end
+
+	assign target_center_x = target_x[9:0];
+	assign target_center_y = target_y[8:0];
 
 	always @(posedge screenEnd) begin
-		target_center_x = target_x[8:0];
-		target_center_y = target_y[8:0];
+		target_left_x <= target_center_x - 10'd30;
+		target_right_x <= target_center_x + 10'd30;
+		target_top_y <= target_center_y - 9'd30;
+		target_bottom_y <= target_center_y + 9'd30;
 	end
-	
-	assign target_left_x = target_center_x - 10'd30;
-	assign target_right_x = target_center_x + 10'd30;
-	assign target_top_y = target_center_y - 10'd30;
-	assign target_bottom_y = target_center_y + 10'd30;
 
 	wire within_target_box;
 	assign within_target_box = (target_left_x < x && x < target_right_x) && (target_top_y < y && y < target_bottom_y);
