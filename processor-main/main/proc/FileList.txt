@@ -36,6 +36,7 @@
 .\alu-main\sra\sra_4.v
 .\alu-main\sra\sra_8.v
 .\alu-main\sra\sra_tb.v
+.\linear-shift-register\linear_shift.v
 .\multdiv-main\add_sub\add_33.v
 .\multdiv-main\add_sub\add_sub_tb.v
 .\multdiv-main\add_sub\sub_33.v
@@ -57,6 +58,7 @@
 .\regfile-main\decoder\decoder_32.v
 .\regfile-main\decoder\decoder_32_tb.v
 .\regfile-main\dff\dffe_ref.v
+.\regfile-main\dff\dffe_ref_1.v
 .\regfile-main\dff\dff_32.v
 .\regfile-main\dff\dff_32_tb.v
 .\regfile-main\regfile\regfile.v

@@ -1,4 +1,4 @@
-num cycles:200
+num cycles:2000
 r1=1
 r2=2
 r3=3

@@ -1,15 +1,16 @@
-module linear_shift (x_bus, clk, reset);
+module linear_shift (rand_out, clk, reset);
     input clk, reset;
-    output [31:0] x_bus;
+    output [31:0] rand_out;
 
-    wire f;
-    xor f_out(f, ~x_bus[31], x_bus[0]);
+    reg [31:0] rand;
 
-    dffe_ref ff_31(x_bus[31], f, clk, 1'b1, reset);
-    genvar i;
-    generate
-        for (i = 30; i >= 0; i = i - 1) begin: loop1
-            dffe_ref ff(x_bus[i], x_bus[i+1], clk, 1'b1, reset);
-        end
-    endgenerate
+    assign rand_out = rand;
+
+    initial begin
+		rand = 1;
+	end
+
+    always @(posedge clk) begin
+        rand = {{rand[31]^rand[30]^rand[10]^rand[0]},rand[31:1]};
+    end
 endmodule

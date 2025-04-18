@@ -1,21 +1,22 @@
 [*]
 [*] GTKWave Analyzer v3.3.100 (w)1999-2019 BSI
-[*] Wed Apr 09 21:48:58 2025
+[*] Thu Apr 17 23:49:55 2025
 [*]
-[dumpfile] "C:\Users\pzhen\VSCodeProjects\ECE_350_Workspace\square-game\processor-main\test_files\output_files\test_files\output_files\gameloop.vcd"
-[savefile] "C:\Users\pzhen\VSCodeProjects\ECE_350_Workspace\square-game\processor-main\test_files\output_files\project.gtkw"
+[dumpfile] "C:\Users\mathe\Documents\Duke\ECE350\Project\square-game\processor-main\test_files\output_files\test_files\output_files\gameloop.vcd"
+[savefile] "C:\Users\mathe\Documents\Duke\ECE350\Project\square-game\processor-main\test_files\output_files\project.gtkw"
 [timestart] 0
-[size] 1600 996
-[pos] -113 -113
-*-19.893906 1456000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[size] 1550 805
+[pos] -90 -156
+*-19.893906 238000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] Wrapper_tb.
 [treeopen] Wrapper_tb.RegisterFile.
+[treeopen] Wrapper_tb.RegisterFile.loop1[11].
 [treeopen] Wrapper_tb.RegisterFile.loop1[25].
 [treeopen] Wrapper_tb.RegisterFile.loop1[27].
 [sst_width] 211
 [signals_width] 491
 [sst_expanded] 1
-[sst_vpaned_height] 623
+[sst_vpaned_height] 480
 @c00200
 -general
 @28
@@ -33,7 +34,7 @@ Wrapper_tb.CPU.D_use_RS
 Wrapper_tb.CPU.D_use_RD
 @1401200
 -general
-@800200
+@c00200
 -insn
 @c00028
 Wrapper_tb.instData[31:0]
@@ -205,9 +206,8 @@ Wrapper_tb.CPU.jump_pc[31:0]
 Wrapper_tb.CPU.final_pc[31:0]
 @1401200
 -pc
-@1000200
 -insn
-@800200
+@c00200
 -execute
 @420
 Wrapper_tb.CPU.immediate[31:0]
@@ -234,9 +234,9 @@ Wrapper_tb.CPU.mult_div_result_rdy
 Wrapper_tb.CPU.alu_math_out[31:0]
 Wrapper_tb.CPU.mult_div_out[31:0]
 Wrapper_tb.CPU.final_math_out[31:0]
-@1000200
+@1401200
 -execute
-@800200
+@c00200
 -writeback
 @28
 Wrapper_tb.CPU.ctrl_writeEnable
@@ -244,7 +244,7 @@ Wrapper_tb.CPU.ctrl_writeEnable
 Wrapper_tb.CPU.ctrl_writeReg[4:0]
 @420
 Wrapper_tb.CPU.data_writeReg[31:0]
-@1000200
+@1401200
 -writeback
 @c00200
 -register inputs
@@ -334,13 +334,10 @@ Wrapper_tb.CPU.q_dmem[31:0]
 Wrapper_tb.CPU.mw_D_out[31:0]
 @1401200
 -lw_sw
-@421
-Wrapper_tb.RegisterFile.data_player_x[31:0]
 @420
+Wrapper_tb.RegisterFile.data_player_x[31:0]
 Wrapper_tb.RegisterFile.data_player_y[31:0]
-Wrapper_tb.RegisterFile.loop1[25].a_dff_32.d[31:0]
-Wrapper_tb.RegisterFile.loop1[25].a_dff_32.q[31:0]
-Wrapper_tb.RegisterFile.loop1[27].a_dff_32.d[31:0]
-Wrapper_tb.RegisterFile.loop1[27].a_dff_32.q[31:0]
+@421
+Wrapper_tb.RegisterFile.loop1[11].a_dff_32.q[31:0]
 [pattern_trace] 1
 [pattern_trace] 0

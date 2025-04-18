@@ -1,7 +1,7 @@
 main:
 # set movement counter value
 addi $t4, $zero, 12416
-# addi $t4, $zero, 2
+#addi $t4, $zero, 2
 
 # initialize random direction counter value
 # rand $t7
@@ -12,6 +12,7 @@ addi $t4, $zero, 12416
 # add $t7, $t7, $t8
 addi $t7, $zero, 12416
 sll $t7, $t7, 2
+#addi $t7, $zero, 4
 
 addi $bx, $zero, 320
 addi $by, $zero, 240
@@ -61,6 +62,7 @@ _reset_direction_counter:
     # add $t7, $t7, $t8
     addi $t7, $zero, 12416
     sll $t7, $t7, 2
+    # addi $t7, $zero, 4
 
     j _after_box_dir
 
@@ -102,14 +104,14 @@ _update_box_pos:
     addi $t5, $zero, 2
     blt $bd, $t5, _decrease_box_pos_x
     addi $t5, $zero, 3
-    blt $bd, $t5, _increase_box_pos_y
-    addi $t5, $zero, 4
     blt $bd, $t5, _decrease_box_pos_y
+    addi $t5, $zero, 4
+    blt $bd, $t5, _increase_box_pos_y
 
 _reset_movement_counter:
     # reset counter value
     addi $t4, $zero, 12416
-    #addi $t4, $zero, 2
+    # addi $t4, $zero, 2
 
     j _update_player_pos
 

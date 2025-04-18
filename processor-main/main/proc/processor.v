@@ -69,6 +69,9 @@ module processor(
     // Data Interfacing
     input [8:0] player_position_x_raw_in;
     input [8:0] player_position_y_raw_in;
+    // wire [8:0] player_position_x_raw_in, player_position_y_raw_in;
+    // assign player_position_x_raw_in = 9'd50;
+    // assign player_position_y_raw_in = 9'd150;
 
 	/* YOUR CODE STARTS HERE */
 
@@ -260,7 +263,7 @@ module processor(
     //Modify x_new_output for updating random number
     wire rand_number_select;
     wire [31:0] rand_number;
-    linear_shift random_generate(.x_bus(rand_number), .clk(clock), .reset(reset));
+    linear_shift random_generate(.rand_out(rand_number), .clk(clock), .reset(reset));
     assign rand_number_select = (dx_ir_out[31:27] == 5'b0 & dx_ir_out[6:2] == 5'b01010);
     tri_state_buffer_32 x_rand_output(x_new_output, rand_number, rand_number_select);
 

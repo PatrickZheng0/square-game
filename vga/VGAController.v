@@ -21,7 +21,8 @@ module VGAController(
 	);
 
 	// Lab Memory Files Location
-	localparam FILES_PATH = "C:/Users/pzhen/VSCodeProjects/ECE_350_Workspace/square-game/vga/";
+	//localparam FILES_PATH = "C:/Users/pzhen/VSCodeProjects/ECE_350_Workspace/square-game/vga/";
+	localparam FILES_PATH = "C:/Users/mathe/Documents/Duke/ECE350/Project/square-game/vga/";
 
 	// VGA Timing Generation for a Standard VGA Screen
 	localparam 
@@ -57,31 +58,32 @@ module VGAController(
 	wire[PALETTE_ADDRESS_WIDTH-1:0] colorAddr; 	 // Color address for the color palette
 	assign imgAddress = x + 640*y;				 // Address calculated coordinate
 
-	RAM #(		
-		.DEPTH(PIXEL_COUNT), 				     // Set RAM depth to contain every pixel
-		.DATA_WIDTH(PALETTE_ADDRESS_WIDTH),      // Set data width according to the color palette
-		.ADDRESS_WIDTH(PIXEL_ADDRESS_WIDTH),     // Set address with according to the pixel count
-		.MEMFILE({FILES_PATH, "image.mem"})) // Memory initialization
-	ImageData(
-		.clk(clk_100mHz), 						 		// Falling edge of the 100 MHz clk
-		.addr(imgAddress),					 // Image data address
-		.dataOut(colorAddr),				 // Color palette address
-		.wEn(1'b0)); 						 // We're always reading
+	// RAM #(		
+	// 	.DEPTH(PIXEL_COUNT), 				     // Set RAM depth to contain every pixel
+	// 	.DATA_WIDTH(PALETTE_ADDRESS_WIDTH),      // Set data width according to the color palette
+	// 	.ADDRESS_WIDTH(PIXEL_ADDRESS_WIDTH),     // Set address with according to the pixel count
+	// 	.MEMFILE({FILES_PATH, "image.mem"})) // Memory initialization
+	// ImageData(
+	// 	.clk(clk_100mHz), 						 		// Falling edge of the 100 MHz clk
+	// 	.addr(imgAddress),					 // Image data address
+	// 	.dataOut(colorAddr),				 // Color palette address
+	// 	.wEn(1'b0)); 						 // We're always reading
 
 	// Color Palette to Map Color Address to 12-Bit Color
 	wire[BITS_PER_COLOR-1:0] bg_colorData; // 12-bit color data at current pixel
+	assign bg_colorData = 12'h000;
 	wire[BITS_PER_COLOR-1:0] player_box_colorData, target_box_colorData; // 12-bit color data at current pixel
 
-	RAM #(
-		.DEPTH(PALETTE_COLOR_COUNT), 		       // Set depth to contain every color		
-		.DATA_WIDTH(BITS_PER_COLOR), 		       // Set data width according to the bits per color
-		.ADDRESS_WIDTH(PALETTE_ADDRESS_WIDTH),     // Set address width according to the color count
-		.MEMFILE({FILES_PATH, "colors.mem"}))  	// Memory initialization
-	ColorPalette(
-		.clk(clk_100mHz), 							   	   // Rising edge of the 100 MHz clk
-		.addr(colorAddr),					       // Address from the ImageData RAM
-		.dataOut(bg_colorData),				       // Color at current pixel
-		.wEn(1'b0)); 						       // We're always reading
+	// RAM #(
+	// 	.DEPTH(PALETTE_COLOR_COUNT), 		       // Set depth to contain every color		
+	// 	.DATA_WIDTH(BITS_PER_COLOR), 		       // Set data width according to the bits per color
+	// 	.ADDRESS_WIDTH(PALETTE_ADDRESS_WIDTH),     // Set address width according to the color count
+	// 	.MEMFILE({FILES_PATH, "colors.mem"}))  	// Memory initialization
+	// ColorPalette(
+	// 	.clk(clk_100mHz), 							   	   // Rising edge of the 100 MHz clk
+	// 	.addr(colorAddr),					       // Address from the ImageData RAM
+	// 	.dataOut(bg_colorData),				       // Color at current pixel
+	// 	.wEn(1'b0)); 						       // We're always reading
 
 	// Assign to output color from register if active
 	wire[BITS_PER_COLOR-1:0] colorOut; 			  // Output color 
