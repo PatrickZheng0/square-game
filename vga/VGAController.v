@@ -107,10 +107,10 @@ module VGAController(
 	end
 	
 	always @(posedge screenEnd) begin
-		player_left_x <= player_center_x - 10'd30;
-		player_right_x <= player_center_x + 10'd30;
-		player_top_y <= player_center_y - 9'd30;
-		player_bottom_y <= player_center_y + 9'd30;
+		player_left_x <= player_center_x - 10'd25;
+		player_right_x <= player_center_x + 10'd25;
+		player_top_y <= player_center_y - 9'd25;
+		player_bottom_y <= player_center_y + 9'd25;
 	end
 
 	wire within_player_box;

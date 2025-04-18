@@ -1,9 +1,9 @@
 main:
-# set movement counter value
-addi $t4, $zero, 12416
+# set target movement counter value
+addi $t4, $zero, 15000
 #addi $t4, $zero, 2
 
-# initialize random direction counter value
+# initialize target random direction counter value
 rand $t7
 addi $t8, $zero, 512
 sll $t8, $t8, 9
@@ -14,10 +14,17 @@ add $t7, $t7, $t8
 # sll $t7, $t7, 2
 #addi $t7, $zero, 4
 
+# initialize box position
 addi $bx, $zero, 320
 addi $by, $zero, 240
 
-_update_player_pos:
+# initialize box speed
+addi $bs, $zero, 1
+
+#initialize lives
+addi $pl, $zero, 1
+
+_gameloop:
     # pull data from accelerometer
     upx
     upy
@@ -49,8 +56,10 @@ _update_player_pos:
 
     # check if movement counter is less than 0
     blt $t4, $zero, _update_box_pos
+
+    jal check_validity
     
-    j _update_player_pos
+    j _gameloop
 
 _reset_direction_counter:
     # # reset counter value
@@ -110,24 +119,24 @@ _update_box_pos:
 
 _reset_movement_counter:
     # reset counter value
-    addi $t4, $zero, 12416
+    addi $t4, $zero, 15000
     # addi $t4, $zero, 2
 
-    j _update_player_pos
+    j _gameloop
 
 _increase_box_pos_x:
     addi $t5, $zero, -540
     sub $t6, $zero, $bx # negate bx for blt to work
     blt $t6, $t5, _choose_left # if box too close to edge of screen don't move it more
 
-    addi $bx, $bx, 1
+    add $bx, $bx, $bs
     j _reset_movement_counter
 
 _decrease_box_pos_x:
     addi $t5, $zero, 100
     blt $bx, $t5, _choose_right # if box too close to edge of screen don't move it more
 
-    addi $bx, $bx, -1
+    sub $bx, $bx, $bs
     j _reset_movement_counter
 
 _increase_box_pos_y:
@@ -135,12 +144,30 @@ _increase_box_pos_y:
     sub $t6, $zero, $by # negate by for blt to work
     blt $t6, $t5, _choose_up # if box too close to edge of screen don't move it more
 
-    addi $by, $by, 1
+    add $by, $by, $bs
     j _reset_movement_counter
 
 _decrease_box_pos_y:
     addi $t5, $zero, 100
     blt $by, $t5, _choose_down # if box too close to edge of screen don't move it more
 
-    addi $by, $by, -1
+    sub $by, $by, $bs
     j _reset_movement_counter
+
+check_validity:
+    sub $t0, $bx, $px
+    sub $t1, $by, $py
+
+    addi $t5, $zero, 10
+    addi $t6, $zero, -10
+
+    blt $t5, $t0, _out_of_bounds
+    blt $t0, $t6, _out_of_bounds
+    blt $t5, $t1, _out_of_bounds
+    blt $t1, $t6, _out_of_bounds
+
+    jr $ra
+
+    _out_of_bounds:
+        sub $pl, $pl, 1
+        jr $ra
