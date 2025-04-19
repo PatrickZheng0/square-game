@@ -1,12 +1,13 @@
 module AudioController(
     input        clk, 		// System Clock Input 100 Mhz
+	input[15:0]   switches,
     output       audioOut,	// PWM signal to the audio jack	
     output       audioEn);	// Audio Enable
 
 	localparam MHz = 1000000;
 	localparam SYSTEM_FREQ = 100*MHz; // System clock frequency
 
-	assign audioEn = 1'b1;  // Enable Audio Output
+	assign audioEn = switches[15];  // Enable Audio Output
 
 	// Initialize the frequency array
 	reg[10:0] FREQs[0:31];
@@ -15,17 +16,12 @@ module AudioController(
 	end
 
 	// Initialize counter
-	wire counterClock;
+	reg noteClock = 0;
 	wire[4:0] noteIndex;
-	count_32 counter(.out(noteIndex), .en(1'b1), .clk(counterClock), .clr(1'b0));
+	count_32 note_counter(.out(noteIndex), .en(1'b1), .clk(noteClock), .clr(1'b0));
 
-	PWMSerializer serialize(.clk(clk),.reset(1'b0), .duty_cycle(duty_cycle), .signal(audioOut));
-
-	wire [9:0] audio_duty_cycle, duty_cycle;
-	assign duty_cycle = audio_duty_cycle;
-	assign audio_duty_cycle = editedClock ? 10'd1023 : 10'd0;
-
-	reg[17:0] periodLimit = 12*Mhz; // half of desired period to switch notes
+	// Compute Note Duty Cycle Clock
+	reg[17:0] periodLimit = 12*MHz; // half of desired period to switch notes
 	reg[17:0] periodCounter = 0;
 
 	reg editedClock = 0;
@@ -35,8 +31,8 @@ module AudioController(
 	always @(posedge clk) begin
 		if (periodCounter < periodLimit) begin
 			periodCounter <= periodCounter + 1;
-			
-			noteCounterLimit <= (SYSTEM_FREQ / (2 * FREQs[noteIndex])) - 1;
+
+			noteCounterLimit <= (SYSTEM_FREQ / (2 * FREQs[switches[4:0]])) - 1;
 			if (counter < noteCounterLimit)
 				counter <= counter + 1;
 			else begin
@@ -46,8 +42,14 @@ module AudioController(
 		end
 		else begin
 			periodCounter <= 0;
-			counterClock <= ~counterClock;
+			noteClock <= ~noteClock;
 		end
 	end
+
+	// Generate Note Output
+	wire [9:0] audio_duty_cycle;
+	assign audio_duty_cycle = editedClock ? 10'd1023 : 10'd0;
+
+	PWMSerializer serialize(.clk(clk),.reset(1'b0), .duty_cycle(audio_duty_cycle), .signal(audioOut));
 
 endmodule

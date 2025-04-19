@@ -51,9 +51,12 @@ module Wrapper (
 	input BTNU,
 	input BTNC,
 
-	// // Audio
-	// output AUD_PWM,
-	// output AUD_SD,
+	// Audio
+	output AUD_PWM,		// PWM Signal to Audio Jack
+	output AUD_SD,		// Audio Enable
+
+	// Switches
+	input[15:0] SW,
 
 	// LEDs
 	output[15:0] LED
@@ -132,12 +135,14 @@ module Wrapper (
 	);
 
 
-	// // Audio
-	// AudioController audio_control(
-	// 	.clk(clk_100mHz),
-	// 	.audioOut(AUD_PWM),
-	// 	.audioEn(AUD_SD)
-	// );
+	// Audio
+	AudioController audio_control(
+		.clk(clk_100mHz),
+		.switches(SW),
+		.audioOut(AUD_PWM),
+		.audioEn(AUD_SD)
+	);
+
 
 	// CPU
 	wire rwe, mwe;
