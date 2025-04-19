@@ -17,12 +17,13 @@ module VGAController(
 	input[31:0] accel_x,
 	input[31:0] accel_y,
 	input[31:0] target_x,
-	input[31:0] target_y
+	input[31:0] target_y,
+	input[31:0] game_state
 	);
 
 	// Lab Memory Files Location
-	localparam FILES_PATH = "C:/Users/pzhen/VSCodeProjects/ECE_350_Workspace/square-game/vga/";
-	// localparam FILES_PATH = "C:/Users/mathe/Documents/Duke/ECE350/Project/square-game/vga/";
+	//localparam FILES_PATH = "C:/Users/pzhen/VSCodeProjects/ECE_350_Workspace/square-game/vga/";
+	localparam FILES_PATH = "C:/Users/mathe/Documents/Duke/ECE350/Project/square-game/vga/";
 
 	// VGA Timing Generation for a Standard VGA Screen
 	localparam 
@@ -71,7 +72,7 @@ module VGAController(
 
 	// Color Palette to Map Color Address to 12-Bit Color
 	wire[BITS_PER_COLOR-1:0] bg_colorData; // 12-bit color data at current pixel
-	assign bg_colorData = 12'h000;
+	assign bg_colorData = (game_state == 32'd0) ? 12'h0F0 : 12'h000;
 	wire[BITS_PER_COLOR-1:0] player_box_colorData, target_box_colorData; // 12-bit color data at current pixel
 
 	// RAM #(

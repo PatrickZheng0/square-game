@@ -5,14 +5,14 @@ module regfile (
 	data_readRegA, data_readRegB,
 	data_player_x, data_player_y,
 	data_target_x, data_target_y,
-	player_lives
+	data_player_lives, data_game_state
 );
 
 	input clock, ctrl_writeEnable, ctrl_reset;
 	input [4:0] ctrl_writeReg, ctrl_readRegA, ctrl_readRegB;
 	input [31:0] data_writeReg;
 
-	output [31:0] data_readRegA, data_readRegB, data_player_x, data_player_y, data_target_x, data_target_y, player_lives;
+	output [31:0] data_readRegA, data_readRegB, data_player_x, data_player_y, data_target_x, data_target_y, data_player_lives, data_game_state;
 
 	// add your code here
 	wire[31:0] reg_write_en;
@@ -53,5 +53,6 @@ module regfile (
 	assign data_player_y = data_out[25];
 	assign data_target_x = data_out[24];
  	assign data_target_y = data_out[23];
-	assign player_lives = data_out[20];
+	assign data_player_lives = data_out[20];
+	assign data_game_state = data_out[29];
 endmodule

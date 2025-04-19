@@ -1,32 +1,52 @@
 main:
-# set target movement counter value
-addi $t4, $zero, 15000
-# addi $t4, $zero, 2
 
-# initialize target random direction counter value
-rand $t7
-addi $t8, $zero, 512
-sll $t8, $t8, 9
-addi $t8, $t8, -1
-and $t7, $t7, $t8
-add $t7, $t7, $t8
-# addi $t7, $zero, 12416
-# sll $t7, $t7, 2
-# addi $t7, $zero, 4
+_await_button_press:
+    diff
+    bne $gs, $zero, _initialize_game
+    j _await_button_press
 
-# initialize box position
-addi $bx, $zero, 320
-addi $by, $zero, 240
+_initialize_game:
+    # set target movement counter value
+    addi $t4, $zero, 15000
+    # addi $t4, $zero, 2
 
-# initialize box speed
-addi $bs, $zero, 1
+    # initialize target random direction counter value
+    rand $t7
+    addi $t8, $zero, 512
+    sll $t8, $t8, 9
+    addi $t8, $t8, -1
+    and $t7, $t7, $t8
+    add $t7, $t7, $t8
+    # addi $t7, $zero, 12416
+    # sll $t7, $t7, 2
+    # addi $t7, $zero, 4
 
-# initialize player out of bounds timer
-addi $t8, $zero, 512
-sll $ot, $t8, 9
+    # initialize box position
+    addi $bx, $zero, 320
+    addi $by, $zero, 240
 
-# initialize lives
-addi $pl, $zero, 8096
+    # initialize player out of bounds timer
+    addi $t8, $zero, 512
+    sll $ot, $t8, 9
+
+    # initialize lives
+    addi $pl, $zero, 8096
+
+    # initialize difficulty settings
+    addi $t0, $zero, 2
+    blt $gs, $t0, _set_easy
+    addi $t0, $zero, 3
+    blt $gs, $t0, _set_medium
+    j _set_hard
+
+    _set_easy:
+        addi $bs, $zero, 1
+        j _gameloop
+    _set_medium:
+        addi $bs, $zero, 3
+        j _gameloop
+    _set_hard:
+        addi $bs, $zero, 5
 
 _gameloop:
     # pull data from accelerometer

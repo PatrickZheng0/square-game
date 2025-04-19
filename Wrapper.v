@@ -27,7 +27,7 @@
 module Wrapper (
 	// Board Signals
 	input clk_100mHzin, 
-	input reset,
+	input anti_reset,
 
 	// VGA Controller
 	output[3:0] VGA_R,  // Red Signal Bits
@@ -49,10 +49,26 @@ module Wrapper (
 	input BTNL,
 	input BTNR,
 	input BTNU,
+	input BTNC,
 
 	// LEDs
 	output[15:0] LED
 	);
+
+	wire reset;
+	assign reset = ~anti_reset;
+
+
+	// Button Logic
+	reg[31:0] difficulty;
+	always @(posedge clock) begin
+		if (BTNL)
+			difficulty <= 32'd1;
+		else if (BTNC)
+			difficulty <= 32'd2;
+		else if (BTNR)
+			difficulty <= 32'd3;
+	end
 
 	// Clock Management
 	wire locked, clk_25mHz, clk_50mHz;
@@ -88,7 +104,8 @@ module Wrapper (
 		.accel_x(player_x),
 		.accel_y(player_y),
 		.target_x(target_x),
-		.target_y(target_y)
+		.target_y(target_y),
+		.game_state(game_state)
 	);
 
 
@@ -119,8 +136,8 @@ module Wrapper (
 
 
 	// ADD YOUR MEMORY FILE HERE
-	localparam INSTR_FILE = "C:/Users/pzhen/VSCodeProjects/ECE_350_Workspace/square-game/processor-main/assembler-python-version/gameloop";
-	// localparam INSTR_FILE = "C:/Users/mathe/Documents/Duke/ECE350/Project/square-game/processor-main/assembler-python-version/gameloop";
+	//localparam INSTR_FILE = "C:/Users/pzhen/VSCodeProjects/ECE_350_Workspace/square-game/processor-main/assembler-python-version/gameloop";
+	localparam INSTR_FILE = "C:/Users/mathe/Documents/Duke/ECE350/Project/square-game/processor-main/assembler-python-version/gameloop";
 
 	// Main Processing Unit
 	processor CPU(.clock(clock), .reset(reset), 
@@ -139,7 +156,8 @@ module Wrapper (
 		
 		// Piped
 		.player_position_x_raw_in(accel_x_out),
-		.player_position_y_raw_in(accel_y_out)
+		.player_position_y_raw_in(accel_y_out),
+		.difficulty_in(difficulty)
 		); 
 	
 	// Instruction Memory (ROM)
@@ -149,7 +167,7 @@ module Wrapper (
 		.dataOut(instData));
 	
 	// Register File
-	wire [31:0] player_x, player_y, target_x, target_y, player_lives;
+	wire [31:0] player_x, player_y, target_x, target_y, player_lives, game_state;
 	regfile RegisterFile(.clock(clock), 
 		.ctrl_writeEnable(rwe), .ctrl_reset(reset), 
 		.ctrl_writeReg(rd),
@@ -157,7 +175,7 @@ module Wrapper (
 		.data_writeReg(rData), .data_readRegA(regA), .data_readRegB(regB),
 		.data_player_x(player_x), .data_player_y(player_y),
 		.data_target_x(target_x), .data_target_y(target_y),
-		.player_lives(player_lives));
+		.data_player_lives(player_lives), .data_game_state(game_state));
 
 	assign LED = player_lives[15:0];
 

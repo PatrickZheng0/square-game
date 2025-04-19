@@ -44,6 +44,7 @@ module processor(
     // Wrapper Data Interfacing
     player_position_x_raw_in,              // I: Data From IMU
     player_position_y_raw_in,              // I: Data From IMU
+    difficulty_in,
     // box_position,                      // O: Position data of the box
 	// game_state,                        // O: Game state data to the VGA
 	);
@@ -69,6 +70,7 @@ module processor(
     // Data Interfacing
     input [8:0] player_position_x_raw_in;
     input [8:0] player_position_y_raw_in;
+    input [31:0] difficulty_in;
     // wire [8:0] player_position_x_raw_in, player_position_y_raw_in;
     // assign player_position_x_raw_in = 9'd50;
     // assign player_position_y_raw_in = 9'd150;
@@ -267,6 +269,11 @@ module processor(
     assign rand_number_select = (dx_ir_out[31:27] == 5'b0 & dx_ir_out[6:2] == 5'b01010);
     tri_state_buffer_32 x_rand_output(x_new_output, rand_number, rand_number_select);
 
+    // Modify x_new_output for updating game state register with difficulty
+    wire difficulty_select;
+    assign difficulty_select = (dx_ir_out[31:27] == 5'b0 & dx_ir_out[6:2] == 5'b01011);
+    tri_state_buffer_32 x_diff_output(x_new_output, difficulty_in, difficulty_select);
+
     // ====Execute Bypassing==== //
     wire M_update_RD, W_update_RD;
     assign M_update_RD = (xm_ir_out[31:27] == 5'b0) | (xm_ir_out[31:27] == 5'b00101);
@@ -351,7 +358,7 @@ module processor(
     // Note pulse_mult_div_exception is on for a whole cycle, but only want to use it until next falling edge to not mess up following instruction
     wire[31:0] x_instruction, x_output;
     assign x_instruction = (ovf_select | jal_select | setx_select | (pulse_mult_div_exception & clock)) ? x_new_instruction : dx_ir_out;
-    assign x_output = (ovf_select | jal_select | setx_select | player_x_select | player_y_select | rand_number_select | (pulse_mult_div_exception & clock)) ? x_new_output : final_math_out;
+    assign x_output = (ovf_select | jal_select | setx_select | player_x_select | player_y_select | rand_number_select | difficulty_select | (pulse_mult_div_exception & clock)) ? x_new_output : final_math_out;
 
     // Latch execute output result
     wire[31:0] xm_O_out;
