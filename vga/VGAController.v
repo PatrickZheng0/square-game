@@ -21,8 +21,8 @@ module VGAController(
 	);
 
 	// Lab Memory Files Location
-	//localparam FILES_PATH = "C:/Users/pzhen/VSCodeProjects/ECE_350_Workspace/square-game/vga/";
-	localparam FILES_PATH = "C:/Users/mathe/Documents/Duke/ECE350/Project/square-game/vga/";
+	localparam FILES_PATH = "C:/Users/pzhen/VSCodeProjects/ECE_350_Workspace/square-game/vga/";
+	// localparam FILES_PATH = "C:/Users/mathe/Documents/Duke/ECE350/Project/square-game/vga/";
 
 	// VGA Timing Generation for a Standard VGA Screen
 	localparam 
@@ -118,10 +118,10 @@ module VGAController(
 	assign player_box_colorData = 12'h0F0;
 
 	// Draw Target Box
-	wire[9:0] target_center_x;
-	wire[8:0] target_center_y;
+	reg[9:0] target_center_x;
+	reg[8:0] target_center_y;
 	reg[9:0] target_left_x, target_right_x; 
-	reg[8:0] target_center_y, target_top_y, target_bottom_y;
+	reg[8:0] target_top_y, target_bottom_y;
 	initial begin
 		target_left_x <= 10'd0;
 		target_right_x <= 10'd0;
@@ -129,8 +129,10 @@ module VGAController(
 		target_bottom_y <= 9'd0;
 	end
 
-	assign target_center_x = target_x[9:0];
-	assign target_center_y = target_y[8:0];
+	always @(negedge screenEnd) begin
+		target_center_x <= target_x[9:0];
+		target_center_y <= target_y[8:0];
+	end
 
 	always @(posedge screenEnd) begin
 		target_left_x <= target_center_x - 10'd30;

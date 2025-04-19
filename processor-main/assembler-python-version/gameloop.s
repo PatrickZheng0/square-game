@@ -1,7 +1,7 @@
 main:
 # set target movement counter value
 addi $t4, $zero, 15000
-#addi $t4, $zero, 2
+# addi $t4, $zero, 2
 
 # initialize target random direction counter value
 rand $t7
@@ -12,7 +12,7 @@ and $t7, $t7, $t8
 add $t7, $t7, $t8
 # addi $t7, $zero, 12416
 # sll $t7, $t7, 2
-#addi $t7, $zero, 4
+# addi $t7, $zero, 4
 
 # initialize box position
 addi $bx, $zero, 320
@@ -21,7 +21,7 @@ addi $by, $zero, 240
 # initialize box speed
 addi $bs, $zero, 1
 
-#initialize lives
+# initialize lives
 addi $pl, $zero, 1
 
 _gameloop:
@@ -62,7 +62,7 @@ _gameloop:
     j _gameloop
 
 _reset_direction_counter:
-    # # reset counter value
+    # reset counter value
     rand $t7
     addi $t8, $zero, 512
     sll $t8, $t8, 9
@@ -154,13 +154,14 @@ _decrease_box_pos_y:
     sub $by, $by, $bs
     j _reset_movement_counter
 
-check_validity:
+check_validity: # decrease lives if player box doesn't overlap with target box
     sub $t0, $bx, $px
     sub $t1, $by, $py
 
     addi $t5, $zero, 10
     addi $t6, $zero, -10
 
+    # check if player box overlaps with target box
     blt $t5, $t0, _out_of_bounds
     blt $t0, $t6, _out_of_bounds
     blt $t5, $t1, _out_of_bounds
@@ -169,5 +170,5 @@ check_validity:
     jr $ra
 
     _out_of_bounds:
-        sub $pl, $pl, 1
+        addi $pl, $pl, -1
         jr $ra
