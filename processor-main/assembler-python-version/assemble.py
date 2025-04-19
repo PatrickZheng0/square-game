@@ -52,7 +52,6 @@ def instr_to_bin(instr, line_num):
 			return f"00000{rd}{rs}{rt}{shamt}{opcode}00\n"
 	elif instr_type == 'I':
 		bne_or_blt = mnemonic == 'bne' or mnemonic == 'blt'
-		print(labels[instr[3]] if bne_or_blt else "")
 		imm = bin((labels[instr[3]]-line_num-1 if bne_or_blt else int(instr[3]))&0x1ffff)[2:].zfill(17)
 		return f"{opcode}{rd}{rs}{imm}\n"
 	elif instr_type == 'JI':
