@@ -22,8 +22,8 @@ module VGAController(
 	);
 
 	// Lab Memory Files Location
-	//localparam FILES_PATH = "C:/Users/pzhen/VSCodeProjects/ECE_350_Workspace/square-game/vga/";
-	localparam FILES_PATH = "C:/Users/mathe/Documents/Duke/ECE350/Project/square-game/vga/";
+	localparam FILES_PATH = "C:/Users/pzhen/VSCodeProjects/ECE_350_Workspace/square-game/vga/";
+	// localparam FILES_PATH = "C:/Users/mathe/Documents/Duke/ECE350/Project/square-game/vga/";
 
 	// VGA Timing Generation for a Standard VGA Screen
 	localparam 
@@ -59,7 +59,7 @@ module VGAController(
 	wire[PALETTE_ADDRESS_WIDTH-1:0] colorAddr; 	 // Color address for the color palette
 	assign imgAddress = x + 640*y;				 // Address calculated coordinate
 
-	// RAM #(		
+	// VGARAM #(		
 	// 	.DEPTH(PIXEL_COUNT), 				     // Set RAM depth to contain every pixel
 	// 	.DATA_WIDTH(PALETTE_ADDRESS_WIDTH),      // Set data width according to the color palette
 	// 	.ADDRESS_WIDTH(PIXEL_ADDRESS_WIDTH),     // Set address with according to the pixel count
@@ -75,7 +75,7 @@ module VGAController(
 	assign bg_colorData = (game_state == 32'd0) ? 12'h0F0 : 12'h000;
 	wire[BITS_PER_COLOR-1:0] player_box_colorData, target_box_colorData; // 12-bit color data at current pixel
 
-	// RAM #(
+	// VGARAM #(
 	// 	.DEPTH(PALETTE_COLOR_COUNT), 		       // Set depth to contain every color		
 	// 	.DATA_WIDTH(BITS_PER_COLOR), 		       // Set data width according to the bits per color
 	// 	.ADDRESS_WIDTH(PALETTE_ADDRESS_WIDTH),     // Set address width according to the color count
