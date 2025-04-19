@@ -21,8 +21,12 @@ addi $by, $zero, 240
 # initialize box speed
 addi $bs, $zero, 1
 
+# initialize player out of bounds timer
+addi $t8, $zero, 512
+sll $ot, $t8, 9
+
 # initialize lives
-addi $pl, $zero, 1
+addi $pl, $zero, 8096
 
 _gameloop:
     # pull data from accelerometer
@@ -166,9 +170,30 @@ check_validity: # decrease lives if player box doesn't overlap with target box
     blt $t0, $t6, _out_of_bounds
     blt $t5, $t1, _out_of_bounds
     blt $t1, $t6, _out_of_bounds
-
-    jr $ra
+    j _in_bounds:
 
     _out_of_bounds:
-        addi $pl, $pl, -1
+        addi $ot, $ot, -1
+        blt $ot, $zero, _decrease_lives
         jr $ra
+
+    _in_bounds:
+        # reset lives counter
+        addi $t8, $zero, 512
+        sll $ot, $t8, 9
+        jr $ra
+
+    _decrease_lives:
+        addi $pl, $pl, -1
+        
+        # reset lives counter
+        addi $t8, $zero, 512
+        sll $ot, $t8, 9
+
+        # set lives to 0 if it becomes negative
+        blt $pl, $zero, _set_lives_to_zero
+        jr $ra
+
+        _set_lives_to_zero:
+            addi $pl, $zero, 0
+            jr $ra

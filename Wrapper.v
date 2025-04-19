@@ -48,7 +48,10 @@ module Wrapper (
 	input BTND,
 	input BTNL,
 	input BTNR,
-	input BTNU
+	input BTNU,
+
+	// LEDs
+	output[15:0] LED
 	);
 
 	// Clock Management
@@ -146,14 +149,18 @@ module Wrapper (
 		.dataOut(instData));
 	
 	// Register File
-	wire [31:0] player_x, player_y, target_x, target_y;
+	wire [31:0] player_x, player_y, target_x, target_y, player_lives;
 	regfile RegisterFile(.clock(clock), 
 		.ctrl_writeEnable(rwe), .ctrl_reset(reset), 
 		.ctrl_writeReg(rd),
 		.ctrl_readRegA(rs1), .ctrl_readRegB(rs2), 
 		.data_writeReg(rData), .data_readRegA(regA), .data_readRegB(regB),
 		.data_player_x(player_x), .data_player_y(player_y),
-		.data_target_x(target_x), .data_target_y(target_y));
+		.data_target_x(target_x), .data_target_y(target_y),
+		.player_lives(player_lives));
+
+	assign LED = player_lives[15:0];
+
 						
 	// Processor Memory (RAM)
 	RAM ProcMem(.clk(clock), 
