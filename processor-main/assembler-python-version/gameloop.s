@@ -25,9 +25,8 @@ _initialize_game:
     addi $bx, $zero, 320
     addi $by, $zero, 240
 
-    # initialize player out of bounds timer
-    addi $t8, $zero, 512
-    sll $ot, $t8, 9
+# initialize lives
+addi $pl, $zero, 4096
 
     # initialize lives
     addi $pl, $zero, 8096
@@ -182,15 +181,15 @@ check_validity: # decrease lives if player box doesn't overlap with target box
     sub $t0, $bx, $px
     sub $t1, $by, $py
 
-    addi $t5, $zero, 10
-    addi $t6, $zero, -10
+    addi $t5, $zero, 80
+    addi $t6, $zero, -80
 
     # check if player box overlaps with target box
     blt $t5, $t0, _out_of_bounds
     blt $t0, $t6, _out_of_bounds
     blt $t5, $t1, _out_of_bounds
     blt $t1, $t6, _out_of_bounds
-    j _in_bounds:
+    j _in_bounds
 
     _out_of_bounds:
         addi $ot, $ot, -1
@@ -198,6 +197,9 @@ check_validity: # decrease lives if player box doesn't overlap with target box
         jr $ra
 
     _in_bounds:
+        # testing bozo
+        addi $pl, $zero, 4096
+
         # reset lives counter
         addi $t8, $zero, 512
         sll $ot, $t8, 9
