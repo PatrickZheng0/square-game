@@ -219,7 +219,7 @@ module Wrapper (
 	// 		clocked_LED <= 16'b0000000000000000;
 	// end
 	// assign LED = clocked_LED;
-	assign LED = player_score[15:0];
+	assign LED = player_score[31:16];
 						
 	// Processor Memory (RAM)
 	RAM ProcMem(.clk(clock), 
