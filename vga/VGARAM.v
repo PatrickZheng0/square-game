@@ -1,5 +1,5 @@
 `timescale 1ns / 1ps
-module RAM #( parameter DATA_WIDTH = 8, ADDRESS_WIDTH = 8, DEPTH = 256, MEMFILE = "") (
+module VGARAM #( parameter DATA_WIDTH = 8, ADDRESS_WIDTH = 8, DEPTH = 256, MEMFILE = "") (
     input wire                     clk,
     input wire                     wEn,
     input wire [ADDRESS_WIDTH-1:0] addr,

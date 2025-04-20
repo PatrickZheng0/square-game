@@ -51,6 +51,13 @@ module Wrapper (
 	input BTNU,
 	input BTNC,
 
+	// Audio
+	output AUD_PWM,		// PWM Signal to Audio Jack
+	output AUD_SD,		// Audio Enable
+
+	// Switches
+	input[15:0] SW,
+
 	// LEDs
 	output[15:0] LED
 	);
@@ -115,6 +122,7 @@ module Wrapper (
 	wire clock;
 	assign clock = clk_50mHz;
 
+
 	// Accelerometer
 	wire[8:0] accel_x_out, accel_y_out;
 	AccelerometerCtl accel_control(
@@ -129,6 +137,15 @@ module Wrapper (
 	);
 
 
+	// Audio
+	AudioController audio_control(
+		.clk(clk_25mHz),
+		.switches(SW),
+		.audioOut(AUD_PWM),
+		.audioEn(AUD_SD)
+	);
+
+
 	// CPU
 	wire rwe, mwe;
 	wire[4:0] rd, rs1, rs2;
@@ -138,8 +155,8 @@ module Wrapper (
 
 
 	// ADD YOUR MEMORY FILE HERE
-	//localparam INSTR_FILE = "C:/Users/pzhen/VSCodeProjects/ECE_350_Workspace/square-game/processor-main/assembler-python-version/gameloop";
-	localparam INSTR_FILE = "C:/Users/mathe/Documents/Duke/ECE350/Project/square-game/processor-main/assembler-python-version/gameloop";
+	localparam INSTR_FILE = "C:/Users/pzhen/VSCodeProjects/ECE_350_Workspace/square-game/processor-main/assembler-python-version/gameloop";
+	// localparam INSTR_FILE = "C:/Users/mathe/Documents/Duke/ECE350/Project/square-game/processor-main/assembler-python-version/gameloop";
 
 	// Main Processing Unit
 	processor CPU(.clock(clock), .reset(reset), 
