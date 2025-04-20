@@ -59,32 +59,32 @@ module VGAController(
 	wire[PALETTE_ADDRESS_WIDTH-1:0] colorAddr; 	 // Color address for the color palette
 	assign imgAddress = x + 640*y;				 // Address calculated coordinate
 
-	// RAM #(		
-	// 	.DEPTH(PIXEL_COUNT), 				     // Set RAM depth to contain every pixel
-	// 	.DATA_WIDTH(PALETTE_ADDRESS_WIDTH),      // Set data width according to the color palette
-	// 	.ADDRESS_WIDTH(PIXEL_ADDRESS_WIDTH),     // Set address with according to the pixel count
-	// 	.MEMFILE({FILES_PATH, "image.mem"})) // Memory initialization
-	// ImageData(
-	// 	.clk(clk_100mHz), 						 		// Falling edge of the 100 MHz clk
-	// 	.addr(imgAddress),					 // Image data address
-	// 	.dataOut(colorAddr),				 // Color palette address
-	// 	.wEn(1'b0)); 						 // We're always reading
+	RAM #(		
+		.DEPTH(PIXEL_COUNT), 				     // Set RAM depth to contain every pixel
+		.DATA_WIDTH(PALETTE_ADDRESS_WIDTH),      // Set data width according to the color palette
+		.ADDRESS_WIDTH(PIXEL_ADDRESS_WIDTH),     // Set address with according to the pixel count
+		.MEMFILE({FILES_PATH, "image.mem"})) // Memory initialization
+	ImageData(
+		.clk(clk_25mHz), 						 		// Falling edge of the 100 MHz clk
+		.addr(imgAddress),					 // Image data address
+		.dataOut(colorAddr),				 // Color palette address
+		.wEn(1'b0)); 						 // We're always reading
 
 	// Color Palette to Map Color Address to 12-Bit Color
-	wire[BITS_PER_COLOR-1:0] bg_colorData; // 12-bit color data at current pixel
-	assign bg_colorData = (game_state == 32'd0) ? 12'h0F0 : 12'h000;
+	wire[BITS_PER_COLOR-1:0] bg_colorData_inter, bg_colorData; // 12-bit color data at current pixel
+	assign bg_colorData_inter = (game_state == 32'd0) ? bg_colorData : 12'h000;
 	wire[BITS_PER_COLOR-1:0] player_box_colorData, target_box_colorData; // 12-bit color data at current pixel
 
-	// RAM #(
-	// 	.DEPTH(PALETTE_COLOR_COUNT), 		       // Set depth to contain every color		
-	// 	.DATA_WIDTH(BITS_PER_COLOR), 		       // Set data width according to the bits per color
-	// 	.ADDRESS_WIDTH(PALETTE_ADDRESS_WIDTH),     // Set address width according to the color count
-	// 	.MEMFILE({FILES_PATH, "colors.mem"}))  	// Memory initialization
-	// ColorPalette(
-	// 	.clk(clk_100mHz), 							   	   // Rising edge of the 100 MHz clk
-	// 	.addr(colorAddr),					       // Address from the ImageData RAM
-	// 	.dataOut(bg_colorData),				       // Color at current pixel
-	// 	.wEn(1'b0)); 						       // We're always reading
+	RAM #(
+		.DEPTH(PALETTE_COLOR_COUNT), 		       // Set depth to contain every color		
+		.DATA_WIDTH(BITS_PER_COLOR), 		       // Set data width according to the bits per color
+		.ADDRESS_WIDTH(PALETTE_ADDRESS_WIDTH),     // Set address width according to the color count
+		.MEMFILE({FILES_PATH, "colors.mem"}))  	// Memory initialization
+	ColorPalette(
+		.clk(clk_25mHz), 							   	   // Rising edge of the 100 MHz clk
+		.addr(colorAddr),					       // Address from the ImageData RAM
+		.dataOut(bg_colorData),				       // Color at current pixel
+		.wEn(1'b0)); 						       // We're always reading
 
 	// Assign to output color from register if active
 	wire[BITS_PER_COLOR-1:0] colorOut; 			  // Output color 
@@ -146,7 +146,7 @@ module VGAController(
 	assign within_target_box = (target_left_x < x && x < target_right_x) && (target_top_y < y && y < target_bottom_y);
 	assign target_box_colorData = 12'h00F;
 
-	assign colorScreen_inter = within_target_box ? target_box_colorData : bg_colorData;
+	assign colorScreen_inter = within_target_box ? target_box_colorData : bg_colorData_inter;
 	assign colorScreen_final = within_player_box ? player_box_colorData : colorScreen_inter;
 	assign colorOut = active ? colorScreen_final : 12'd0; // When not active, output black
 
