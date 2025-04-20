@@ -67,6 +67,9 @@ _gameloop:
     div $ay, $ay, $t1
     add $py, $ay, $t2
 
+    # increment score counter
+    addi $ps, $ps, 1
+
     # decrease movement counter
     addi $t4, $t4, -1
 

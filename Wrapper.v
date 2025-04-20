@@ -71,12 +71,13 @@ module Wrapper (
 	end
 
 	// Clock Management
-	wire locked, clk_25mHz, clk_50mHz;
+	wire locked, clk_25mHz, clk_50mHz, clk_125mHz;
 	clk_wiz_0 pll_25MHz (
 		// Clock out ports
 		.clk_out50(clk_50mHz),
 		.clk_out25(clk_25mHz),
 		.clk_out100(clk_100mHz),
+		.clk_out125(clk_125mHz),
 		// Status and control signals
 		.reset(1'b0),
 		.locked(locked),
@@ -105,7 +106,8 @@ module Wrapper (
 		.accel_y(player_y),
 		.target_x(target_x),
 		.target_y(target_y),
-		.game_state(game_state)
+		.game_state(game_state),
+		.lives(player_lives)
 	);
 
 
@@ -167,7 +169,7 @@ module Wrapper (
 		.dataOut(instData));
 	
 	// Register File
-	wire [31:0] player_x, player_y, target_x, target_y, player_lives, game_state;
+	wire [31:0] player_x, player_y, target_x, target_y, player_lives, game_state, player_score;
 	regfile RegisterFile(.clock(clock), 
 		.ctrl_writeEnable(rwe), .ctrl_reset(reset), 
 		.ctrl_writeReg(rd),
@@ -175,10 +177,49 @@ module Wrapper (
 		.data_writeReg(rData), .data_readRegA(regA), .data_readRegB(regB),
 		.data_player_x(player_x), .data_player_y(player_y),
 		.data_target_x(target_x), .data_target_y(target_y),
-		.data_player_lives(player_lives), .data_game_state(game_state));
+		.data_player_lives(player_lives), .data_game_state(game_state),
+		.data_player_score(player_score));
 
-	assign LED = player_lives[15:0];
-
+	// Score Processing
+	// reg[15:0] clocked_LED;
+	// always @(negedge clk_125mHz) begin
+	// 	// if (player_score > 32'd2000000000)
+	// 	// 	clocked_LED <= 16'b1111111111111111;
+	// 	// else if (player_score > 32'd1500000000)
+	// 	// 	clocked_LED <= 16'b1111111111111110;
+	// 	// else if (player_score > 32'd1000000000)
+	// 	// 	clocked_LED <= 16'b1111111111111100;
+	// 	// else if (player_score > 32'd900000000)
+	// 	// 	clocked_LED <= 16'b1111111111111000;
+	// 	// else if (player_score > 32'd800000000)
+	// 	// 	clocked_LED <= 16'b1111111111110000;
+	// 	// else if (player_score > 32'd700000000)
+	// 	// 	clocked_LED <= 16'b1111111111100000;
+	// 	// else if (player_score > 32'd600000000)
+	// 	// 	clocked_LED <= 16'b1111111111000000;
+	// 	// else if (player_score > 32'd500000000)
+	// 	// 	clocked_LED <= 16'b1111111110000000;
+	// 	// else if (player_score > 32'd450000000)
+	// 	// 	clocked_LED <= 16'b1111111100000000;
+	// 	// else if (player_score > 32'd400000000)
+	// 	// 	clocked_LED <= 16'b1111111000000000;
+	// 	// else if (player_score > 32'd350000000)
+	// 	// 	clocked_LED <= 16'b1111110000000000;
+	// 	if (player_score > 32'd33554432)
+	// 		clocked_LED <= 16'b1111100000000000;
+	// 	else if (player_score > 32'd1048576)
+	// 		clocked_LED <= 16'b1111000000000000;
+	// 	else if (player_score > 32'd32768)
+	// 		clocked_LED <= 16'b1110000000000000;
+	// 	else if (player_score > 32'd1024)
+	// 		clocked_LED <= 16'b1100000000000000;
+	// 	else if (player_score > 32'd32)
+	// 		clocked_LED <= 16'b1000000000000000;
+	// 	else
+	// 		clocked_LED <= 16'b0000000000000000;
+	// end
+	// assign LED = clocked_LED;
+	assign LED = player_score[15:0];
 						
 	// Processor Memory (RAM)
 	RAM ProcMem(.clk(clock), 

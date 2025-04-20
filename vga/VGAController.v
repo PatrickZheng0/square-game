@@ -18,7 +18,8 @@ module VGAController(
 	input[31:0] accel_y,
 	input[31:0] target_x,
 	input[31:0] target_y,
-	input[31:0] game_state
+	input[31:0] game_state,
+	input[31:0] lives
 	);
 
 	// Lab Memory Files Location
@@ -85,6 +86,41 @@ module VGAController(
 		.addr(colorAddr),					       // Address from the ImageData RAM
 		.dataOut(bg_colorData),				       // Color at current pixel
 		.wEn(1'b0)); 						       // We're always reading
+
+	// Sprite Management
+	// localparam
+	// 	ASCII_COUNT = 256,
+	// 	ASCII_DATA_WIDTH = 7,
+	// 	ASCII_ADDRESS_WIDTH = 9;
+
+	// RAM #(		
+	// 	.DEPTH(ASCII_COUNT), 				     // Set RAM depth to contain every ascii value
+	// 	.DATA_WIDTH(ASCII_DATA_WIDTH),      // Set data width according to the ascii value
+	// 	.ADDRESS_WIDTH(ASCII_ADDRESS_WIDTH),     // Set address with according to the ascii value
+	// 	.MEMFILE({FILES_PATH, "ascii.mem"})) // Memory initialization
+	// ASCIIData(
+	// 	.clk(clk), 						 // Falling edge of the 100 MHz clk
+	// 	.addr(clk_25mHz),					 // Image data address
+	// 	.dataOut(ascii_data),				 // Color palette address
+	// 	.wEn(1'b0)); 						 // We're always reading
+
+	// localparam
+	// 	SPRITES_COUNT = 50*50*94,
+	// 	SPRITES_DATA_WIDTH = 1,
+	// 	SPRITES_ADDRESS_WIDTH = $clog2(SPRITES_COUNT) + 1;
+
+	// RAM #(		
+	// 	.DEPTH(SPRITES_COUNT), 				     // Set RAM depth to contain every ascii value
+	// 	.DATA_WIDTH(SPRITES_DATA_WIDTH),      // Set data width according to the ascii value
+	// 	.ADDRESS_WIDTH(SPRITES_ADDRESS_WIDTH),     // Set address with according to the ascii value
+	// 	.MEMFILE({FILES_PATH, "sprites.mem"})) // Memory initialization
+	// SpriteData(
+	// 	.clk(clk_25mHz), 						 // Falling edge of the 100 MHz clk
+	// 	.addr((ascii_data - 1) * 2500 + (x - sq_x) + 50 * (y-sq_y)),					 // Image data address
+	// 	.dataOut(sprite_data),				 // Color palette address
+	// 	.wEn(1'b0)); 						 // We're always reading
+	
+	// wire sprite_data;
 
 	// Assign to output color from register if active
 	wire[BITS_PER_COLOR-1:0] colorOut; 			  // Output color 
