@@ -67,9 +67,6 @@ _gameloop:
     div $ay, $ay, $t1
     add $py, $ay, $t2
 
-    # increment score counter
-    addi $ps, $ps, 1
-
     # decrease movement counter
     addi $t4, $t4, -1
 
@@ -201,6 +198,8 @@ check_validity: # decrease lives if player box doesn't overlap with target box
         jr $ra
 
     _in_bounds:
+        # increment score counter
+        addi $ps, $ps, 1
         # reset lives counter
         addi $t8, $zero, 512
         sll $ot, $t8, 9

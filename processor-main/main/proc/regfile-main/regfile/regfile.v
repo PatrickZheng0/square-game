@@ -56,5 +56,5 @@ module regfile (
  	assign data_target_y = data_out[23];
 	assign data_player_lives = data_out[20];
 	assign data_game_state = data_out[29];
-	assign data_player_score = data_out[19];
+	assign data_player_score = data_out[18];
 endmodule

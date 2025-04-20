@@ -155,8 +155,8 @@ module Wrapper (
 
 
 	// ADD YOUR MEMORY FILE HERE
-	localparam INSTR_FILE = "C:/Users/pzhen/VSCodeProjects/ECE_350_Workspace/square-game/processor-main/assembler-python-version/gameloop";
-	// localparam INSTR_FILE = "C:/Users/mathe/Documents/Duke/ECE350/Project/square-game/processor-main/assembler-python-version/gameloop";
+	//localparam INSTR_FILE = "C:/Users/pzhen/VSCodeProjects/ECE_350_Workspace/square-game/processor-main/assembler-python-version/gameloop";
+	localparam INSTR_FILE = "C:/Users/mathe/Documents/Duke/ECE350/Project/square-game/processor-main/assembler-python-version/gameloop";
 
 	// Main Processing Unit
 	processor CPU(.clock(clock), .reset(reset), 
@@ -198,45 +198,18 @@ module Wrapper (
 		.data_player_score(player_score));
 
 	// Score Processing
-	// reg[15:0] clocked_LED;
-	// always @(negedge clk_125mHz) begin
-	// 	// if (player_score > 32'd2000000000)
-	// 	// 	clocked_LED <= 16'b1111111111111111;
-	// 	// else if (player_score > 32'd1500000000)
-	// 	// 	clocked_LED <= 16'b1111111111111110;
-	// 	// else if (player_score > 32'd1000000000)
-	// 	// 	clocked_LED <= 16'b1111111111111100;
-	// 	// else if (player_score > 32'd900000000)
-	// 	// 	clocked_LED <= 16'b1111111111111000;
-	// 	// else if (player_score > 32'd800000000)
-	// 	// 	clocked_LED <= 16'b1111111111110000;
-	// 	// else if (player_score > 32'd700000000)
-	// 	// 	clocked_LED <= 16'b1111111111100000;
-	// 	// else if (player_score > 32'd600000000)
-	// 	// 	clocked_LED <= 16'b1111111111000000;
-	// 	// else if (player_score > 32'd500000000)
-	// 	// 	clocked_LED <= 16'b1111111110000000;
-	// 	// else if (player_score > 32'd450000000)
-	// 	// 	clocked_LED <= 16'b1111111100000000;
-	// 	// else if (player_score > 32'd400000000)
-	// 	// 	clocked_LED <= 16'b1111111000000000;
-	// 	// else if (player_score > 32'd350000000)
-	// 	// 	clocked_LED <= 16'b1111110000000000;
-	// 	if (player_score > 32'd33554432)
-	// 		clocked_LED <= 16'b1111100000000000;
-	// 	else if (player_score > 32'd1048576)
-	// 		clocked_LED <= 16'b1111000000000000;
-	// 	else if (player_score > 32'd32768)
-	// 		clocked_LED <= 16'b1110000000000000;
-	// 	else if (player_score > 32'd1024)
-	// 		clocked_LED <= 16'b1100000000000000;
-	// 	else if (player_score > 32'd32)
-	// 		clocked_LED <= 16'b1000000000000000;
-	// 	else
-	// 		clocked_LED <= 16'b0000000000000000;
-	// end
-	// assign LED = clocked_LED;
-	assign LED = player_score[31:16];
+	reg[15:0] clocked_LED;
+	reg[31:0] period_counter;
+	reg[31:0] periodLimit = 10000;
+	always @(negedge clk_50mHz) begin
+		if (period_counter < periodLimit)
+			period_counter <= period_counter + 1;
+		else begin
+			period_counter <= 0;
+			clocked_LED <= player_score[31:16];
+		end
+	end
+	assign LED = clocked_LED;
 						
 	// Processor Memory (RAM)
 	RAM ProcMem(.clk(clock), 
