@@ -5,7 +5,7 @@ module AudioController(
     output       audioEn);	// Audio Enable
 
 	localparam MHz = 1000000;
-	localparam SYSTEM_FREQ = 100*MHz; // System clock frequency
+	localparam SYSTEM_FREQ = 25*MHz; // System clock frequency
 
 	assign audioEn = switches[15];  // Enable Audio Output
 
@@ -16,33 +16,32 @@ module AudioController(
 	end
 
 	// Initialize counter
-	reg noteClock = 0;
-	wire[4:0] noteIndex;
-	count_32 note_counter(.out(noteIndex), .en(1'b1), .clk(noteClock), .clr(1'b0));
+	reg[4:0] noteIndex = 0;
 
 	// Compute Note Duty Cycle Clock
-	reg[17:0] periodLimit = 12*MHz; // half of desired period to switch notes
-	reg[17:0] periodCounter = 0;
+	reg[31:0] periodLimit = SYSTEM_FREQ/3; // period to switch notes
+	reg[31:0] periodCounter = 0;
 
 	reg editedClock = 0;
-	reg[17:0] noteCounterLimit;
 	reg[17:0] counter = 0;
 
-	always @(posedge clk) begin
-		if (periodCounter < periodLimit) begin
-			periodCounter <= periodCounter + 1;
+	wire [17:0] noteCounterLimit = (SYSTEM_FREQ / (2 * FREQs[noteIndex])) - 1;
 
-			noteCounterLimit <= (SYSTEM_FREQ / (2 * FREQs[switches[4:0]])) - 1;
-			if (counter < noteCounterLimit)
-				counter <= counter + 1;
-			else begin
-				counter <= 0;
-				editedClock <= ~editedClock;
-			end
-		end
+	always @(posedge clk) begin
+		if (periodCounter < periodLimit)
+			periodCounter <= periodCounter + 1;
 		else begin
 			periodCounter <= 0;
-			noteClock <= ~noteClock;
+			noteIndex <= noteIndex + 1;
+			if (noteIndex == 32)
+				noteIndex <= 0;
+		end
+
+		if (counter < noteCounterLimit)
+			counter <= counter + 1;
+		else begin
+			counter <= 0;
+			editedClock <= ~editedClock;
 		end
 	end
 

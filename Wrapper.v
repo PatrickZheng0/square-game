@@ -78,7 +78,7 @@ module Wrapper (
 	end
 
 	// Clock Management
-	wire locked, clk_25mHz, clk_50mHz;
+	wire locked, clk_25mHz, clk_50mHz, clk_100mHz;
 	clk_wiz_0 pll_25MHz (
 		// Clock out ports
 		.clk_out50(clk_50mHz),
@@ -137,7 +137,7 @@ module Wrapper (
 
 	// Audio
 	AudioController audio_control(
-		.clk(clk_100mHz),
+		.clk(clk_25mHz),
 		.switches(SW),
 		.audioOut(AUD_PWM),
 		.audioEn(AUD_SD)
