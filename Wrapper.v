@@ -112,7 +112,8 @@ module Wrapper (
 		.accel_y(player_y),
 		.target_x(target_x),
 		.target_y(target_y),
-		.game_state(game_state)
+		.game_state(game_state),
+		.player_lives(player_lives)
 	);
 
 
@@ -193,9 +194,6 @@ module Wrapper (
 		.data_player_x(player_x), .data_player_y(player_y),
 		.data_target_x(target_x), .data_target_y(target_y),
 		.data_player_lives(player_lives), .data_game_state(game_state));
-
-	assign LED = player_lives[15:0];
-
 						
 	// Processor Memory (RAM)
 	RAM ProcMem(.clk(clock), 

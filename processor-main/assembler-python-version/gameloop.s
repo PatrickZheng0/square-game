@@ -30,7 +30,7 @@ _initialize_game:
     sll $ot, $t8, 9
 
     # initialize lives
-    addi $pl, $zero, 4096
+    addi $pl, $zero, 8
 
     # initialize difficulty settings
     addi $t0, $zero, 2
