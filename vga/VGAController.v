@@ -19,7 +19,7 @@ module VGAController(
 	input[31:0] target_x,
 	input[31:0] target_y,
 	input[31:0] game_state,
-	input[31:0] lives
+	input[31:0] player_lives
 	);
 
 	// Lab Memory Files Location
@@ -87,44 +87,9 @@ module VGAController(
 		.dataOut(bg_colorData),				       // Color at current pixel
 		.wEn(1'b0)); 						       // We're always reading
 
-	// Sprite Management
-	// localparam
-	// 	ASCII_COUNT = 256,
-	// 	ASCII_DATA_WIDTH = 7,
-	// 	ASCII_ADDRESS_WIDTH = 9;
-
-	// RAM #(		
-	// 	.DEPTH(ASCII_COUNT), 				     // Set RAM depth to contain every ascii value
-	// 	.DATA_WIDTH(ASCII_DATA_WIDTH),      // Set data width according to the ascii value
-	// 	.ADDRESS_WIDTH(ASCII_ADDRESS_WIDTH),     // Set address with according to the ascii value
-	// 	.MEMFILE({FILES_PATH, "ascii.mem"})) // Memory initialization
-	// ASCIIData(
-	// 	.clk(clk), 						 // Falling edge of the 100 MHz clk
-	// 	.addr(clk_25mHz),					 // Image data address
-	// 	.dataOut(ascii_data),				 // Color palette address
-	// 	.wEn(1'b0)); 						 // We're always reading
-
-	// localparam
-	// 	SPRITES_COUNT = 50*50*94,
-	// 	SPRITES_DATA_WIDTH = 1,
-	// 	SPRITES_ADDRESS_WIDTH = $clog2(SPRITES_COUNT) + 1;
-
-	// RAM #(		
-	// 	.DEPTH(SPRITES_COUNT), 				     // Set RAM depth to contain every ascii value
-	// 	.DATA_WIDTH(SPRITES_DATA_WIDTH),      // Set data width according to the ascii value
-	// 	.ADDRESS_WIDTH(SPRITES_ADDRESS_WIDTH),     // Set address with according to the ascii value
-	// 	.MEMFILE({FILES_PATH, "sprites.mem"})) // Memory initialization
-	// SpriteData(
-	// 	.clk(clk_25mHz), 						 // Falling edge of the 100 MHz clk
-	// 	.addr((ascii_data - 1) * 2500 + (x - sq_x) + 50 * (y-sq_y)),					 // Image data address
-	// 	.dataOut(sprite_data),				 // Color palette address
-	// 	.wEn(1'b0)); 						 // We're always reading
-	
-	// wire sprite_data;
-
 	// Assign to output color from register if active
 	wire[BITS_PER_COLOR-1:0] colorOut; 			  // Output color 
-	wire[BITS_PER_COLOR-1:0] colorScreen_final, colorScreen_inter;
+	wire[BITS_PER_COLOR-1:0] colorScreen_final, colorScreen_inter1, colorScreen_inter2;
 
 	// Draw Player Box
 	reg[9:0] player_center_x;
@@ -196,20 +161,48 @@ module VGAController(
 	assign within_target_box = (target_left_x < x && x < target_right_x) && (target_top_y < y && y < target_bottom_y) && (game_state != 32'd0);
 	assign target_box_colorData = 12'h00F;
 
-	assign colorScreen_inter = within_target_box ? target_box_colorData : bg_colorData_inter;
-	assign colorScreen_final = within_player_box ? player_box_colorData : colorScreen_inter;
+	// Draw Sprite for Lives
+	wire spriteData;
+	wire[6:0] ascii_lives = player_lives[6:0] + 7'd15;
+
+	wire[9:0] sprite_left_x, sprite_right_x;
+	wire[8:0] sprite_top_y, sprite_bottom_y;
+
+	assign sprite_left_x = 10'd50;
+	assign sprite_top_y = 9'd50;
+
+	assign sprite_right_x = sprite_left_x + 10'd50;
+	assign sprite_bottom_y = sprite_top_y + 9'd50;
+		
+	assign within_sprite = (sprite_left_x < x && x < sprite_right_x) && (sprite_top_y < y && y < sprite_bottom_y);
+	assign sprite_colorData = spriteData ? 12'hFFF : bg_colorData_inter;
+	
+	// Sprite Data to Map Ascii to Sprite Value
+	
+	localparam 
+		ASCII_COUNT = 50*50*94, 	             		// Number of pixels on the screen
+		ASCII_COUNT_ADDRESS_WIDTH = $clog2(ASCII_COUNT) + 1,           // Use built in log2 command
+		SPRITE_TOTAL_COUNT = 94, 								 // Number of Colors available
+		SPRITE_ADDRESS_WIDTH = 1; 						// Use built in log2 Command
+
+	VGARAM #(
+		.DEPTH(ASCII_COUNT), 		       				// Set depth to contain every color		
+		.DATA_WIDTH(SPRITE_ADDRESS_WIDTH), 		       // Set data width according to the bits per color
+		.ADDRESS_WIDTH(ASCII_COUNT_ADDRESS_WIDTH),     // Set address width according to the color count
+		.MEMFILE({FILES_PATH, "sprites.mem"}))  // Memory initialization
+	SpritePalette(
+		.clk(clk_25mHz), 							   	   // Rising edge of the 100 MHz clk
+		.addr(ascii_lives*50*50 + (y-sprite_top_y)*50 + (x-sprite_left_x)),					       // Address from the ImageData RAM
+		.dataOut(spriteData),				       // Color at current pixel
+		.wEn(1'b0));
+
+	// Output Color Management
+	assign colorScreen_inter1 = within_target_box ? target_box_colorData : bg_colorData_inter;
+	assign colorScreen_inter2 = within_player_box ? player_box_colorData : colorScreen_inter1;
+	assign colorScreen_final = within_sprite ? sprite_colorData : colorScreen_inter2;
 	assign colorOut = active ? colorScreen_final : 12'd0; // When not active, output black
 
 	// Quickly assign the output colors to their channels using concatenation
 	assign {VGA_R, VGA_G, VGA_B} = colorOut;
-
-	// Get PS2 Controller
-	wire read_data;
-	wire[7:0] rx_data;
-	reg[7:0] latched_rx_data;
-	Ps2Interface controller(.ps2_clk(ps2_clk), .ps2_data(ps2_data), .clk(clk_100mHz), .rst(reset), .rx_data(rx_data), .read_data(read_data));
-	always @(posedge read_data) begin
-		latched_rx_data = rx_data;
-	end
 
 endmodule

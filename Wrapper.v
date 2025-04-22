@@ -116,7 +116,7 @@ module Wrapper (
 		.target_x(target_x),
 		.target_y(target_y),
 		.game_state(game_state),
-		.lives(player_lives)
+		.player_lives(player_lives)
 	);
 
 
