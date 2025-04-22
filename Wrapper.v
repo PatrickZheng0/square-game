@@ -124,15 +124,26 @@ module Wrapper (
 
 	// Accelerometer
 	wire[8:0] accel_x_out, accel_y_out;
-	AccelerometerCtl accel_control(
-		.SYSCLK(clock),
-		.RESET(reset),
-		.SCLK(sclk),
-		.MOSI(mosi),
-		.MISO(miso),
-		.SS(ss),
-		.ACCEL_X_OUT(accel_y_out), // accelerometer on FPGA is sideways
-		.ACCEL_Y_OUT(accel_x_out) // accelerometer on FPGA is sideways
+	// AccelerometerCtl accel_control(
+	// 	.SYSCLK(clock),
+	// 	.RESET(reset),
+	// 	.SCLK(sclk),
+	// 	.MOSI(mosi),
+	// 	.MISO(miso),
+	// 	.SS(ss),
+	// 	.ACCEL_X_OUT(accel_y_out), // accelerometer on FPGA is sideways
+	// 	.ACCEL_Y_OUT(accel_x_out) // accelerometer on FPGA is sideways
+	// );
+
+	AccelerometerControl accel_control(
+		.clk(clock),
+		.reset(reset),
+		.sclk(sclk),
+		.mosi(mosi),
+		.miso(miso),
+		.ss(ss),
+		.accel_x_out(accel_y_out), // accelerometer on FPGA is sideways
+		.accel_y_out(accel_x_out) // accelerometer on FPGA is sideways
 	);
 
 
