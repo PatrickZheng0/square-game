@@ -144,14 +144,21 @@ module VGAController(
 	end
 	
 	always @(posedge screenEnd) begin
-		player_left_x <= player_center_x - 10'd25;
-		player_right_x <= player_center_x + 10'd25;
-		player_top_y <= player_center_y - 9'd25;
-		player_bottom_y <= player_center_y + 9'd25;
+		if (game_state == 32'd3) begin
+			player_left_x <= player_center_x - 10'd10;
+			player_right_x <= player_center_x + 10'd10;
+			player_top_y <= player_center_y - 9'd10;
+			player_bottom_y <= player_center_y + 9'd10;
+		end else begin
+			player_left_x <= player_center_x - 10'd20;
+			player_right_x <= player_center_x + 10'd20;
+			player_top_y <= player_center_y - 9'd20;
+			player_bottom_y <= player_center_y + 9'd20;
+		end
 	end
 
 	wire within_player_box;
-	assign within_player_box = (player_left_x < x && x < player_right_x) && (player_top_y < y && y < player_bottom_y);
+	assign within_player_box = (player_left_x < x && x < player_right_x) && (player_top_y < y && y < player_bottom_y) && (game_state != 32'd0);
 	assign player_box_colorData = 12'h0F0;
 
 	// Draw Target Box
@@ -172,14 +179,21 @@ module VGAController(
 	end
 
 	always @(posedge screenEnd) begin
-		target_left_x <= target_center_x - 10'd30;
-		target_right_x <= target_center_x + 10'd30;
-		target_top_y <= target_center_y - 9'd30;
-		target_bottom_y <= target_center_y + 9'd30;
+		if (game_state == 32'd3) begin
+			target_left_x <= target_center_x - 10'd20;
+			target_right_x <= target_center_x + 10'd20;
+			target_top_y <= target_center_y - 9'd20;
+			target_bottom_y <= target_center_y + 9'd20;
+		end else begin
+			target_left_x <= target_center_x - 10'd30;
+			target_right_x <= target_center_x + 10'd30;
+			target_top_y <= target_center_y - 9'd30;
+			target_bottom_y <= target_center_y + 9'd30;
+		end
 	end
 
 	wire within_target_box;
-	assign within_target_box = (target_left_x < x && x < target_right_x) && (target_top_y < y && y < target_bottom_y);
+	assign within_target_box = (target_left_x < x && x < target_right_x) && (target_top_y < y && y < target_bottom_y) && (game_state != 32'd0);
 	assign target_box_colorData = 12'h00F;
 
 	assign colorScreen_inter = within_target_box ? target_box_colorData : bg_colorData_inter;

@@ -31,9 +31,6 @@ _initialize_game:
     addi $t8, $zero, 512
     sll $ot, $t8, 9
 
-    # initialize lives
-    addi $pl, $zero, 4
-
     # initialize difficulty settings
     addi $t0, $zero, 2
     blt $gs, $t0, _set_easy
@@ -43,12 +40,15 @@ _initialize_game:
 
     _set_easy:
         addi $bs, $zero, 1
+        addi $pl, $zero, 9
         j _gameloop
     _set_medium:
         addi $bs, $zero, 3
+        addi $pl, $zero, 5
         j _gameloop
     _set_hard:
         addi $bs, $zero, 5
+        addi $pl, $zero, 2
 
 _gameloop:
     # pull data from accelerometer
@@ -184,8 +184,8 @@ check_validity: # decrease lives if player box doesn't overlap with target box
     sub $t0, $bx, $px
     sub $t1, $by, $py
 
-    addi $t5, $zero, 80
-    addi $t6, $zero, -80
+    addi $t5, $zero, 10
+    addi $t6, $zero, -10
 
     # check if player box overlaps with target box
     blt $t5, $t0, _out_of_bounds
