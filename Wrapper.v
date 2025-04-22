@@ -75,15 +75,18 @@ module Wrapper (
 			difficulty <= 32'd2;
 		else if (BTNR)
 			difficulty <= 32'd3;
+		else
+			difficulty <= 32'd0;
 	end
 
 	// Clock Management
-	wire locked, clk_25mHz, clk_50mHz, clk_100mHz;
+	wire locked, clk_25mHz, clk_50mHz, clk_125mHz;
 	clk_wiz_0 pll_25MHz (
 		// Clock out ports
 		.clk_out50(clk_50mHz),
 		.clk_out25(clk_25mHz),
 		.clk_out100(clk_100mHz),
+		.clk_out125(clk_125mHz),
 		// Status and control signals
 		.reset(1'b0),
 		.locked(locked),
@@ -112,7 +115,8 @@ module Wrapper (
 		.accel_y(player_y),
 		.target_x(target_x),
 		.target_y(target_y),
-		.game_state(game_state)
+		.game_state(game_state),
+		.lives(player_lives)
 	);
 
 
@@ -153,8 +157,8 @@ module Wrapper (
 
 
 	// ADD YOUR MEMORY FILE HERE
-	localparam INSTR_FILE = "C:/Users/pzhen/VSCodeProjects/ECE_350_Workspace/square-game/processor-main/assembler-python-version/gameloop";
-	// localparam INSTR_FILE = "C:/Users/mathe/Documents/Duke/ECE350/Project/square-game/processor-main/assembler-python-version/gameloop";
+	//localparam INSTR_FILE = "C:/Users/pzhen/VSCodeProjects/ECE_350_Workspace/square-game/processor-main/assembler-python-version/gameloop";
+	localparam INSTR_FILE = "C:/Users/mathe/Documents/Duke/ECE350/Project/square-game/processor-main/assembler-python-version/gameloop";
 
 	// Main Processing Unit
 	processor CPU(.clock(clock), .reset(reset), 
@@ -184,7 +188,7 @@ module Wrapper (
 		.dataOut(instData));
 	
 	// Register File
-	wire [31:0] player_x, player_y, target_x, target_y, player_lives, game_state;
+	wire [31:0] player_x, player_y, target_x, target_y, player_lives, game_state, player_score;
 	regfile RegisterFile(.clock(clock), 
 		.ctrl_writeEnable(rwe), .ctrl_reset(reset), 
 		.ctrl_writeReg(rd),
@@ -192,10 +196,22 @@ module Wrapper (
 		.data_writeReg(rData), .data_readRegA(regA), .data_readRegB(regB),
 		.data_player_x(player_x), .data_player_y(player_y),
 		.data_target_x(target_x), .data_target_y(target_y),
-		.data_player_lives(player_lives), .data_game_state(game_state));
+		.data_player_lives(player_lives), .data_game_state(game_state),
+		.data_player_score(player_score));
 
-	assign LED = player_lives[15:0];
-
+	// Score Processing
+	reg[15:0] clocked_LED;
+	reg[31:0] period_counter;
+	reg[31:0] periodLimit = 10000;
+	always @(negedge clk_50mHz) begin
+		if (period_counter < periodLimit)
+			period_counter <= period_counter + 1;
+		else begin
+			period_counter <= 0;
+			clocked_LED <= player_score[31:16];
+		end
+	end
+	assign LED = clocked_LED;
 						
 	// Processor Memory (RAM)
 	RAM ProcMem(.clk(clock), 

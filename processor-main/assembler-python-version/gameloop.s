@@ -6,6 +6,8 @@ _await_button_press:
      j _await_button_press
 
 _initialize_game:
+    # reset score
+    addi $ps, $zero, 0
     # set target movement counter value
     addi $t4, $zero, 15000
     # addi $t4, $zero, 2
@@ -30,7 +32,7 @@ _initialize_game:
     sll $ot, $t8, 9
 
     # initialize lives
-    addi $pl, $zero, 4096
+    addi $pl, $zero, 4
 
     # initialize difficulty settings
     addi $t0, $zero, 2
@@ -198,6 +200,8 @@ check_validity: # decrease lives if player box doesn't overlap with target box
         jr $ra
 
     _in_bounds:
+        # increment score counter
+        addi $ps, $ps, 1
         # reset lives counter
         addi $t8, $zero, 512
         sll $ot, $t8, 9
@@ -216,4 +220,5 @@ check_validity: # decrease lives if player box doesn't overlap with target box
 
         _set_lives_to_zero:
             addi $pl, $zero, 0
-            jr $ra
+            addi $gs, $zero, 0
+            j _await_button_press
