@@ -148,22 +148,20 @@ module VGAController(
 	assign within_target_box = (target_left_x < x && x < target_right_x) && (target_top_y < y && y < target_bottom_y);
 	assign target_box_colorData = 12'h00F;
 
-	assign colorScreen_inter1 = within_target_box ? target_box_colorData : bg_colorData;
-	assign colorScreen_inter2 = within_player_box ? player_box_colorData : colorScreen_inter1;
-	assign colorScreen_final = within_sprite ? sprite_colorData : colorScreen_inter2;
-	assign colorOut = active ? colorScreen_final : 12'd0; // When not active, output black
-
-	// Quickly assign the output colors to their channels using concatenation
-	assign {VGA_R, VGA_G, VGA_B} = colorOut;
-
 	// Draw Sprite for Lives
 	wire spriteData;
-	wire[31:0] ascii_lives = player_lives + 31'd48;
+	wire[6:0] ascii_lives = player_lives[6:0] + 7'd15;
 
-	wire[9:0] sprite_left_x = 9'd540;
-	wire[8:0] sprite_top_y = 9'd50;
+	wire[9:0] sprite_left_x, sprite_right_x;
+	wire[8:0] sprite_top_y, sprite_bottom_y;
+
+	assign sprite_left_x = 10'd50;
+	assign sprite_top_y = 9'd50;
+
+	assign sprite_right_x = sprite_left_x + 10'd50;
+	assign sprite_bottom_y = sprite_top_y + 9'd50;
 		
-	assign within_sprite = (sprite_left_x < x && x < sprite_left_x + 9'd50) && (sprite_top_y < y && y < sprite_top_y + 8'd50);
+	assign within_sprite = (sprite_left_x < x && x < sprite_right_x) && (sprite_top_y < y && y < sprite_bottom_y);
 	assign sprite_colorData = spriteData ? 12'hFFF : bg_colorData;
 	
 	// Sprite Data to Map Ascii to Sprite Value
@@ -180,9 +178,18 @@ module VGAController(
 		.ADDRESS_WIDTH(ASCII_COUNT_ADDRESS_WIDTH),     // Set address width according to the color count
 		.MEMFILE({FILES_PATH, "sprites.mem"}))  // Memory initialization
 	SpritePalette(
-		.clk(clk), 							   	   // Rising edge of the 100 MHz clk
-		.addr((ascii_lives-1)*50*50 + (y-sprite_top_y)*50 + (x-sprite_left_x)),					       // Address from the ImageData RAM
+		.clk(clk_100mHz), 							   	   // Rising edge of the 100 MHz clk
+		.addr(ascii_lives*50*50 + (y-sprite_top_y)*50 + (x-sprite_left_x)),					       // Address from the ImageData RAM
 		.dataOut(spriteData),				       // Color at current pixel
 		.wEn(1'b0));
+
+	// Output Colors
+	assign colorScreen_inter1 = within_target_box ? target_box_colorData : bg_colorData;
+	assign colorScreen_inter2 = within_player_box ? player_box_colorData : colorScreen_inter1;
+	assign colorScreen_final = within_sprite ? sprite_colorData : colorScreen_inter2;
+	assign colorOut = active ? colorScreen_final : 12'd0; // When not active, output black
+
+	// Quickly assign the output colors to their channels using concatenation
+	assign {VGA_R, VGA_G, VGA_B} = colorOut;
 
 endmodule
