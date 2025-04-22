@@ -23,8 +23,8 @@ module VGAController(
 	);
 
 	// Lab Memory Files Location
-	// localparam FILES_PATH = "C:/Users/pzhen/VSCodeProjects/ECE_350_Workspace/square-game/vga/";
-	localparam FILES_PATH = "C:/Users/mathe/Documents/Duke/ECE350/Project/square-game/vga/";
+	localparam FILES_PATH = "C:/Users/pzhen/VSCodeProjects/ECE_350_Workspace/square-game/vga/";
+	// localparam FILES_PATH = "C:/Users/mathe/Documents/Duke/ECE350/Project/square-game/vga/";
 
 	// VGA Timing Generation for a Standard VGA Screen
 	localparam 
@@ -124,7 +124,7 @@ module VGAController(
 	end
 
 	wire within_player_box;
-	assign within_player_box = (player_left_x < x && x < player_right_x) && (player_top_y < y && y < player_bottom_y) && (game_state != 32'd0);
+	assign within_player_box = (player_left_x < x && x < player_right_x) && (player_top_y < y && y < player_bottom_y) && (game_state[1:0] != 2'd0);
 	assign player_box_colorData = 12'h0F0;
 
 	// Draw Target Box
@@ -159,7 +159,7 @@ module VGAController(
 	end
 
 	wire within_target_box;
-	assign within_target_box = (target_left_x < x && x < target_right_x) && (target_top_y < y && y < target_bottom_y) && (game_state != 32'd0);
+	assign within_target_box = (target_left_x < x && x < target_right_x) && (target_top_y < y && y < target_bottom_y) && (game_state[1:0] != 2'd0);
 	assign target_box_colorData = 12'h00F;
 
 	// Draw Sprite for Lives
@@ -175,7 +175,8 @@ module VGAController(
 	assign sprite_right_x = sprite_left_x + 10'd50;
 	assign sprite_bottom_y = sprite_top_y + 9'd50;
 		
-	assign within_sprite = (sprite_left_x < x && x < sprite_right_x) && (sprite_top_y < y && y < sprite_bottom_y);
+	wire within_sprite;
+	assign within_sprite = (sprite_left_x < x && x < sprite_right_x) && (sprite_top_y < y && y < sprite_bottom_y) && (game_state[1:0] != 2'd0);
 	assign sprite_colorData = spriteData ? 12'hFFF : bg_colorData_inter;
 	
 	// Sprite Data to Map Ascii to Sprite Value
