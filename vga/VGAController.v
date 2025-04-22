@@ -23,8 +23,8 @@ module VGAController(
 	);
 
 	// Lab Memory Files Location
-	//localparam FILES_PATH = "C:/Users/pzhen/VSCodeProjects/ECE_350_Workspace/square-game/vga/";
-	localparam FILES_PATH = "C:/Users/mathe/Documents/Duke/ECE350/Project/square-game/vga/";
+	localparam FILES_PATH = "C:/Users/pzhen/VSCodeProjects/ECE_350_Workspace/square-game/vga/";
+	// localparam FILES_PATH = "C:/Users/mathe/Documents/Duke/ECE350/Project/square-game/vga/";
 
 	// VGA Timing Generation for a Standard VGA Screen
 	localparam 
@@ -74,6 +74,7 @@ module VGAController(
 	// Color Palette to Map Color Address to 12-Bit Color
 	wire[BITS_PER_COLOR-1:0] bg_colorData_inter, bg_colorData; // 12-bit color data at current pixel
 	assign bg_colorData_inter = (game_state == 32'd0) ? bg_colorData : 12'h000;
+	wire[BITS_PER_COLOR-1:0] sprite_colorData; // 12-bit color data at current pixel
 	wire[BITS_PER_COLOR-1:0] player_box_colorData, target_box_colorData; // 12-bit color data at current pixel
 
 	VGARAM #(
@@ -191,7 +192,7 @@ module VGAController(
 		.ADDRESS_WIDTH(ASCII_COUNT_ADDRESS_WIDTH),     // Set address width according to the color count
 		.MEMFILE({FILES_PATH, "sprites.mem"}))  // Memory initialization
 	SpritePalette(
-		.clk(clk_25mHz), 							   	   // Rising edge of the 100 MHz clk
+		.clk(clk_100mHz), 							   	   // Rising edge of the 100 MHz clk
 		.addr(ascii_lives*50*50 + (y-sprite_top_y)*50 + (x-sprite_left_x)),					       // Address from the ImageData RAM
 		.dataOut(spriteData),				       // Color at current pixel
 		.wEn(1'b0));
