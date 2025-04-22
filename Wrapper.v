@@ -75,6 +75,8 @@ module Wrapper (
 			difficulty <= 32'd2;
 		else if (BTNR)
 			difficulty <= 32'd3;
+		else
+			difficulty <= 32'd0;
 	end
 
 	// Clock Management

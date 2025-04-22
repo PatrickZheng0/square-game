@@ -51,10 +51,10 @@ module VGAController(
 	// Image Data to Map Pixel Location to Color Address
 	localparam 
 		PIXEL_COUNT = VIDEO_WIDTH*VIDEO_HEIGHT, 	             // Number of pixels on the screen
-		PIXEL_ADDRESS_WIDTH = $clog2(PIXEL_COUNT) + 1,           // Use built in log2 command
+		PIXEL_ADDRESS_WIDTH = $clog2(PIXEL_COUNT),           // Use built in log2 command
 		BITS_PER_COLOR = 12, 	  								 // Nexys A7 uses 12 bits/color
-		PALETTE_COLOR_COUNT = 256, 								 // Number of Colors available
-		PALETTE_ADDRESS_WIDTH = $clog2(PALETTE_COLOR_COUNT) + 1; // Use built in log2 Command
+		PALETTE_COLOR_COUNT = 152, 								 // Number of Colors available
+		PALETTE_ADDRESS_WIDTH = $clog2(PALETTE_COLOR_COUNT); // Use built in log2 Command
 
 	wire[PIXEL_ADDRESS_WIDTH-1:0] imgAddress;  	 // Image address for the image data
 	wire[PALETTE_ADDRESS_WIDTH-1:0] colorAddr; 	 // Color address for the color palette
@@ -64,7 +64,7 @@ module VGAController(
 		.DEPTH(PIXEL_COUNT), 				     // Set RAM depth to contain every pixel
 		.DATA_WIDTH(PALETTE_ADDRESS_WIDTH),      // Set data width according to the color palette
 		.ADDRESS_WIDTH(PIXEL_ADDRESS_WIDTH),     // Set address with according to the pixel count
-		.MEMFILE({FILES_PATH, "image.mem"})) // Memory initialization
+		.MEMFILE({FILES_PATH, "start_image.mem"})) // Memory initialization
 	ImageData(
 		.clk(clk_25mHz), 						 		// Falling edge of the 100 MHz clk
 		.addr(imgAddress),					 // Image data address
@@ -80,7 +80,7 @@ module VGAController(
 		.DEPTH(PALETTE_COLOR_COUNT), 		       // Set depth to contain every color		
 		.DATA_WIDTH(BITS_PER_COLOR), 		       // Set data width according to the bits per color
 		.ADDRESS_WIDTH(PALETTE_ADDRESS_WIDTH),     // Set address width according to the color count
-		.MEMFILE({FILES_PATH, "colors.mem"}))  	// Memory initialization
+		.MEMFILE({FILES_PATH, "start_colors.mem"}))  	// Memory initialization
 	ColorPalette(
 		.clk(clk_25mHz), 							   	   // Rising edge of the 100 MHz clk
 		.addr(colorAddr),					       // Address from the ImageData RAM
