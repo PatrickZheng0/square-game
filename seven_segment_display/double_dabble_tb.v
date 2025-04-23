@@ -1,6 +1,6 @@
 `timescale 1ns / 100ps
 module double_dabble_tb;
-    reg[15:0] score = 16'd1243;
+    reg[15:0] score = 16'd754;
     reg start, clk;
     wire[3:0] bcd0, bcd1, bcd2, bcd3, bcd4;
     wire busy, done;

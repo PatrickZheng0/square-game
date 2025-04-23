@@ -77,20 +77,18 @@ module seven_segment_display(
         AN[6] <= ~(digit_on == 3'd6);
         AN[7] <= ~(digit_on == 3'd7);
 
-        if (done) begin
-            if (reset)
-                digit_on <= 3'd0;
-            else if (digit_on == 3'd0)
-                {CG, CF, CE, CD, CC, CB, CA} <= seg0;
-            else if (digit_on == 3'd1)
-                {CG, CF, CE, CD, CC, CB, CA} <= seg1;
-            else if (digit_on == 3'd2)
-                {CG, CF, CE, CD, CC, CB, CA} <= seg2;
-            else if (digit_on == 3'd3)
-                {CG, CF, CE, CD, CC, CB, CA} <= seg3;
-            else if (digit_on == 3'd4)
-                {CG, CF, CE, CD, CC, CB, CA} <= seg4;
-        end
+        if (reset)
+            digit_on <= 3'd0;
+        else if (digit_on == 3'd0)
+            {CG, CF, CE, CD, CC, CB, CA} <= seg0;
+        else if (digit_on == 3'd1)
+            {CG, CF, CE, CD, CC, CB, CA} <= seg1;
+        else if (digit_on == 3'd2)
+            {CG, CF, CE, CD, CC, CB, CA} <= seg2;
+        else if (digit_on == 3'd3)
+            {CG, CF, CE, CD, CC, CB, CA} <= seg3;
+        else if (digit_on == 3'd4)
+            {CG, CF, CE, CD, CC, CB, CA} <= seg4;
 
         if (digit_on == 3'd4)
             digit_on <= 3'd0;

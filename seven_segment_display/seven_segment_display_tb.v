@@ -22,7 +22,7 @@ module seven_segment_display_tb;
 
     initial begin
         clk = 0;
-        #9000000;
+        #50000000;
         $finish;
     end
 
