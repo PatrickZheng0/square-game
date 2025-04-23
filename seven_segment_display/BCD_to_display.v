@@ -16,7 +16,7 @@ module BCD_to_display(
             4'd7: segment = 7'b1111000;
             4'd8: segment = 7'b0000000;
             4'd9: segment = 7'b0010000;
-            default: segment = 7'b0000000;
+            default: segment = 7'b1111111;
         endcase
     end
 endmodule

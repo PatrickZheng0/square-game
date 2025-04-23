@@ -1,7 +1,6 @@
 `timescale 1 ns/ 100 ps
 module VGAController(     
 	input clk_25mHz, 	// 25 MHz PLL Clock
-	input clk_100mHz,
 	input reset, 		// Reset Signal
 	output hSync, 		// H Sync Signal
 	output vSync, 		// Veritcal Sync Signal
