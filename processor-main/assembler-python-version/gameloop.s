@@ -10,7 +10,6 @@ _initialize_game:
     addi $ps, $zero, 0
     # set target movement counter value
     addi $t4, $zero, 15000
-    # addi $t4, $zero, 2
 
     # initialize target random direction counter value
     rand $t7
@@ -19,9 +18,6 @@ _initialize_game:
     addi $t8, $t8, -1
     and $t7, $t7, $t8
     add $t7, $t7, $t8
-    # addi $t7, $zero, 12416
-    # sll $t7, $t7, 2
-    # addi $t7, $zero, 4
 
     # initialize box position
     addi $bx, $zero, 320
@@ -43,11 +39,11 @@ _initialize_game:
         addi $pl, $zero, 9
         j _gameloop
     _set_medium:
-        addi $bs, $zero, 3
+        addi $bs, $zero, 2
         addi $pl, $zero, 5
         j _gameloop
     _set_hard:
-        addi $bs, $zero, 5
+        addi $bs, $zero, 4
         addi $pl, $zero, 2
 
 _gameloop:
@@ -95,9 +91,6 @@ _reset_direction_counter:
     addi $t8, $t8, -1
     and $t7, $t7, $t8
     add $t7, $t7, $t8
-    # addi $t7, $zero, 12416
-    # sll $t7, $t7, 2
-    # addi $t7, $zero, 4
 
     j _after_box_dir
 
@@ -146,7 +139,6 @@ _update_box_pos:
 _reset_movement_counter:
     # reset counter value
     addi $t4, $zero, 15000
-    # addi $t4, $zero, 2
 
     j _gameloop
 
