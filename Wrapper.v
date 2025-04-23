@@ -161,7 +161,7 @@ module Wrapper (
 	// Seven Segment Display
 	wire clk_10kHz;
 	clock_divider divider(
-		.clk_100mHz_in(clk_100mHz_in),
+		.clk_100mHz_in(clk_100mHzin),
 		.reset(reset),
 		.clk_10kHz_out(clk_10kHz)
 	);
