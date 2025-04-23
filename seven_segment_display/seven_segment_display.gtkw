@@ -1,0 +1,77 @@
+[*]
+[*] GTKWave Analyzer v3.3.100 (w)1999-2019 BSI
+[*] Wed Apr 23 08:53:38 2025
+[*]
+[dumpfile] "C:\Users\pzhen\VSCodeProjects\ECE_350_Workspace\lab_7_8\seven_segment_display\seven_segment_display_tb.vcd"
+[dumpfile_mtime] "Wed Apr 23 08:03:26 2025"
+[dumpfile_size] 10777
+[savefile] "C:\Users\pzhen\VSCodeProjects\ECE_350_Workspace\lab_7_8\seven_segment_display\seven_segment_display.gtkw"
+[timestart] 0
+[size] 1600 996
+[pos] -165 -165
+*-30.579277 2294000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] seven_segment_display_tb.
+[sst_width] 211
+[signals_width] 215
+[sst_expanded] 1
+[sst_vpaned_height] 623
+@c00024
+seven_segment_display_tb.score[15:0]
+@28
+(0)seven_segment_display_tb.score[15:0]
+(1)seven_segment_display_tb.score[15:0]
+(2)seven_segment_display_tb.score[15:0]
+(3)seven_segment_display_tb.score[15:0]
+(4)seven_segment_display_tb.score[15:0]
+(5)seven_segment_display_tb.score[15:0]
+(6)seven_segment_display_tb.score[15:0]
+(7)seven_segment_display_tb.score[15:0]
+(8)seven_segment_display_tb.score[15:0]
+(9)seven_segment_display_tb.score[15:0]
+(10)seven_segment_display_tb.score[15:0]
+(11)seven_segment_display_tb.score[15:0]
+(12)seven_segment_display_tb.score[15:0]
+(13)seven_segment_display_tb.score[15:0]
+(14)seven_segment_display_tb.score[15:0]
+(15)seven_segment_display_tb.score[15:0]
+@1401200
+-group_end
+@28
+seven_segment_display_tb.clk
+seven_segment_display_tb.reset
+seven_segment_display_tb.display_score.done
+@25
+seven_segment_display_tb.display_score.digit_on[2:0]
+@22
+seven_segment_display_tb.display_score.bcd4[3:0]
+seven_segment_display_tb.display_score.bcd3[3:0]
+seven_segment_display_tb.display_score.bcd2[3:0]
+seven_segment_display_tb.display_score.bcd1[3:0]
+seven_segment_display_tb.display_score.bcd0[3:0]
+@c00028
+seven_segment_display_tb.display_score.seg4[6:0]
+@28
+(0)seven_segment_display_tb.display_score.seg4[6:0]
+(1)seven_segment_display_tb.display_score.seg4[6:0]
+(2)seven_segment_display_tb.display_score.seg4[6:0]
+(3)seven_segment_display_tb.display_score.seg4[6:0]
+(4)seven_segment_display_tb.display_score.seg4[6:0]
+(5)seven_segment_display_tb.display_score.seg4[6:0]
+(6)seven_segment_display_tb.display_score.seg4[6:0]
+@1401200
+-group_end
+@28
+seven_segment_display_tb.display_score.seg3[6:0]
+seven_segment_display_tb.display_score.seg2[6:0]
+seven_segment_display_tb.display_score.seg1[6:0]
+seven_segment_display_tb.display_score.seg0[6:0]
+seven_segment_display_tb.AN[7:0]
+seven_segment_display_tb.CG
+seven_segment_display_tb.CF
+seven_segment_display_tb.CE
+seven_segment_display_tb.CD
+seven_segment_display_tb.CC
+seven_segment_display_tb.CB
+seven_segment_display_tb.CA
+[pattern_trace] 1
+[pattern_trace] 0

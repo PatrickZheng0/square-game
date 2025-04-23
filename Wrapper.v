@@ -169,7 +169,7 @@ module Wrapper (
 	seven_segment_display display_score(
 		.clk(clk_10kHz),
 		.reset(reset),
-		.score(player_score[31:16]),
+		.score(clocked_LED),
 		.AN(AN),
 		.CA(CA),
 		.CB(CB),
