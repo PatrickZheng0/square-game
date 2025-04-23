@@ -59,7 +59,18 @@ module Wrapper (
 	input[15:0] SW,
 
 	// LEDs
-	output[15:0] LED
+	output[15:0] LED,
+
+	// Seven Segment Display
+	output[7:0] AN,
+	output CA,
+	output CB,
+	output CC,
+	output CD,
+	output CE,
+	output CF,
+	output CG,
+	output DP
 	);
 
 	wire reset;
@@ -98,7 +109,6 @@ module Wrapper (
 	// VGA
 	VGAController vga_control(
 		.clk_25mHz(clk_25mHz),
-		.clk_100mHz(clk_100mHz),
 		.reset(reset),
 		.hSync(hSync),
 		.vSync(vSync),
@@ -147,6 +157,28 @@ module Wrapper (
 		.audioEn(AUD_SD)
 	);
 
+	// Seven Segment Display
+	wire clk_10kHz;
+	clock_divider divider(
+		.clk_100mHz_in(clk_100mHz),
+		.reset(reset),
+		.clk_10kHz_out(clk_10kHz)
+	);
+
+	seven_segment_display display_score(
+		.clk(clk_10kHz),
+		.reset(reset),
+		.score(clocked_LED),
+		.AN(AN),
+		.CA(CA),
+		.CB(CB),
+		.CC(CC),
+		.CD(CD),
+		.CE(CE),
+		.CF(CF),
+		.CG(CG)
+	);
+	assign DP = 1'b1;
 
 	// CPU
 	wire rwe, mwe;

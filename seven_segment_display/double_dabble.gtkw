@@ -1,0 +1,116 @@
+[*]
+[*] GTKWave Analyzer v3.3.100 (w)1999-2019 BSI
+[*] Wed Apr 23 07:15:32 2025
+[*]
+[dumpfile] "C:\Users\pzhen\VSCodeProjects\ECE_350_Workspace\lab_7_8\seven_segment_display\double_dabble_tb.vcd"
+[dumpfile_mtime] "Wed Apr 23 07:12:55 2025"
+[dumpfile_size] 4872
+[savefile] "C:\Users\pzhen\VSCodeProjects\ECE_350_Workspace\lab_7_8\seven_segment_display\test.gtkw"
+[timestart] 0
+[size] 1600 996
+[pos] -139 -139
+*-30.518841 1323000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] double_dabble_tb.
+[sst_width] 211
+[signals_width] 473
+[sst_expanded] 1
+[sst_vpaned_height] 623
+@28
+double_dabble_tb.clk
+double_dabble_tb.done
+double_dabble_tb.start
+double_dabble_tb.busy
+@c00024
+double_dabble_tb.score[15:0]
+@28
+(0)double_dabble_tb.score[15:0]
+(1)double_dabble_tb.score[15:0]
+(2)double_dabble_tb.score[15:0]
+(3)double_dabble_tb.score[15:0]
+(4)double_dabble_tb.score[15:0]
+(5)double_dabble_tb.score[15:0]
+(6)double_dabble_tb.score[15:0]
+(7)double_dabble_tb.score[15:0]
+(8)double_dabble_tb.score[15:0]
+(9)double_dabble_tb.score[15:0]
+(10)double_dabble_tb.score[15:0]
+(11)double_dabble_tb.score[15:0]
+(12)double_dabble_tb.score[15:0]
+(13)double_dabble_tb.score[15:0]
+(14)double_dabble_tb.score[15:0]
+(15)double_dabble_tb.score[15:0]
+@1401200
+-group_end
+@24
+double_dabble_tb.last_score[15:0]
+double_dabble_tb.binary_to_BCD.counter[4:0]
+@29
+double_dabble_tb.binary_to_BCD.test
+@800028
+double_dabble_tb.binary_to_BCD.scratch_space[35:0]
+@800200
+-gr5
+@28
+(0)double_dabble_tb.binary_to_BCD.scratch_space[35:0]
+(1)double_dabble_tb.binary_to_BCD.scratch_space[35:0]
+(2)double_dabble_tb.binary_to_BCD.scratch_space[35:0]
+(3)double_dabble_tb.binary_to_BCD.scratch_space[35:0]
+@1000200
+-gr5
+@800200
+-g4
+@28
+(4)double_dabble_tb.binary_to_BCD.scratch_space[35:0]
+(5)double_dabble_tb.binary_to_BCD.scratch_space[35:0]
+(6)double_dabble_tb.binary_to_BCD.scratch_space[35:0]
+(7)double_dabble_tb.binary_to_BCD.scratch_space[35:0]
+@1000200
+-g4
+@800200
+-gr3
+@28
+(8)double_dabble_tb.binary_to_BCD.scratch_space[35:0]
+(9)double_dabble_tb.binary_to_BCD.scratch_space[35:0]
+(10)double_dabble_tb.binary_to_BCD.scratch_space[35:0]
+(11)double_dabble_tb.binary_to_BCD.scratch_space[35:0]
+@1000200
+-gr3
+@800200
+-gr2
+@28
+(12)double_dabble_tb.binary_to_BCD.scratch_space[35:0]
+(13)double_dabble_tb.binary_to_BCD.scratch_space[35:0]
+(14)double_dabble_tb.binary_to_BCD.scratch_space[35:0]
+(15)double_dabble_tb.binary_to_BCD.scratch_space[35:0]
+@1000200
+-gr2
+@800200
+-gr1
+@28
+(16)double_dabble_tb.binary_to_BCD.scratch_space[35:0]
+(17)double_dabble_tb.binary_to_BCD.scratch_space[35:0]
+(18)double_dabble_tb.binary_to_BCD.scratch_space[35:0]
+(19)double_dabble_tb.binary_to_BCD.scratch_space[35:0]
+@1000200
+-gr1
+@28
+(20)double_dabble_tb.binary_to_BCD.scratch_space[35:0]
+(21)double_dabble_tb.binary_to_BCD.scratch_space[35:0]
+(22)double_dabble_tb.binary_to_BCD.scratch_space[35:0]
+(23)double_dabble_tb.binary_to_BCD.scratch_space[35:0]
+(24)double_dabble_tb.binary_to_BCD.scratch_space[35:0]
+(25)double_dabble_tb.binary_to_BCD.scratch_space[35:0]
+(26)double_dabble_tb.binary_to_BCD.scratch_space[35:0]
+(27)double_dabble_tb.binary_to_BCD.scratch_space[35:0]
+(28)double_dabble_tb.binary_to_BCD.scratch_space[35:0]
+(29)double_dabble_tb.binary_to_BCD.scratch_space[35:0]
+(30)double_dabble_tb.binary_to_BCD.scratch_space[35:0]
+(31)double_dabble_tb.binary_to_BCD.scratch_space[35:0]
+(32)double_dabble_tb.binary_to_BCD.scratch_space[35:0]
+(33)double_dabble_tb.binary_to_BCD.scratch_space[35:0]
+(34)double_dabble_tb.binary_to_BCD.scratch_space[35:0]
+(35)double_dabble_tb.binary_to_BCD.scratch_space[35:0]
+@1001200
+-group_end
+[pattern_trace] 1
+[pattern_trace] 0
